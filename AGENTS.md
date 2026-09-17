@@ -8,7 +8,28 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# MCPs
+## MCPs
 
--Playrright  Screenshots y cualquier cosa relacionada a Playwright tienen que estar en la carpeta .playwright-mcp.
--Context7  Usaremos este MCP para traer la documentación actualizada del framework.
+- Playwright: Screenshots y cualquier cosa relacionada a Playwright tienen que estar en la carpeta `.playwright-mcp/`. Configurado en `opencode.json` (solo MCP local declarado).
+- Context7: Usaremos este MCP para traer la documentación actualizada del framework (Next.js, Tailwind, etc.).
+
+# Comandos
+
+- `npm run dev` — dev server en http://localhost:3000
+- `npm run build` — build de producción
+- `npm run start` — sirve el build
+- `npm run lint` — ESLint (único check de calidad)
+- **No hay** suite de tests ni script de typecheck. Para verificar tipos usa `npx tsc --noEmit` (tsconfig ya tiene `noEmit: true`).
+
+# Arquitectura y toolchain
+
+- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Entrypoints: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`.
+- Tailwind v4 (CSS-first): **no existe `tailwind.config.js`**. El tema y fuentes se configuran en `app/globals.css` vía `@import "tailwindcss"` y `@theme`. PostCSS usa `@tailwindcss/postcss`.
+- Alias de path `@/*` → raíz del repo (ver `tsconfig.json`).
+- `.env*` está en `.gitignore` silenciosamente (línea `*.tsbuildinfo`/`next-env.d.ts` también gitignoreados). No asumas que hay env config en el repo.
+- `CLAUDE.md` solo referencia `@AGENTS.md`.
+
+## Spec Driven Development -Skills
+ 
+ -/spec Utilizaremos esta skill para crear especificaciones.
+ -/spec-impl Usaremos esta skill para implementar las especificaciones.
