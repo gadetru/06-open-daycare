@@ -31,5 +31,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Spec Driven Development -Skills
  
- -/spec Utilizaremos esta skill para crear especificaciones.
- -/spec-impl Usaremos esta skill para implementar las especificaciones.
+- /spec Utilizaremos esta skill para crear especificaciones.
+- /spec-impl Usaremos esta skill para implementar las especificaciones.
+
+## Reglas de código.
+
+- Usar código limpio, nombres y variables etc en inglés. 
+- crear funciones con código sencillo de entender para un junior, no hacer funciones con letras simples para referenciar variables o parametros.
+- crear funciones cortas, legibles y faciles de entender.
+ 
