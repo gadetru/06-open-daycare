@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SVGProps } from "react";
 
 type PhotoPlaceholderProps = {
@@ -10,6 +10,14 @@ type PhotoPlaceholderProps = {
 
 export default function PhotoPlaceholder({ src, alt }: PhotoPlaceholderProps) {
   const [hasFailed, setHasFailed] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const image = imageRef.current;
+    if (image && image.complete && image.naturalWidth === 0) {
+      setHasFailed(true);
+    }
+  }, []);
 
   if (hasFailed) {
     return (
@@ -22,6 +30,7 @@ export default function PhotoPlaceholder({ src, alt }: PhotoPlaceholderProps) {
 
   return (
     <img
+      ref={imageRef}
       src={src}
       alt={alt}
       onError={() => setHasFailed(true)}

@@ -9,7 +9,7 @@ type PostImage = {
   alt: string;
 };
 
-type PostCardProps = {
+export type PostCardProps = {
   type: PostType;
   childName: string;
   time: string;
