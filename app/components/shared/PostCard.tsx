@@ -43,7 +43,7 @@ export default function PostCard({
 
   return (
     <article className="rounded-[20px] border border-border bg-surface px-[22px] py-5 shadow-[0_4px_16px_-12px_rgba(120,90,60,.5)]">
-      <div className="mb-[14px] flex items-center gap-3 pb-4">
+      <div className="mb-[14px] flex items-center gap-3">
         <div
           className={`flex h-11 w-11 flex-none items-center justify-center rounded-full font-heading text-[17px] font-semibold ${
             isAnnouncement ? "bg-announce-bg text-announce" : "bg-avatar-sky-bg text-avatar-sky-ink"

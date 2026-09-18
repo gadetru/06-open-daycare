@@ -29,6 +29,7 @@ export default function PhotoPlaceholder({ src, alt }: PhotoPlaceholderProps) {
   }
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- onError fallback to dashed UI requires raw img
     <img
       ref={imageRef}
       src={src}
