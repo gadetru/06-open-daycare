@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { SVGProps } from "react";
-import type { Kid } from "@/data/kids";
+import type { Kid } from "../../data/kids";
 
 type KidCardProps = {
   kid: Kid;
