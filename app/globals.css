@@ -26,6 +26,26 @@
   --color-announce: #4e72c8;
   --color-avatar-sky-bg: #a9d9e8;
   --color-avatar-sky-ink: #1f7a93;
+  --color-avatar-pink-bg: #f4b8cc;
+  --color-avatar-pink-ink: #c44a7a;
+  --color-avatar-green-bg: #b9dec4;
+  --color-avatar-green-ink: #3e8b62;
+  --color-avatar-yellow-bg: #f4dc8e;
+  --color-avatar-yellow-ink: #9a7b1e;
+  --color-avatar-purple-bg: #c9b6e8;
+  --color-avatar-purple-ink: #7b5fc0;
+  --color-alert-bg: #fbdad6;
+  --color-alert-icon-bg: #f4a8a0;
+  --color-alert-title: #c5413a;
+  --color-alert-text: #b25249;
+  --color-pending-bg: #f7e7a6;
+  --color-pending-ink: #9a7b1e;
+  --color-badge-mani-bg: #fbd8cc;
+  --color-badge-mani-ink: #d9684a;
+  --color-badge-vincular-bg: #f9d2de;
+  --color-badge-vincular-ink: #c56486;
+  --color-chevron: #cbb89f;
+  --color-parent-sky-bg: #a9c7e8;
   --color-scrollbar: #e4d6c4;
 
   --font-heading: var(--font-fredoka);
