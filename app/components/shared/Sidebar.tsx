@@ -17,7 +17,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: "Feed", href: "/", icon: FeedIcon },
-  { label: "Niños", href: "/ninos", icon: ChildrenIcon },
+  { label: "Niños", href: "/kids", icon: ChildrenIcon },
   { label: "Avisos", href: "/avisos", icon: BellIcon },
   { label: "Mi cuenta", href: "/mi-cuenta", icon: UserIcon },
 ];
@@ -66,7 +66,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <nav className="flex flex-1 flex-col gap-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}

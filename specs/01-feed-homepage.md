@@ -1,6 +1,6 @@
 # SPEC 01 — Feed homepage (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** —
 > **Date:** 2026-09-17
 > **Objective:** Implement the visual feed homepage from `feed.dc.html` as the root `/` route, using Tailwind and componentized architecture, matching the original design and adapting responsively across desktop, tablet, and mobile.
