@@ -1,6 +1,6 @@
 # SPEC 02 — Páginas de niños y perfil del niño (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-09-18
 > **Objective:** Implementar las páginas `/kids` (lista de niños) y `/kids/[id]` (perfil del niño) siguiendo `references/pantallas/ninos.dc.html` y `perfil-nino.dc.html`, con Tailwind, datos hardcodeados, verificación visual exacta vía Playwright y verificación de codigo actual de next con context7.
