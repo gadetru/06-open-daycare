@@ -78,19 +78,19 @@ Cada paso deja el sistema funcional; el 1–2 y 3–4 son independientes.
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` arranca sin errores y `/kids` responde 200.
-- [ ] Desktop ≥1024: al pulsar "Agregar niño" se abre el modal replicando `agregar-nino.dc.html` 1:1 (card 520px, header Cancelar/Agregar niño/Guardar, campos con bordes `#EADFD0` y placeholders `#B6A99B`); la URL no cambia (no existe la ruta).
-- [ ] Nombre vacío o solo espacios → error inline "El nombre es obligatorio" (borde rojo) y no agrega; al tipear se limpia.
-- [ ] Fechas inválidas muestran error: formato incorrecto, mes 13, día 65, `31/02/2021`, año `1999` (menor a 2000) y año futuro/recién nacido (ej. `2025`); válidas como `05/05/2023` y bisiestos `29/02/2024` pasan y `29/02/2023` falla.
-- [ ] El input de fecha solo acepta dígitos e inserta `/` automáticamente (`dd/mm/aaaa`).
-- [ ] `Guardar` con errores no cierra el modal ni agrega nada; los errores se muestran inline bajo cada campo.
-- [ ] Guardar válido: cierra el modal, la card del nuevo niño aparece en `/kids` bajo su sala (header dinámico con su conteo) y la lista existente no se altera.
-- [ ] Datos derivados correctos para `05/05/2023`: `birthDate: "5 may 2023"`, `age: 3`, `enrolledDate` = mes/año actual, `id` slug del nombre, `initial` primera letra, color siguiendo el ciclo de paletas.
-- [ ] Con alergias completas: badge MANÍ (texto en mayúsculas, colores `#FBD8CC`/`#D9684A`); sin alergias y `parents []`: badge VINCULAR en la card.
-- [ ] `Cancelar`, `Esc` y clic en backdrop cierran sin guardar; reabrir muestra el form vacío (reset).
-- [ ] Móvil/tablet 768/375: modal centrado y sin overflow horizontal; el dropdown de sala es usable.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) comparados 1:1 contra `references/pantallas/agregar-nino.dc.html` en el mismo viewport.
+- [x] `npm run dev` arranca sin errores y `/kids` responde 200.
+- [x] Desktop ≥1024: al pulsar "Agregar niño" se abre el modal replicando `agregar-nino.dc.html` 1:1 (card 520px, header Cancelar/Agregar niño/Guardar, campos con bordes `#EADFD0` y placeholders `#B6A99B`); la URL no cambia (no existe la ruta).
+- [x] Nombre vacío o solo espacios → error inline "El nombre es obligatorio" (borde rojo) y no agrega; al tipear se limpia.
+- [x] Fechas inválidas muestran error: formato incorrecto, mes 13, día 65, `31/02/2021`, año `1999` (menor a 2000) y año futuro/recién nacido (ej. `2025`); válidas como `05/05/2023` y bisiestos `29/02/2024` pasan y `29/02/2023` falla.
+- [x] El input de fecha solo acepta dígitos e inserta `/` automáticamente (`dd/mm/aaaa`).
+- [x] `Guardar` con errores no cierra el modal ni agrega nada; los errores se muestran inline bajo cada campo.
+- [x] Guardar válido: cierra el modal, la card del nuevo niño aparece en `/kids` bajo su sala (header dinámico con su conteo) y la lista existente no se altera.
+- [x] Datos derivados correctos para `05/05/2023`: `birthDate: "5 may 2023"`, `age: 3`, `enrolledDate` = mes/año actual, `id` slug del nombre, `initial` primera letra, color siguiendo el ciclo de paletas.
+- [x] Con alergias completas: badge MANÍ (texto en mayúsculas, colores `#FBD8CC`/`#D9684A`); sin alergias y `parents []`: badge VINCULAR en la card.
+- [x] `Cancelar`, `Esc` y clic en backdrop cierran sin guardar; reabrir muestra el form vacío (reset).
+- [x] Móvil/tablet 768/375: modal centrado y sin overflow horizontal; el dropdown de sala es usable.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) comparados 1:1 contra `references/pantallas/agregar-nino.dc.html` en el mismo viewport.
 
 ---
 
