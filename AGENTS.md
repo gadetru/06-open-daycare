@@ -23,9 +23,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Arquitectura y toolchain
 
-- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Entrypoints: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`.
+- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Entrypoints: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `app/kids/page.tsx` y `app/kids/[id]/page.tsx` (rutas de negocio como client components que reusan `Sidebar` y manejo de hamburguesa/overlay; en `[id]` se usa `use(params)` para `params: Promise<{ id: string }>`).
 - Tailwind v4 (CSS-first): **no existe `tailwind.config.js`**. El tema y fuentes se configuran en `app/globals.css` vía `@import "tailwindcss"` y `@theme`. PostCSS usa `@tailwindcss/postcss`.
 - Alias de path `@/*` → raíz del repo (ver `tsconfig.json`).
+- Datos hardcodeados tipados en `app/data/` (ej. `kids.ts` con el tipo `Kid` y 8 niños); no hay backend ni fetch real.
 - `.env*` está en `.gitignore` silenciosamente (línea `*.tsbuildinfo`/`next-env.d.ts` también gitignoreados). No asumas que hay env config en el repo.
 - `CLAUDE.md` solo referencia `@AGENTS.md`.
 
@@ -37,7 +38,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Agente spec-verifier
 
 - `spec-verifier` es un subagente de opencode que verifica los **Acceptance criteria** de un spec contra el código real (Next.js 16) y screenshots reales vía Playwright MCP.
-- Verifica cada check y lo marca como `[x]` en `specs/*.md` solo cuando pasa, con evidencia `archivo:línea` y rutas de screenshots.
+- Marca cada check como `[x]`/`[ ]` en `specs/*.md` **sin reescribir el texto del criterio**; la evidencia (`archivo:línea`, screenshots) va en el reporte final, no en el spec.
 - Corrige problemas menores de código para que los checks pasen **sin cambiar el scope** del spec.
 - Corre `npm run lint`, `npx tsc --noEmit` y `npm run build` como validación de calidad.
 - El status del spec solo pasa a `aprobado` con confirmación explícita del usuario.
@@ -52,7 +53,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 2. Recorre cada Acceptance criteria con Playwright (desktop ≥1024px, tablet, mobile <1024px).
 3. Compara el resultado visual contra la referencia del template (ej: `references/pantallas/*.html`).
 4. Aplica fixes menores si es necesario y re-verifica.
-5. Marca los checks `[x]` en el spec con evidencia, y reporta PASS/FAIL por criterio.
+5. Solo marca la casilla `[x]`/`[ ]` de cada check (sin reescribir el criterio) y reporta PASS/FAIL con evidencia en el resumen final.
 
 ## Reglas de código.
 
