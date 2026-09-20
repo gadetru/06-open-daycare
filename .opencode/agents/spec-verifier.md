@@ -7,7 +7,7 @@ permission:
   read: allow
   glob: allow
   grep: allow
-  edit: ask
+  edit: allow
   bash:
     "*": allow
     "npm run dev": allow
