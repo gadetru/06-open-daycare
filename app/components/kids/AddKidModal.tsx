@@ -46,14 +46,6 @@ export default function AddKidModal({
   const [isRoomsOpen, setIsRoomsOpen] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      setForm(EMPTY_FORM);
-      setErrors({});
-      setIsRoomsOpen(false);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     if (!isOpen) return;
 
     document.body.style.overflow = "hidden";

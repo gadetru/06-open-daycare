@@ -99,12 +99,14 @@ export default function KidsPage() {
         </div>
       </main>
 
-      <AddKidModal
-        isOpen={isModalOpen}
-        nextIndex={kidsState.length}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveKid}
-      />
+      {isModalOpen && (
+        <AddKidModal
+          isOpen={isModalOpen}
+          nextIndex={kidsState.length}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveKid}
+        />
+      )}
     </div>
   );
 }

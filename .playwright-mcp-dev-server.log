@@ -62,3 +62,6 @@
  GET /activar-cuenta 200 in 48ms (next.js: 14ms, application-code: 34ms)
  GET /kids 200 in 46ms (next.js: 12ms, application-code: 34ms)
  GET /kids 200 in 34ms (next.js: 5ms, application-code: 30ms)
+ GET /kids 200 in 39ms (next.js: 8ms, application-code: 31ms)
+ GET /kids 200 in 39ms (next.js: 7ms, application-code: 32ms)
+ GET /kids 200 in 38ms (next.js: 6ms, application-code: 32ms)
