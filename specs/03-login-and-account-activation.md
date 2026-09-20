@@ -84,6 +84,7 @@ Esta spec no introduce estructuras de datos nuevas. Las páginas son estáticas;
 - **No:** backend, auth, sesión ni persistencia.
 - **No:** validación de formularios ni registro/activación real (queda para un spec futuro).
 - **No:** refactor mayor del Sidebar (solo adopta `SunIcon`).
+- **Context7 2026-09-20 (paso 1):** `/vercel/next.js/v16.2.9` validado: server components sin `"use client"` es el comportamiento por defecto del App Router (las páginas `app/login/page.tsx` y `app/activar-cuenta/page.tsx` serán server components estáticos); `next/link` (`Link`) es el patrón para navegación (CTAs "Iniciar sesión", "Activá tu cuenta", etc.); `@theme` en `app/globals.css` ya aplicado en el repo (SPEC 01/02), patrón Tailwind v4 correcto. Sin discrepancias.
 
 ---
 
