@@ -2,18 +2,33 @@
 
 import { useState } from "react";
 import type { SVGProps } from "react";
-import Link from "next/link";
 import Sidebar from "../components/shared/Sidebar";
 import KidCard from "../components/kids/KidCard";
-import { kids } from "../data/kids";
+import AddKidModal from "../components/kids/AddKidModal";
+import { kids, type Kid } from "../data/kids";
+import { rooms } from "../data/rooms";
 
 export default function KidsPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [kidsState, setKidsState] = useState<Kid[]>(kids);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredKids = kids.filter((kid) =>
+  const filteredKids = kidsState.filter((kid) =>
     kid.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const kidsByRoom = rooms
+    .map((room) => ({
+      room: room,
+      kids: filteredKids.filter((kid) => kid.room === room),
+    }))
+    .filter((group) => group.kids.length > 0);
+
+  function handleSaveKid(kid: Kid) {
+    setKidsState((current) => [...current, kid]);
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="flex min-h-full bg-background">
@@ -40,13 +55,14 @@ export default function KidsPage() {
                 Niños
               </h1>
             </div>
-            <Link
-              href="/agregar-nino"
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 rounded-[14px] bg-gradient-to-b from-accent-1 to-accent-2 px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.7)]"
             >
               <PlusIcon />
               Agregar niño
-            </Link>
+            </button>
           </div>
 
           <div className="mb-[22px] flex items-center gap-[11px] rounded-[14px] border border-border bg-surface px-4 py-3">
@@ -59,21 +75,38 @@ export default function KidsPage() {
             />
           </div>
 
-          <div className="mb-[14px] flex items-center gap-3">
-            <span className="text-[12.5px] font-extrabold tracking-[.8px] text-ink">
-              SALA SOLES
-            </span>
-            <span className="text-[13px] text-ink-soft">{kids.length} niños</span>
-            <span className="h-px flex-1 bg-divider" />
-          </div>
+          <div className="space-y-[28px]">
+            {kidsByRoom.map((group) => (
+              <div key={group.room}>
+                <div className="mb-[14px] flex items-center gap-3">
+                  <span className="text-[12.5px] font-extrabold tracking-[.8px] text-ink">
+                    SALA {group.room.toUpperCase()}
+                  </span>
+                  <span className="text-[13px] text-ink-soft">
+                    {group.kids.length} {group.kids.length === 1 ? "niño" : "niños"}
+                  </span>
+                  <span className="h-px flex-1 bg-divider" />
+                </div>
 
-          <div className="grid grid-cols-1 gap-[14px] lg:grid-cols-2">
-            {filteredKids.map((kid) => (
-              <KidCard key={kid.id} kid={kid} />
+                <div className="grid grid-cols-1 gap-[14px] lg:grid-cols-2">
+                  {group.kids.map((kid) => (
+                    <KidCard key={kid.id} kid={kid} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </main>
+
+      {isModalOpen && (
+        <AddKidModal
+          isOpen={isModalOpen}
+          nextIndex={kidsState.length}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveKid}
+        />
+      )}
     </div>
   );
 }

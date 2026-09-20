@@ -57,3 +57,253 @@
  GET /login 200 in 33ms (next.js: 5ms, application-code: 28ms)
  GET /activar-cuenta 200 in 35ms (next.js: 5ms, application-code: 29ms)
  GET /activar-cuenta 200 in 36ms (next.js: 6ms, application-code: 30ms)
+ GET / 200 in 167ms (next.js: 60ms, application-code: 108ms)
+ GET /login 200 in 59ms (next.js: 14ms, application-code: 45ms)
+ GET /activar-cuenta 200 in 48ms (next.js: 14ms, application-code: 34ms)
+ GET /kids 200 in 46ms (next.js: 12ms, application-code: 34ms)
+ GET /kids 200 in 34ms (next.js: 5ms, application-code: 30ms)
+ GET /kids 200 in 39ms (next.js: 8ms, application-code: 31ms)
+ GET /kids 200 in 39ms (next.js: 7ms, application-code: 32ms)
+ GET /kids 200 in 38ms (next.js: 6ms, application-code: 32ms)
+ GET / 200 in 49ms (next.js: 6ms, application-code: 43ms)
+ GET / 200 in 31ms (next.js: 4ms, application-code: 27ms)
+ GET /kids 200 in 30ms (next.js: 6ms, application-code: 24ms)
+ GET /kids/pepito 200 in 90ms (next.js: 63ms, application-code: 27ms)
+ GET /kids 200 in 19ms (next.js: 4ms, application-code: 14ms)
+ GET /kids/benjamin 200 in 25ms (next.js: 9ms, application-code: 15ms)
+ GET /kids 200 in 17ms (next.js: 4ms, application-code: 13ms)
+⨯ ./app/kids/page.tsx:7:1
+Error: Module not found: Can't resolve '../components/kids/AddKidModal'
+  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
+  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m10 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:7:1
+Error: Module not found: Can't resolve '../components/kids/AddKidModal'
+  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
+  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m10 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:7:1
+Error: Module not found: Can't resolve '../components/kids/AddKidModal'
+  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
+  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m10 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:7:1
+Error: Module not found: Can't resolve '../components/kids/AddKidModal'
+  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
+  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m10 |[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:9:1
+Error: Module not found: Can't resolve '../data/rooms'
+  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
+  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:9:1
+Error: Module not found: Can't resolve '../data/rooms'
+  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
+  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:9:1
+Error: Module not found: Can't resolve '../data/rooms'
+  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
+  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/kids/page.tsx:9:1
+Error: Module not found: Can't resolve '../data/rooms'
+  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
+  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
+  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /kids 200 in 27ms (next.js: 10ms, application-code: 17ms)
+[browser] ./app/kids/page.tsx:7:1
+Error: Module not found: Can't resolve '../components/kids/AddKidModal'
+   5 | import Sidebar from "../components/shared/Sidebar";
+   6 | import KidCard from "../components/kids/KidCard";
+>  7 | import AddKidModal from "../components/kids/AddKidModal";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { kids, type Kid } from "../data/kids";
+   9 | import { rooms } from "../data/rooms";
+  10 |
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+[browser] ./app/kids/page.tsx:9:1
+Error: Module not found: Can't resolve '../data/rooms'
+   7 | import AddKidModal from "../components/kids/AddKidModal";
+   8 | import { kids, type Kid } from "../data/kids";
+>  9 | import { rooms } from "../data/rooms";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 |
+  11 | export default function KidsPage() {
+  12 |   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+Import traces:
+  Client Component Browser:
+    ./app/kids/page.tsx [Client Component Browser]
+    ./app/kids/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/kids/page.tsx [Client Component SSR]
+    ./app/kids/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+ GET /kids 200 in 27ms (next.js: 10ms, application-code: 17ms)
+✓ Compiled in 245ms

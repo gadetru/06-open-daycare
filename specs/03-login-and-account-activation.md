@@ -1,6 +1,6 @@
 # SPEC 03 — Páginas de login y activación de cuenta (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 02
 > **Date:** 2026-09-20
 > **Objective:** Implementar las páginas estáticas `/login` y `/activar-cuenta` replicando `references/pantallas/login.dc.html` y `activar-cuenta.dc.html`, sin el selector "INGRESO COMO", standalone sin Sidebar, con datos pre-cargados idénticos al template, sin backend, reutilizando un `SunIcon` compartido y con verificación de imágenes 1:1 vía Playwright y de framework vía Context7.
