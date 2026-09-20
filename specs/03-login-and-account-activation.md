@@ -57,15 +57,15 @@ Esta spec no introduce estructuras de datos nuevas. Las páginas son estáticas;
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` arranca sin errores; `/login` y `/activar-cuenta` responden 200.
-- [ ] `app/components/shared/SunIcon.tsx` es la única fuente del SVG del sol: `Sidebar.tsx`, `/login` y `/activar-cuenta` lo importan (grep: sin `function SunIcon` ni SVG sol duplicado fuera de ese archivo); desktop ≥1024px no cambia visualmente vs previo.
-- [ ] Desktop ≥1024px: `/login` replica `login.dc.html` 1:1 **sin** el bloque "INGRESO COMO": fondo `#FBF4EC`, grid 1.05fr/1fr, panel gradiente (circles, brand con sol, h1 dos líneas, párrafo max 430px, pie "🌿 Guardería Sala Soles"), columna derecha centrada máx. 392px, email prefill `caro@opendaycare.com`, placeholder `••••••••` en contraseña, "¿Olvidaste tu contraseña?" presente e inerte, CTA gradiente con sombra con `href="/familia-feed"`, link "Activá tu cuenta" → `/activar-cuenta`. Sin Sidebar (`aside` no presente).
-- [ ] Desktop ≥1024px: `/activar-cuenta` replica `activar-cuenta.dc.html` 1:1: card centrada máx. 440px, tile logo 58px gradiente con sombra y sol, h1, invitado "Mateo · Sala Soles" (avatar `M` `#A9D9E8`/`#1F7A93`), inputs prefill (código `7K4P9`, email `lucia.fernandez@gmail.com`, contraseña value `contraseña` con borde `#F2A78E`), checkbox autorización `#FBF1D6` con check `#5FB97E`, CTA "Activar mi cuenta" con `href="/familia-feed"`, link "Iniciar sesión" → `/login`. Sin Sidebar.
-- [ ] Las capturas de `/login` y `/activar-cuenta` se comparan 1:1 con `references/pantallas/login.dc.html` / `activar-cuenta.dc.html` abiertos en el mismo viewport (misma columna, mismo layout).
-- [ ] No se crea `app/familia-feed/`: navegar desde los CTAs a `/familia-feed` devuelve 404 (href correcto verificado, página futura).
-- [ ] Móvil/tablet `<1024px`: en `/login` las columnas se apilan (panel arriba, formulario abajo), sin overflow horizontal (`scrollWidth === clientWidth` en 768 y 375), sin Sidebar ni hamburguesa; `/activar-cuenta` se ve centrado correctamente en 768 y 375.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots de referencia en `.playwright-mcp/` para `/login` y `/activar-cuenta` en 1280, 1024, 768 y 375 (nombres tipo `login-desktop-1280.png`, `activar-cuenta-mobile-375.png`).
+- [x] `npm run dev` arranca sin errores; `/login` y `/activar-cuenta` responden 200.
+- [x] `app/components/shared/SunIcon.tsx` es la única fuente del SVG del sol: `Sidebar.tsx`, `/login` y `/activar-cuenta` lo importan (grep: sin `function SunIcon` ni SVG sol duplicado fuera de ese archivo); desktop ≥1024px no cambia visualmente vs previo.
+- [x] Desktop ≥1024px: `/login` replica `login.dc.html` 1:1 **sin** el bloque "INGRESO COMO": fondo `#FBF4EC`, grid 1.05fr/1fr, panel gradiente (circles, brand con sol, h1 dos líneas, párrafo max 430px, pie "🌿 Guardería Sala Soles"), columna derecha centrada máx. 392px, email prefill `caro@opendaycare.com`, placeholder `••••••••` en contraseña, "¿Olvidaste tu contraseña?" presente e inerte, CTA gradiente con sombra con `href="/familia-feed"`, link "Activá tu cuenta" → `/activar-cuenta`. Sin Sidebar (`aside` no presente).
+- [x] Desktop ≥1024px: `/activar-cuenta` replica `activar-cuenta.dc.html` 1:1: card centrada máx. 440px, tile logo 58px gradiente con sombra y sol, h1, invitado "Mateo · Sala Soles" (avatar `M` `#A9D9E8`/`#1F7A93`), inputs prefill (código `7K4P9`, email `lucia.fernandez@gmail.com`, contraseña value `contraseña` con borde `#F2A78E`), checkbox autorización `#FBF1D6` con check `#5FB97E`, CTA "Activar mi cuenta" con `href="/familia-feed"`, link "Iniciar sesión" → `/login`. Sin Sidebar.
+- [x] Las capturas de `/login` y `/activar-cuenta` se comparan 1:1 con `references/pantallas/login.dc.html` / `activar-cuenta.dc.html` abiertos en el mismo viewport (misma columna, mismo layout).
+- [x] No se crea `app/familia-feed/`: navegar desde los CTAs a `/familia-feed` devuelve 404 (href correcto verificado, página futura).
+- [x] Móvil/tablet `<1024px`: en `/login` las columnas se apilan (panel arriba, formulario abajo), sin overflow horizontal (`scrollWidth === clientWidth` en 768 y 375), sin Sidebar ni hamburguesa; `/activar-cuenta` se ve centrado correctamente en 768 y 375.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots de referencia en `.playwright-mcp/` para `/login` y `/activar-cuenta` en 1280, 1024, 768 y 375 (nombres tipo `login-desktop-1280.png`, `activar-cuenta-mobile-375.png`).
 
 ---
 
