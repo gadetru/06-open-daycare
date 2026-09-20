@@ -1,6 +1,14 @@
 # OpenDayCare
 
-Aplicación web para guarderías: feed de publicaciones (logros, actividades y avisos) visual y responsive basado en el template `references/pantallas/feed.dc.html`.
+Aplicación web para guarderías, visual y responsive, construida con Next.js 16 + Tailwind v4 siguiendo los templates de `references/pantallas/` (spec-driven development). Hoy implementa: feed de publicaciones (logros, actividades y avisos), lista de niños y perfil de niño.
+
+## Rutas
+
+| Ruta | Descripción | Spec |
+| --- | --- | --- |
+| `/` | Feed con publicaciones (logros, actividades y avisos) | 01 |
+| `/kids` | Lista de niños con buscador client-side | 02 |
+| `/kids/[id]` | Perfil del niño (alergias, info, padres vinculados) | 02 |
 
 ## Stack
 
@@ -34,14 +42,20 @@ Abrí [http://localhost:3000](http://localhost:3000) para ver el resultado.
 
 ```
 app/
-├── layout.tsx                  # Fonts (Fredoka/Nunito), lang="es", metadata
-├── page.tsx                    # Feed homepage (root "/") → spec 01
-├── globals.css                 # Tailwind + paleta cálida via @theme
+├── layout.tsx                      # Fonts (Fredoka/Nunito), lang="es", metadata
+├── page.tsx                        # Feed homepage (root "/") → spec 01
+├── globals.css                     # Tailwind + paleta cálida via @theme
+├── kids/
+│   ├── page.tsx                    # Lista de niños + buscador client-side → spec 02
+│   └── [id]/page.tsx               # Perfil del niño → spec 02
+├── data/
+│   └── kids.ts                     # Datos hardcodeados tipados (tipo Kid, 8 niños)
 └── components/
-    ├── shared/                 # Sidebar, PostCard, PhotoPlaceholder
-    └── home/                   # FeedHeader, FeedInput
-specs/                          # Especificaciones (spec-driven development)
-references/pantallas/           # Templates HTML de referencia visual
+    ├── shared/                     # Sidebar, PostCard, PhotoPlaceholder
+    ├── home/                       # FeedHeader, FeedInput
+    └── kids/                       # KidCard
+specs/                              # Especificaciones (01 feed, 02 kids) — spec-driven development
+references/pantallas/               # Templates HTML de referencia visual
 ```
 
 ## Flujo de trabajo (Spec Driven Development)

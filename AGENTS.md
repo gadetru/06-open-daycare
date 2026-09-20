@@ -23,9 +23,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Arquitectura y toolchain
 
-- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Entrypoints: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`.
+- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Entrypoints: `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `app/kids/page.tsx` y `app/kids/[id]/page.tsx` (rutas de negocio como client components que reusan `Sidebar` y manejo de hamburguesa/overlay; en `[id]` se usa `use(params)` para `params: Promise<{ id: string }>`).
 - Tailwind v4 (CSS-first): **no existe `tailwind.config.js`**. El tema y fuentes se configuran en `app/globals.css` vía `@import "tailwindcss"` y `@theme`. PostCSS usa `@tailwindcss/postcss`.
 - Alias de path `@/*` → raíz del repo (ver `tsconfig.json`).
+- Datos hardcodeados tipados en `app/data/` (ej. `kids.ts` con el tipo `Kid` y 8 niños); no hay backend ni fetch real.
 - `.env*` está en `.gitignore` silenciosamente (línea `*.tsbuildinfo`/`next-env.d.ts` también gitignoreados). No asumas que hay env config en el repo.
 - `CLAUDE.md` solo referencia `@AGENTS.md`.
 
