@@ -89,19 +89,19 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` arranca sin errores y `/` responde 200.
-- [ ] Desktop ≥1024: al pulsar "Compartí un momento…" o "Nueva publicación" (Sidebar) se abre el modal replicando `crear-publicacion.dc.html` 1:1 (card 580px, header Cancelar/Nueva publicación/Publicar, pills de PARA con los 8 niños + "Toda la sala", 7 chips de TIPO, textarea con placeholder, bloque FOTOS estático); la URL no cambia (no existe la ruta).
-- [ ] PARA multi-selección: clics alternados seleccionan/deseleccionan niños; elegir "Toda la sala" limpia los niños y viceversa; los pills reflejan el estado seleccionado (relleno oscuro).
-- [ ] TIPO: selección única; "Publicar" sin tipo → error "Elegí un tipo" y no publica; al elegir se limpia.
-- [ ] Descripción vacía o solo espacios → error "Escribí una descripción" y no publica; al tipear se limpia.
-- [ ] Sin destino → error "Elegí al menos un destinatario"; al elegir un niño o "Toda la sala" se limpia.
-- [ ] Publicar válido (tipo + descripción + destinatario) cierra el modal y el nuevo post aparece **al inicio** de "PUBLICADO HOY": badge con el color del tipo, "Para: familia de…", author "vos", likes 0, comments 0; los 3 posts del seed no se alteran.
-- [ ] Post a un solo niño → "Para: familia de Mateo"; a varios → "familias de Mateo, Sofía y Benjamín"; con "Toda la sala" → childName "Anuncio general" y "Para: toda la sala".
-- [ ] `Cancelar`, `Esc` y clic en backdrop cierran sin publicar; reabrir muestra el form vacío (reset).
-- [ ] Móvil/tablet 768/375: modal centrado sin overflow horizontal; chips de PARA/TIPO usables.
-- [ ] En `/kids` el botón del Sidebar sigue siendo Link a `/crear-publicacion` (comportamiento actual, sin cambios).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) con el modal abierto sobre `/`, comparados 1:1 contra la card de `references/pantallas/crear-publicacion.dc.html` en el mismo viewport.
+- [x] `npm run dev` arranca sin errores y `/` responde 200.
+- [x] Desktop ≥1024: al pulsar "Compartí un momento…" o "Nueva publicación" (Sidebar) se abre el modal replicando `crear-publicacion.dc.html` 1:1 (card 580px, header Cancelar/Nueva publicación/Publicar, pills de PARA con los 8 niños + "Toda la sala", 7 chips de TIPO, textarea con placeholder, bloque FOTOS estático); la URL no cambia (no existe la ruta).
+- [x] PARA multi-selección: clics alternados seleccionan/deseleccionan niños; elegir "Toda la sala" limpia los niños y viceversa; los pills reflejan el estado seleccionado (relleno oscuro).
+- [x] TIPO: selección única; "Publicar" sin tipo → error "Elegí un tipo" y no publica; al elegir se limpia.
+- [x] Descripción vacía o solo espacios → error "Escribí una descripción" y no publica; al tipear se limpia.
+- [x] Sin destino → error "Elegí al menos un destinatario"; al elegir un niño o "Toda la sala" se limpia.
+- [x] Publicar válido (tipo + descripción + destinatario) cierra el modal y el nuevo post aparece **al inicio** de "PUBLICADO HOY": badge con el color del tipo, "Para: familia de…", author "vos", likes 0, comments 0; los 3 posts del seed no se alteran.
+- [x] Post a un solo niño → "Para: familia de Mateo"; a varios → "familias de Mateo, Sofía y Benjamín"; con "Toda la sala" → childName "Anuncio general" y "Para: toda la sala".
+- [x] `Cancelar`, `Esc` y clic en backdrop cierran sin publicar; reabrir muestra el form vacío (reset).
+- [x] Móvil/tablet 768/375: modal centrado sin overflow horizontal; chips de PARA/TIPO usables.
+- [x] En `/kids` el botón del Sidebar sigue siendo Link a `/crear-publicacion` (comportamiento actual, sin cambios).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) con el modal abierto sobre `/`, comparados 1:1 contra la card de `references/pantallas/crear-publicacion.dc.html` en el mismo viewport.
 
 ---
 
