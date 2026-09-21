@@ -25,7 +25,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Skills instaladas
 
-### Supabase (`.claude/skills/supabase/`)
+### Supabase (`.agents/skills/supabase/`)
 
 Cargar esta skill para **cualquier tarea** que toque Supabase: Database, Auth, Edge Functions, Realtime, Storage, Vectors, Cron, Queues; integraciones `supabase-js` / `@supabase/ssr` en Next.js/React; problemas de auth (login, logout, sesiones, JWT, cookies, RLS); CLI o MCP; migraciones, esquemas declarativos, auditorías de seguridad, extensiones de Postgres (`pg_graphql`, `pg_cron`, `pg_vector`); y debugging (errores HTTP/Postgres, RLS, permission denied, timeouts, logs).
 
@@ -38,7 +38,7 @@ Principios clave (extraídos de la skill):
 5. RLS en TODA tabla de esquemas expuestos (`public`). Crear policies acordes al modelo real de acceso, no un default genérico.
 6. Security checklist offline: no usar `user_metadata` en decisiones de autorización, borrar usuario no invalida tokens (sign out/revoke primero), JWT claims no siempre fresh.
 
-### Supabase Postgres Best Practices (`.claude/skills/supabase-postgres-best-practices/`)
+### Supabase Postgres Best Practices (`.agents/skills/supabase-postgres-best-practices/`)
 
 Cargarla **antes** de escribir o cambiar cualquier cosa en Postgres: crear/alterar tablas y columnas (incluyendo tipos), diseño de schema, migraciones, RLS y sus tests, índices, triggers, funciones, jobs (`pg_cron`, `pgmq`), búsqueda vectorial (`pgvector`) y restores/imports dumps. También para diagnosticar queries lentas, CPU alto, timeouts, EXPLAIN plans, locks, bloat o filas visibles para el usuario/tenant equivocado. Aplica también para un cambio de una sola columna.
 
