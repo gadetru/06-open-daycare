@@ -1,11 +1,15 @@
-import Link from "next/link";
 import type { SVGProps } from "react";
 
-export default function FeedInput() {
+type FeedInputProps = {
+  onClick: () => void;
+};
+
+export default function FeedInput({ onClick }: FeedInputProps) {
   return (
-    <Link
-      href="/crear-publicacion"
-      className="mb-6 flex items-center gap-[14px] rounded-[18px] border border-border bg-surface px-[18px] py-[14px] shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)]"
+    <button
+      type="button"
+      onClick={onClick}
+      className="mb-6 flex w-full items-center gap-[14px] rounded-[18px] border border-border bg-surface px-[18px] py-[14px] text-left shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)]"
     >
       <div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-accent font-heading text-[16px] font-semibold text-white">
         C
@@ -14,7 +18,7 @@ export default function FeedInput() {
       <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-[12px] bg-accent-soft text-coral">
         <CameraIcon />
       </span>
-    </Link>
+    </button>
   );
 }
 

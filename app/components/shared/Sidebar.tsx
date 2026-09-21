@@ -8,6 +8,7 @@ import SunIcon from "./SunIcon";
 type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
+  onNewPost?: () => void;
 };
 
 type NavItem = {
@@ -23,7 +24,7 @@ const navItems: NavItem[] = [
   { label: "Mi cuenta", href: "/mi-cuenta", icon: UserIcon },
 ];
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose, onNewPost }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -56,14 +57,25 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
         </Link>
 
-        <Link
-          href="/crear-publicacion"
-          onClick={onClose}
-          className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-b from-accent-1 to-accent-2 px-3 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.75)]"
-        >
-          <PlusIcon />
-          Nueva publicación
-        </Link>
+        {onNewPost ? (
+          <button
+            type="button"
+            onClick={onNewPost}
+            className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-b from-accent-1 to-accent-2 px-3 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.75)]"
+          >
+            <PlusIcon />
+            Nueva publicación
+          </button>
+        ) : (
+          <Link
+            href="/crear-publicacion"
+            onClick={onClose}
+            className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-b from-accent-1 to-accent-2 px-3 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.75)]"
+          >
+            <PlusIcon />
+            Nueva publicación
+          </Link>
+        )}
 
         <nav className="flex flex-1 flex-col gap-1">
           {navItems.map((item) => {
