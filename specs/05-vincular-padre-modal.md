@@ -62,18 +62,18 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` arranca sin errores y `/kids/mateo` responde 200.
-- [ ] Desktop ≥1024: al pulsar "Vincular otro padre" se abre el modal replicando `vincular-padre.dc.html` 1:1 (card 480px, header "Vincular padre / a Mateo Fernández" con X, callout citando "el feed de Mateo", inputs con bordes `#EADFD0` y placeholders, PARENTESCO con Mamá preseleccionada, código `7K4P9` con "Vence en 7 días", CTA "Enviar invitación"); la URL no cambia (no existe la ruta).
-- [ ] Nombre vacío o solo espacios → error inline "El nombre es obligatorio" y no agrega; al tipear se limpia.
-- [ ] Email vacío → error "Ingresá el email"; formato inválido (ej. `abc`, `a@b`) → "Ingresá un email válido"; errores limpios al corregir.
-- [ ] "Enviar invitación" con errores no cierra el modal ni agrega nada; los errores se muestran inline bajo cada campo.
-- [ ] Guardar válido: cierra el modal, la nueva fila aparece al final de PADRES VINCULADOS con avatar por ciclo, `role` según parentesco ("· invitación enviada") y pill PENDIENTE; los padres existentes no se alteran.
-- [ ] Parentesco: los 3 botones (Mamá/Papá/Tutor/a) seleccionan y el role guardado es consistente.
-- [ ] X del header, `Esc` y clic en backdrop cierran sin guardar; reabrir muestra el form vacío (nombre/email vacíos, Mamá preseleccionada).
-- [ ] Móvil/tablet 768/375: modal centrado sin overflow horizontal; pills y CTA usables.
-- [ ] Emails de seed correctos (`lucia.fernandez@gmail.com` para Lucía) y `npx tsc --noEmit` sin errores con el nuevo campo obligatorio.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) con el modal abierto sobre `/kids/mateo`, comparados 1:1 contra la card de `references/pantallas/vincular-padre.dc.html` en el mismo viewport.
+- [x] `npm run dev` arranca sin errores y `/kids/mateo` responde 200.
+- [x] Desktop ≥1024: al pulsar "Vincular otro padre" se abre el modal replicando `vincular-padre.dc.html` 1:1 (card 480px, header "Vincular padre / a Mateo Fernández" con X, callout citando "el feed de Mateo", inputs con bordes `#EADFD0` y placeholders, PARENTESCO con Mamá preseleccionada, código `7K4P9` con "Vence en 7 días", CTA "Enviar invitación"); la URL no cambia (no existe la ruta).
+- [x] Nombre vacío o solo espacios → error inline "El nombre es obligatorio" y no agrega; al tipear se limpia.
+- [x] Email vacío → error "Ingresá el email"; formato inválido (ej. `abc`, `a@b`) → "Ingresá un email válido"; errores limpios al corregir.
+- [x] "Enviar invitación" con errores no cierra el modal ni agrega nada; los errores se muestran inline bajo cada campo.
+- [x] Guardar válido: cierra el modal, la nueva fila aparece al final de PADRES VINCULADOS con avatar por ciclo, `role` según parentesco ("· invitación enviada") y pill PENDIENTE; los padres existentes no se alteran.
+- [x] Parentesco: los 3 botones (Mamá/Papá/Tutor/a) seleccionan y el role guardado es consistente.
+- [x] X del header, `Esc` y clic en backdrop cierran sin guardar; reabrir muestra el form vacío (nombre/email vacíos, Mamá preseleccionada).
+- [x] Móvil/tablet 768/375: modal centrado sin overflow horizontal; pills y CTA usables.
+- [x] Emails de seed correctos (`lucia.fernandez@gmail.com` para Lucía) y `npx tsc --noEmit` sin errores con el nuevo campo obligatorio.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots de referencia en `.playwright-mcp/` (1280, 1024, 768, 375) con el modal abierto sobre `/kids/mateo`, comparados 1:1 contra la card de `references/pantallas/vincular-padre.dc.html` en el mismo viewport.
 
 ---
 
