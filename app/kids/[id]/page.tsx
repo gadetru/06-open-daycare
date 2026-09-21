@@ -178,13 +178,15 @@ function KidProfileContent({ kid }: { kid: Kid }) {
           </div>
         </div>
       </div>
-      <LinkParentModal
-        isOpen={isLinkModalOpen}
-        kidName={kid.name}
-        kidFirstName={kidFirstName}
-        onClose={() => setIsLinkModalOpen(false)}
-        onSaveParent={handleSaveParent}
-      />
+      {isLinkModalOpen && (
+        <LinkParentModal
+          isOpen={isLinkModalOpen}
+          kidName={kid.name}
+          kidFirstName={kidFirstName}
+          onClose={() => setIsLinkModalOpen(false)}
+          onSaveParent={handleSaveParent}
+        />
+      )}
     </div>
   );
 }

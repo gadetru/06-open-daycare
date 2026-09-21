@@ -44,15 +44,6 @@ export default function LinkParentModal({
   const [errors, setErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
-    if (isOpen) {
-      setParentName("");
-      setParentEmail("");
-      setRelationship("Mamá");
-      setErrors({});
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     if (!isOpen) return;
 
     document.body.style.overflow = "hidden";
