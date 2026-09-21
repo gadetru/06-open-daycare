@@ -2,6 +2,7 @@ export type KidBadge = { label: string; bg: string; ink: string };
 
 export type LinkedParent = {
   name: string;
+  email: string;
   role: string;
   status: "ACTIVA" | "PENDIENTE";
 };
@@ -49,11 +50,13 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Lucía Fernández",
+        email: "lucia.fernandez@gmail.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
       {
         name: "Diego Fernández",
+        email: "diego.fernandez@example.com",
         role: "Papá · invitación enviada",
         status: "PENDIENTE",
       },
@@ -73,6 +76,7 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Carolina Méndez",
+        email: "carolina.mendez@example.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
@@ -92,11 +96,13 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Florencia Ruiz",
+        email: "florencia.ruiz@example.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
       {
         name: "Martín Ruiz",
+        email: "martin.ruiz@example.com",
         role: "Papá · activa",
         status: "ACTIVA",
       },
@@ -130,6 +136,7 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Gonzalo Díaz",
+        email: "gonzalo.diaz@example.com",
         role: "Papá · activa",
         status: "ACTIVA",
       },
@@ -149,6 +156,7 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Laura Castro",
+        email: "laura.castro@example.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
@@ -168,6 +176,7 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Paula Romero",
+        email: "paula.romero@example.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
@@ -187,6 +196,7 @@ export const kids: Kid[] = [
     parents: [
       {
         name: "Rocío Vega",
+        email: "rocio.vega@example.com",
         role: "Mamá · activa",
         status: "ACTIVA",
       },
