@@ -157,7 +157,7 @@ function KidProfileContent({ kid }: { kid: Kid }) {
             <div className="flex flex-col gap-[14px]">
               {parents.map((parent, index) => (
                 <ParentRow
-                  key={parent.name}
+                  key={`${parent.name}-${index}`}
                   parent={parent}
                   avatar={parentAvatarPalette[index % parentAvatarPalette.length]}
                 />
