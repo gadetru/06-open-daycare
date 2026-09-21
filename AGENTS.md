@@ -12,6 +12,37 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Playwright: Screenshots y cualquier cosa relacionada a Playwright tienen que estar en la carpeta `.playwright-mcp/`. Configurado en `opencode.json` (solo MCP local declarado).
 - Context7: Usaremos este MCP para traer la documentación actualizada del framework (Next.js, Tailwind, etc.).
+- Supabase: MCP conectado al proyecto Supabase. Permite ejecutar SQL (`supabase_execute_sql`), migraciones, listar tablas, queries a logs, generar tipos de TS, revisar advisory (RLS/seguridad/rendimiento) y buscar docs (`supabase_search_docs`). Antes de cualquier cambio de schema inspecciona las tablas existentes y RLS.
+
+# Supabase y Skills
+
+## Supabase
+
+- El proyecto tiene MCP de Supabase activo (herramientas `supabase_*`). No asumas la config: revisa tablas/RLS reales antes de migrar.
+- El schema de referencia (no implementado aún) vive en `../07-DB-Schema` (reference `docs`).
+- **Regla general**: activa RLS en toda tabla de `public`, no expongas secretos en el cliente, y verifica los cambios con `supabase_get_advisors` (security/performance) después de cada DDL.
+- Para auth/sesiones usa el patrón `@supabase/ssr` con cookies; nunca confíes en `user_metadata` para decisiones de autorización.
+
+## Skills instaladas
+
+### Supabase (`.agents/skills/supabase/`)
+
+Cargar esta skill para **cualquier tarea** que toque Supabase: Database, Auth, Edge Functions, Realtime, Storage, Vectors, Cron, Queues; integraciones `supabase-js` / `@supabase/ssr` en Next.js/React; problemas de auth (login, logout, sesiones, JWT, cookies, RLS); CLI o MCP; migraciones, esquemas declarativos, auditorías de seguridad, extensiones de Postgres (`pg_graphql`, `pg_cron`, `pg_vector`); y debugging (errores HTTP/Postgres, RLS, permission denied, timeouts, logs).
+
+Principios clave (extraídos de la skill):
+
+1. Supabase cambia seguido — verificar contra `https://supabase.com/changelog.md` (buscar tags `breaking-change`) y docs actuales antes de implementar.
+2. Verificar el trabajo: después de un fix correr una query de prueba.
+3. No buclerse en errores: si falla 2-3 veces, cambiar de enfoque y revisar logs.
+4. Tablas creadas por SQL pueden NO estar expuestas al Data API: revisar settings y `GRANT` a `anon`/`authenticated` cuando aplique.
+5. RLS en TODA tabla de esquemas expuestos (`public`). Crear policies acordes al modelo real de acceso, no un default genérico.
+6. Security checklist offline: no usar `user_metadata` en decisiones de autorización, borrar usuario no invalida tokens (sign out/revoke primero), JWT claims no siempre fresh.
+
+### Supabase Postgres Best Practices (`.agents/skills/supabase-postgres-best-practices/`)
+
+Cargarla **antes** de escribir o cambiar cualquier cosa en Postgres: crear/alterar tablas y columnas (incluyendo tipos), diseño de schema, migraciones, RLS y sus tests, índices, triggers, funciones, jobs (`pg_cron`, `pgmq`), búsqueda vectorial (`pgvector`) y restores/imports dumps. También para diagnosticar queries lentas, CPU alto, timeouts, EXPLAIN plans, locks, bloat o filas visibles para el usuario/tenant equivocado. Aplica también para un cambio de una sola columna.
+
+Cubre 8 categorías de rendimiento priorizadas por impacto (query performance, connection management, migraciones, etc.) con ejemplos incorrectos vs. correctos y análisis de query plans. Usar `supabase_get_advisors` tras cambios DDL.
 
 # Comandos
 
