@@ -5,6 +5,8 @@ import type { SVGProps } from "react";
 import Link from "next/link";
 import Sidebar from "../../components/shared/Sidebar";
 import SunIcon from "../../components/shared/SunIcon";
+import LinkParentModal from "../../components/kids/LinkParentModal";
+import type { NewParentFields } from "../../components/kids/LinkParentModal";
 import { kids } from "../../data/kids";
 import type { Kid, LinkedParent } from "../../data/kids";
 
@@ -42,7 +44,7 @@ export default function KidProfilePage({ params }: ProfilePageProps) {
 
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         {kid ? (
-          <KidProfileContent kid={kid} />
+          <KidProfileContent key={kid.id} kid={kid} />
         ) : (
           <div className="mx-auto w-full max-w-[820px] px-6 pb-20 pt-[34px] sm:px-10">
             <Link
@@ -68,6 +70,28 @@ export default function KidProfilePage({ params }: ProfilePageProps) {
 }
 
 function KidProfileContent({ kid }: { kid: Kid }) {
+  const [parents, setParents] = useState<LinkedParent[]>(kid.parents);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [linkModalSession, setLinkModalSession] = useState(0);
+
+  const kidFirstName = kid.name.split(" ")[0];
+
+  function openLinkModal() {
+    setLinkModalSession((current) => current + 1);
+    setIsLinkModalOpen(true);
+  }
+
+  function handleSaveParent(fields: NewParentFields) {
+    const newParent: LinkedParent = {
+      name: fields.name,
+      email: fields.email,
+      role: `${fields.parentesco} · invitación enviada`,
+      status: "PENDIENTE",
+    };
+    setParents((current) => [...current, newParent]);
+    setIsLinkModalOpen(false);
+  }
+
   return (
     <div className="mx-auto w-full max-w-[820px] px-6 pb-20 pt-[34px] sm:px-10">
       <Link
@@ -138,15 +162,16 @@ function KidProfileContent({ kid }: { kid: Kid }) {
               PADRES VINCULADOS
             </div>
             <div className="flex flex-col gap-[14px]">
-              {kid.parents.map((parent, index) => (
+              {parents.map((parent, index) => (
                 <ParentRow
                   key={parent.name}
                   parent={parent}
                   avatar={parentAvatarPalette[index % parentAvatarPalette.length]}
                 />
               ))}
-              <Link
-                href="/vincular-padre"
+              <button
+                type="button"
+                onClick={openLinkModal}
                 className="flex items-center gap-3 px-0 pb-2 pt-2"
               >
                 <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
@@ -155,11 +180,20 @@ function KidProfileContent({ kid }: { kid: Kid }) {
                 <span className="text-[14.5px] font-extrabold text-coral-deep">
                   Vincular otro padre
                 </span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      <LinkParentModal
+        key={`link-parent-${linkModalSession}`}
+        isOpen={isLinkModalOpen}
+        kidName={kid.name}
+        kidFirstName={kidFirstName}
+        onClose={() => setIsLinkModalOpen(false)}
+        onSaveParent={handleSaveParent}
+      />
     </div>
   );
 }
