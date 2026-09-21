@@ -1,6 +1,6 @@
 # SPEC 04 — Modal agregar niño con validación (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 02
 > **Date:** 2026-09-20
 > **Objective:** Implementar un modal "Agregar niño" que se abre desde el botón del mismo nombre en `/kids`, réplica de `references/pantallas/agregar-nino.dc.html`, con validación de campos, salas hardcodeadas y alta en el mock en memoria.
