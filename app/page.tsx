@@ -7,8 +7,9 @@ import PostCard from "./components/shared/PostCard";
 import type { PostCardProps } from "./components/shared/PostCard";
 import FeedHeader from "./components/home/FeedHeader";
 import FeedInput from "./components/home/FeedInput";
+import CreatePostModal from "./components/home/CreatePostModal";
 
-const posts: PostCardProps[] = [
+const seedPosts: PostCardProps[] = [
   {
     type: "LOGRO",
     childName: "Mateo",
@@ -44,10 +45,28 @@ const posts: PostCardProps[] = [
 
 export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [posts, setPosts] = useState<PostCardProps[]>(seedPosts);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createOpenCount, setCreateOpenCount] = useState(0);
+
+  function openCreateModal() {
+    setIsSidebarOpen(false);
+    setCreateOpenCount((current) => current + 1);
+    setIsCreateOpen(true);
+  }
+
+  function handlePublish(post: PostCardProps) {
+    setPosts((current) => [post, ...current]);
+    setIsCreateOpen(false);
+  }
 
   return (
     <div className="flex min-h-full bg-background">
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onNewPost={openCreateModal}
+      />
 
       {!isSidebarOpen && (
         <button
@@ -62,7 +81,7 @@ export default function Home() {
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[760px] px-6 pb-20 pt-[34px] sm:px-10">
           <FeedHeader />
-          <FeedInput />
+          <FeedInput onClick={openCreateModal} />
 
           <div className="mb-[14px] flex items-center gap-[14px]">
             <span className="text-[12.5px] font-extrabold tracking-[.8px] text-[#8A7C6D]">
@@ -78,6 +97,13 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <CreatePostModal
+        key={createOpenCount}
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onPublish={handlePublish}
+      />
     </div>
   );
 }

@@ -42,6 +42,12 @@
   --color-error-text: #c5413a;
   --color-pending-bg: #f7e7a6;
   --color-pending-ink: #9a7b1e;
+  --color-type-siesta-bg: #e7dcf6;
+  --color-type-siesta-ink: #7b5fc0;
+  --color-type-mood-bg: #f9d2de;
+  --color-type-mood-ink: #c56486;
+  --color-type-photo-bg: #fbd8cc;
+  --color-type-photo-ink: #d9684a;
   --color-badge-mani-bg: #fbd8cc;
   --color-badge-mani-ink: #d9684a;
   --color-badge-vincular-bg: #f9d2de;

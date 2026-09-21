@@ -2,7 +2,14 @@ import Link from "next/link";
 import type { SVGProps } from "react";
 import PhotoPlaceholder from "./PhotoPlaceholder";
 
-type PostType = "LOGRO" | "ACTIVIDAD" | "ANUNCIO";
+export type PostType =
+  | "COMIDA"
+  | "SIESTA"
+  | "ACTIVIDAD"
+  | "LOGRO"
+  | "ÁNIMO"
+  | "FOTO"
+  | "ANUNCIO";
 
 type PostImage = {
   src: string;
@@ -22,8 +29,12 @@ export type PostCardProps = {
 };
 
 const badgeStyles: Record<PostType, { container: string; dot: string; label: string }> = {
-  LOGRO: { container: "bg-success-bg", dot: "bg-success", label: "text-success" },
+  COMIDA: { container: "bg-pending-bg", dot: "bg-pending-ink", label: "text-pending-ink" },
+  SIESTA: { container: "bg-type-siesta-bg", dot: "bg-type-siesta-ink", label: "text-type-siesta-ink" },
   ACTIVIDAD: { container: "bg-info-bg", dot: "bg-info", label: "text-info" },
+  LOGRO: { container: "bg-success-bg", dot: "bg-success", label: "text-success" },
+  ÁNIMO: { container: "bg-type-mood-bg", dot: "bg-type-mood-ink", label: "text-type-mood-ink" },
+  FOTO: { container: "bg-type-photo-bg", dot: "bg-type-photo-ink", label: "text-type-photo-ink" },
   ANUNCIO: { container: "bg-announce-bg", dot: "bg-announce", label: "text-announce" },
 };
 
