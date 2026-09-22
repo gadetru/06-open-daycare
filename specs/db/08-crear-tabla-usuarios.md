@@ -1,6 +1,6 @@
 # SPEC 08 — Tabla users y sus enums en Supabase
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 07 (`public.daycares` existe y tiene seed; el staff se ata a "Guardería Sala Soles" mediante subquery por nombre)
 > **Date:** 2026-09-22
 > **Objective:** Crear los enums `user_role` y `user_status`, la tabla `public.users` (FK a `daycares` y a `auth.users`) con RLS de lectura de la propia fila, y un usuario staff real (`gabriel@google.com`) para poder loguearse en la demo, replicando el patrón de migraciones del proyecto.

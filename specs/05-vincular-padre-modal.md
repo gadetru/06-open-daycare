@@ -1,6 +1,6 @@
 # SPEC 05 — Modal vincular padre (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 02 (perfil de niño y tipo `LinkedParent`)
 > **Date:** 2026-09-21
 > **Objective:** Implementar un modal "Vincular padre" en `/kids/[id]` que se abre desde el botón hoy llamado "Vincular otro padre", réplica de `references/pantallas/vincular-padre.dc.html`, con validación de nombre y email, alta en memoria del padre con status `PENDIENTE` y sin crear la ruta `/vincular-padre`.
