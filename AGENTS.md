@@ -21,6 +21,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - El proyecto tiene MCP de Supabase activo (herramientas `supabase_*`). No asumas la config: revisa tablas/RLS reales antes de migrar.
 - El schema de referencia (no implementado aún) vive en `../07-DB-Schema` (reference `docs`).
 - **Regla general**: activa RLS en toda tabla de `public`, no expongas secretos en el cliente, y verifica los cambios con `supabase_get_advisors` (security/performance) después de cada DDL.
+- **Siempre crear el archivo de migración local**: toda manipulación de la base de datos (crear/alterar/drop de tablas, columnas, tipos, policies, funciones, triggers, seeds/data) se aplica por MCP (`supabase_apply_migration`) y **además** se versiona el SQL idéntico (réplica 1:1) en `supabase/migrations/<version>_<nombre>.sql` (formato `<YYYYMMDDHHMMSS>_<snake_case>.sql`), historial para git sin depender de la CLI local. Sin excepción: si hay DDL/data change hacia la DB remota, hay archivo local asociado.
 - Para auth/sesiones usa el patrón `@supabase/ssr` con cookies; nunca confíes en `user_metadata` para decisiones de autorización.
 
 ## Skills instaladas
