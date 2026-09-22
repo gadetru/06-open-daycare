@@ -113,7 +113,7 @@ Convenciones: el `daycare_id` se resuelve por nombre (no se hardcodea el uuid de
 - [x] `pg_policies` muestra exactamente 1 policy `users_select_own` (SELECT, `authenticated`, `auth.uid() = id`); `select` como `anon` devuelve 0 filas.
 - [x] `supabase_get_advisors` (security/performance) no reporta issues nuevos derivados de la migración (tras la optimización: FK indexada y policy con initplan).
 - [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan (validación de regresión; sin cambios de código).
-- [ ] `git status` muestra solo el spec y `supabase/migrations/2026-09-22_105250_create_users_table.sql` + `2026-09-22_110751_users_table_optimizations.sql`, replicando 1:1 el SQL aplicado en cada migración.
+- [x] `git status` muestra solo el spec y `supabase/migrations/2026-09-22_105250_create_users_table.sql` + `2026-09-22_110751_users_table_optimizations.sql`, replicando 1:1 el SQL aplicado en cada migración.
 
 ---
 
