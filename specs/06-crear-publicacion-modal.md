@@ -1,6 +1,6 @@
 # SPEC 06 — Modal crear publicación (responsive)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 01 (feed del home que modifica; mismo patrón de modal que SPEC 04/05)
 > **Date:** 2026-09-21
 > **Objective:** Implementar un modal "Nueva publicación" que se abre desde el box "Compartí un momento…" y el botón "Nueva publicación" del Sidebar en la vista home, réplica de `references/pantallas/crear-publicacion.dc.html`, con validación de descripción/destino/tipo y alta del post en memoria al inicio del feed, sin crear la ruta `/crear-publicacion`.

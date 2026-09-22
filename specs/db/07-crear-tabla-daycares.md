@@ -1,6 +1,6 @@
 # SPEC 07 — Tabla daycares en Supabase (primera migración)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** Ninguna (primer spec de base de datos; el frontend aún no consume la DB)
 > **Date:** 2026-09-22
 > **Objective:** Crear la primera tabla del esquema (`daycares`) en Supabase aplicando el patrón de migraciones del proyecto (MCP `apply_migration`), réplica del diccionario de `@docs`, con RLS habilitado desde el arranque (policy `SELECT` para `authenticated`) y 4 daycares de seed, dejando la base lista para los specs de datos futuros.
