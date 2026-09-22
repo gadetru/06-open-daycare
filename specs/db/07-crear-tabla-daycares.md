@@ -12,7 +12,7 @@
 **In:**
 
 - Migración única vía `supabase_apply_migration` (MCP), nombre `create_daycares_table`.
-- Archivo local versionado `supabase/migrations/20260922065407_create_daycares_table.sql` con el SQL idéntico al aplicado (historial en git).
+- Archivo local versionado `supabase/migrations/2026-09-22_065407_create_daycares_table.sql` con el SQL idéntico al aplicado (historial en git).
 - `DROP TABLE` de la tabla residual `public.tabla_prueba` (artefacto de pruebas, 0 filas).
 - `CREATE TABLE public.daycares` según `07-DB-Schema/opendaycare-database-schema.md`: `id uuid PK default gen_random_uuid()`, `name text not null`, `created_at timestamptz not null default now()`.
 - `ALTER TABLE public.daycares ENABLE ROW LEVEL SECURITY` y policy `SELECT` para el rol `authenticated` (`auth.uid() IS NOT NULL`).
@@ -64,7 +64,7 @@ insert into public.daycares (name) values
 
 ## Implementation plan
 
-1. Aplicar la migración `create_daycares_table` con `supabase_apply_migration`: `drop table if exists public.tabla_prueba`, `create table public.daycares`, `enable row level security` + policy `daycares_select_authenticated`, `insert` de los 4 seeds. La misma migración se replica en el archivo local `supabase/migrations/20260922065407_create_daycares_table.sql` (versionado en git). Deja la tabla creada, RLS activo y el seed cargado.
+1. Aplicar la migración `create_daycares_table` con `supabase_apply_migration`: `drop table if exists public.tabla_prueba`, `create table public.daycares`, `enable row level security` + policy `daycares_select_authenticated`, `insert` de los 4 seeds. La misma migración se replica en el archivo local `supabase/migrations/2026-09-22_065407_create_daycares_table.sql` (versionado en git). Deja la tabla creada, RLS activo y el seed cargado.
 2. Verificar schema: `supabase_list_tables` muestra `public.daycares` con `rls_enabled: true` y ya no muestra `public.tabla_prueba`; corroborar las 3 columnas contra `information_schema.columns`.
 3. Verificar seed: `select id, name from public.daycares` devuelve 4 filas con los nombres del seed.
 4. Verificar policy: `select * from pg_policies where schemaname = 'public' and tablename = 'daycares'` devuelve exactamente 1 policy `daycares_select_authenticated`, `cmd = 'SELECT'`, roles `{authenticated}`, `qual = (auth.uid() IS NOT NULL)`; `relrowsecurity = true` en `pg_class`. Como usuario `anon` el SELECT debe devolver 0 filas.
@@ -84,7 +84,7 @@ Cada paso deja la base en estado consistente. El único cambio en el repo es el 
 - [x] `daycares` tiene `relrowsecurity = true` y exactamente una policy `daycares_select_authenticated` de tipo `SELECT` para el rol `authenticated` con `qual = (auth.uid() IS NOT NULL)` (verificada en `pg_policies`).
 - [x] `supabase_get_advisors` en security y performance no reporta issues nuevos derivados de esta migración.
 - [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan (sin cambios de código; validación de regresión).
-- [x] `git status` muestra únicamente el spec y el archivo `supabase/migrations/20260922065407_create_daycares_table.sql`, cuyo SQL replica 1:1 el de la migración aplicada (sin cambios en `app/` ni configuración).
+- [x] `git status` muestra únicamente el spec y el archivo `supabase/migrations/2026-09-22_065407_create_daycares_table.sql`, cuyo SQL replica 1:1 el de la migración aplicada (sin cambios en `app/` ni configuración).
 
 ---
 
@@ -95,7 +95,7 @@ Cada paso deja la base en estado consistente. El único cambio en el repo es el 
 - **Yes:** Seed de 4 daycares (`Guardería Sala Soles` del docs + 3 inventadas: `Guardería Arcoíris Feliz`, `Pequeños Pasos`, `Rayito de Sol`), para tener datos al conectar el frontend.
 - **Yes:** Réplica 1:1 del diccionario: solo `created_at`, sin `updated_at` en esta tabla (si una tabla futura lo requiera, se agrega en su spec).
 - **Yes:** Drop de `public.tabla_prueba` como limpieza (artefacto de pruebas sin uso).
-- **Yes:** Patrón de migraciones = MCP `apply_migration` contra el remoto + archivo local `supabase/migrations/20260922065407_create_daycares_table.sql` versionado en git (réplica 1:1 del SQL aplicado), para mantener historial sin depender de la CLI local.
+- **Yes:** Patrón de migraciones = MCP `apply_migration` contra el remoto + archivo local `supabase/migrations/2026-09-22_065407_create_daycares_table.sql` versionado en git (réplica 1:1 del SQL aplicado), para mantener historial sin depender de la CLI local.
 - **No:** tipos TS generados e integración frontend–DB, policies para el resto de las tablas, escritura en `daycares` y trigger de auth, tablas y ENUMs restantes, seeds de rooms/children/users, migraciones aplicadas vía CLI local (`supabase db push`).
 
 ---

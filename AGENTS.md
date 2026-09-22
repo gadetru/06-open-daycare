@@ -21,8 +21,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - El proyecto tiene MCP de Supabase activo (herramientas `supabase_*`). No asumas la config: revisa tablas/RLS reales antes de migrar.
 - El schema de referencia (no implementado aún) vive en `../07-DB-Schema` (reference `docs`).
 - **Regla general**: activa RLS en toda tabla de `public`, no expongas secretos en el cliente, y verifica los cambios con `supabase_get_advisors` (security/performance) después de cada DDL.
-- **Siempre crear el archivo de migración local**: toda manipulación de la base de datos (crear/alterar/drop de tablas, columnas, tipos, policies, funciones, triggers, seeds/data) se aplica por MCP (`supabase_apply_migration`) y **además** se versiona el SQL idéntico (réplica 1:1) en `supabase/migrations/<version>_<nombre>.sql` (formato `<YYYYMMDDHHMMSS>_<snake_case>.sql`), historial para git sin depender de la CLI local. Sin excepción: si hay DDL/data change hacia la DB remota, hay archivo local asociado.
+- **Siempre crear el archivo de migración local**: toda manipulación de la base de datos (crear/alterar/drop de tablas, columnas, tipos, policies, funciones, triggers, seeds/data) se aplica por MCP (`supabase_apply_migration`) y **además** se versiona el SQL idéntico (réplica 1:1) en `supabase/migrations/<version>_<nombre>.sql` (formato `<YYYY-MM-DD_HHMMSS>_<snake_case>.sql`, ejemplo `2026-09-22_105250_create_users_table.sql`), historial para git sin depender de la CLI local. Sin excepción: si hay DDL/data change hacia la DB remota, hay archivo local asociado.
 - Para auth/sesiones usa el patrón `@supabase/ssr` con cookies; nunca confíes en `user_metadata` para decisiones de autorización.
+- Estado actual de la DB remota: `public.daycares` (seed de 4 guarderías) y `public.users` (RLS + policy `users_select_own`; 1 staff seed: `gabriel@google.com` / pass `1q2w3e4r5t`, email confirmado, `role staff`, atado a "Guardería Sala Soles" por subquery de nombre). `daycare_id` indexado (`users_daycare_id_idx`). no hay backend en la app todavía (datos hardcodeados + modales en memoria).
 
 ## Skills instaladas
 
@@ -67,11 +68,12 @@ Cubre 8 categorías de rendimiento priorizadas por impacto (query performance, c
  
 - /spec Utilizaremos esta skill para crear especificaciones.
 - /spec-impl Usaremos esta skill para implementar las especificaciones.
+- **Los specs de base de datos se guardan en `specs/db/`** (p.ej. `specs/db/08-crear-tabla-usuarios.md`), no en la raíz de `specs/`. Los specs de frontend/UI siguen en `specs/`. La numeración es global y secuencial entre ambas carpetas.
 
 ## Agente spec-verifier
 
 - `spec-verifier` es un subagente de opencode que verifica los **Acceptance criteria** de un spec contra el código real (Next.js 16) y screenshots reales vía Playwright MCP.
-- Marca cada check como `[x]`/`[ ]` en `specs/*.md` **sin reescribir el texto del criterio**; la evidencia (`archivo:línea`, screenshots) va en el reporte final, no en el spec.
+- Marca cada check como `[x]`/`[ ]` en `specs/*.md` y `specs/db/*.md` **sin reescribir el texto del criterio**; la evidencia (`archivo:línea`, screenshots) va en el reporte final, no en el spec.
 - Corrige problemas menores de código para que los checks pasen **sin cambiar el scope** del spec.
 - Corre `npm run lint`, `npx tsc --noEmit` y `npm run build` como validación de calidad.
 - El status del spec solo pasa a `aprobado` con confirmación explícita del usuario.
