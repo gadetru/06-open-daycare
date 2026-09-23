@@ -1,4 +1,4 @@
-const SHORT_MONTHS = [
+export const SHORT_MONTHS = [
   "ene",
   "feb",
   "mar",
