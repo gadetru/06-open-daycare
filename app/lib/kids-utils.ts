@@ -1,19 +1,5 @@
 import type { Kid, KidBadge } from "../data/kids";
-import type { RoomName } from "../data/rooms";
-import {
-  formatShortDate,
-  getAgeInYears,
-  getCurrentMonthYear,
-  SHORT_MONTHS,
-} from "./dates";
-
-export type NewKidFields = {
-  name: string;
-  birthDate: Date;
-  room: RoomName;
-  allergies: string;
-  note: string;
-};
+import { formatShortDate, getAgeInYears, SHORT_MONTHS } from "./dates";
 
 const AVATAR_PALETTES: ReadonlyArray<{ bg: string; ink: string }> = [
   { bg: "#A9D9E8", ink: "#1F7A93" },
@@ -79,13 +65,39 @@ export function childRowToKid(row: ChildRow, index: number): Kid {
   };
 }
 
-export function slugify(name: string): string {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+export type NewChildFields = {
+  fullName: string;
+  birthDate: string;
+  roomId: string;
+  allergyTags: string[];
+  medicalNotes: string;
+  enrolledAt: string;
+  photoConsent: boolean;
+};
+
+const ALLERGY_TAG_TRANSLATIONS: Record<string, string> = {
+  mani: "peanut",
+  lactosa: "lactose",
+  gluten: "gluten",
+};
+
+export function parseAllergyTags(raw: string): string[] {
+  const tags: string[] = [];
+  for (const part of raw.split(",")) {
+    const cleaned = part
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    if (!cleaned) {
+      continue;
+    }
+    const tag = ALLERGY_TAG_TRANSLATIONS[cleaned] ?? cleaned;
+    if (!tags.includes(tag)) {
+      tags.push(tag);
+    }
+  }
+  return tags;
 }
 
 export function getInitial(name: string): string {
@@ -94,34 +106,4 @@ export function getInitial(name: string): string {
 
 export function getAvatarFor(index: number): { bg: string; ink: string } {
   return AVATAR_PALETTES[index % AVATAR_PALETTES.length];
-}
-
-export function buildNewKid(fields: NewKidFields, index: number): Kid {
-  const day = fields.birthDate.getDate();
-  const month = fields.birthDate.getMonth() + 1;
-  const year = fields.birthDate.getFullYear();
-  const cleanedName = fields.name.trim();
-  const cleanedAllergies = fields.allergies.trim();
-  const avatar = getAvatarFor(index);
-
-  return {
-    id: slugify(cleanedName),
-    name: cleanedName,
-    initial: getInitial(cleanedName),
-    avatarBg: avatar.bg,
-    avatarInk: avatar.ink,
-    age: getAgeInYears(fields.birthDate),
-    room: fields.room,
-    allergyBadge: cleanedAllergies
-      ? {
-          label: cleanedAllergies.toUpperCase(),
-          bg: "#FBD8CC",
-          ink: "#D9684A",
-        }
-      : undefined,
-    note: fields.note.trim(),
-    birthDate: formatShortDate(day, month, year),
-    enrolledDate: getCurrentMonthYear(),
-    parents: [],
-  };
 }

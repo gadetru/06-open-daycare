@@ -6,6 +6,7 @@ import Sidebar from "../components/shared/Sidebar";
 import KidCard from "../components/kids/KidCard";
 import AddKidModal from "../components/kids/AddKidModal";
 import type { Kid } from "../data/kids";
+import { childRowToKid, type NewChildFields } from "../lib/kids-utils";
 
 export type RoomGroup = {
   id: string;
@@ -48,8 +49,23 @@ export default function KidsClient({ rooms, notice }: KidsClientProps) {
         .filter((group) => group.kids.length > 0)
     : groupsWithNew;
 
-  function handleSaveKid(kid: Kid) {
-    setAddedKids((current) => [...current, kid]);
+  function handleSaveKid(fields: NewChildFields) {
+    const roomName = rooms.find((group) => group.id === fields.roomId)?.name ?? "";
+    const tempKid = childRowToKid(
+      {
+        id: `temp-${addedKids.length}-${fields.roomId}`,
+        room_id: fields.roomId,
+        room_name: roomName,
+        full_name: fields.fullName,
+        birth_date: fields.birthDate,
+        enrolled_at: fields.enrolledAt,
+        medical_notes: fields.medicalNotes,
+        allergy_tags: fields.allergyTags,
+        photo_consent: fields.photoConsent,
+      },
+      totalKids,
+    );
+    setAddedKids((current) => [...current, tempKid]);
     setIsModalOpen(false);
   }
 
@@ -144,7 +160,7 @@ export default function KidsClient({ rooms, notice }: KidsClientProps) {
       {isModalOpen && (
         <AddKidModal
           isOpen={isModalOpen}
-          nextIndex={totalKids}
+          rooms={rooms.map((group) => ({ id: group.id, name: group.name }))}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveKid}
         />

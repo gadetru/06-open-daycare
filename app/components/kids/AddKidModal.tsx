@@ -2,46 +2,67 @@
 
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode, SVGProps } from "react";
-import type { Kid } from "../../data/kids";
-import { rooms, type RoomName } from "../../data/rooms";
-import { getMaxBirthDate, isRealDate } from "../../lib/dates";
-import { buildNewKid, type NewKidFields } from "../../lib/kids-utils";
+import {
+  getMaxBirthDate,
+  getTodayMasked,
+  isRealDate,
+} from "../../lib/dates";
+import { parseAllergyTags, type NewChildFields } from "../../lib/kids-utils";
+
+export type RoomOption = {
+  id: string;
+  name: string;
+};
 
 type AddKidModalProps = {
   isOpen: boolean;
-  nextIndex: number;
+  rooms: RoomOption[];
   onClose: () => void;
-  onSave: (kid: Kid) => void;
+  onSave: (fields: NewChildFields) => void;
 };
 
 type FormState = {
   name: string;
   birthDate: string;
-  room: RoomName;
+  roomId: string;
   allergies: string;
   note: string;
+  enrolledAt: string;
+  photoConsent: boolean;
 };
 
 type FieldErrors = {
   name?: string;
   birthDate?: string;
+  roomId?: string;
+  enrolledAt?: string;
 };
 
-const EMPTY_FORM: FormState = {
-  name: "",
-  birthDate: "",
-  room: "Soles",
-  allergies: "",
-  note: "",
+type DateParts = {
+  day: number;
+  month: number;
+  year: number;
 };
+
+function getEmptyForm(rooms: RoomOption[]): FormState {
+  return {
+    name: "",
+    birthDate: "",
+    roomId: rooms[0]?.id ?? "",
+    allergies: "",
+    note: "",
+    enrolledAt: getTodayMasked(),
+    photoConsent: true,
+  };
+}
 
 export default function AddKidModal({
   isOpen,
-  nextIndex,
+  rooms,
   onClose,
   onSave,
 }: AddKidModalProps) {
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [form, setForm] = useState<FormState>(() => getEmptyForm(rooms));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isRoomsOpen, setIsRoomsOpen] = useState(false);
 
@@ -70,6 +91,8 @@ export default function AddKidModal({
     return null;
   }
 
+  const selectedRoom = rooms.find((room) => room.id === form.roomId);
+
   function updateTextField(field: "name" | "allergies" | "note", value: string) {
     setForm((current) => ({ ...current, [field]: value }));
   }
@@ -79,13 +102,23 @@ export default function AddKidModal({
     setErrors((current) => ({ ...current, birthDate: undefined }));
   }
 
+  function updateEnrolledAt(value: string) {
+    setForm((current) => ({ ...current, enrolledAt: applyDateMask(value) }));
+    setErrors((current) => ({ ...current, enrolledAt: undefined }));
+  }
+
   function updateName(value: string) {
     setForm((current) => ({ ...current, name: value }));
     setErrors((current) => ({ ...current, name: undefined }));
   }
 
-  function selectRoom(room: RoomName) {
-    setForm((current) => ({ ...current, room }));
+  function updatePhotoConsent(value: boolean) {
+    setForm((current) => ({ ...current, photoConsent: value }));
+  }
+
+  function selectRoom(roomId: string) {
+    setForm((current) => ({ ...current, roomId }));
+    setErrors((current) => ({ ...current, roomId: undefined }));
     setIsRoomsOpen(false);
   }
 
@@ -99,28 +132,32 @@ export default function AddKidModal({
     const nextErrors: FieldErrors = {
       name: form.name.trim() ? undefined : "El nombre es obligatorio",
       birthDate: validateBirthDate(form.birthDate),
+      roomId: form.roomId ? undefined : "Elegí una sala",
+      enrolledAt: validateEnrolledAt(form.enrolledAt, form.birthDate),
     };
     setErrors(nextErrors);
 
-    if (nextErrors.name || nextErrors.birthDate) {
+    if (
+      nextErrors.name ||
+      nextErrors.birthDate ||
+      nextErrors.roomId ||
+      nextErrors.enrolledAt
+    ) {
       return;
     }
 
-    const parts = parseBirthDate(form.birthDate) as {
-      day: number;
-      month: number;
-      year: number;
-    };
-    const fields: NewKidFields = {
-      name: form.name,
-      birthDate: new Date(parts.year, parts.month - 1, parts.day),
-      room: form.room,
-      allergies: form.allergies,
-      note: form.note,
-    };
+    const birthParts = parseMaskedDate(form.birthDate) as DateParts;
+    const enrolledParts = parseMaskedDate(form.enrolledAt) as DateParts;
 
-    onSave(buildNewKid(fields, nextIndex));
-    onClose();
+    onSave({
+      fullName: form.name.trim(),
+      birthDate: toIsoDate(birthParts),
+      roomId: form.roomId,
+      allergyTags: parseAllergyTags(form.allergies),
+      medicalNotes: form.note.trim(),
+      enrolledAt: toIsoDate(enrolledParts),
+      photoConsent: form.photoConsent,
+    });
   }
 
   return (
@@ -131,7 +168,7 @@ export default function AddKidModal({
       aria-modal="true"
       aria-labelledby="add-kid-title"
     >
-      <div className="w-full max-w-[520px] overflow-hidden rounded-[24px] border border-border bg-auth-bg shadow-[0_20px_50px_-24px_rgba(63,54,46,.35)]">
+      <div className="max-h-full w-full max-w-[520px] overflow-y-auto rounded-[24px] border border-border bg-auth-bg shadow-[0_20px_50px_-24px_rgba(63,54,46,.35)]">
         <div className="flex items-center justify-between border-b border-border px-[26px] py-5">
           <button
             type="button"
@@ -190,7 +227,9 @@ export default function AddKidModal({
                   onClick={() => setIsRoomsOpen((current) => !current)}
                   className="flex w-full items-center gap-2 rounded-[14px] border-[1.5px] border-field-border bg-white px-4 py-[13px] text-[15px] font-bold text-ink"
                 >
-                  <span className="flex-1 text-left">{form.room}</span>
+                  <span className="flex-1 text-left">
+                    {selectedRoom ? selectedRoom.name : "Sin salas"}
+                  </span>
                   <ChevronDownIcon isOpen={isRoomsOpen} />
                 </button>
 
@@ -206,23 +245,37 @@ export default function AddKidModal({
                     <div className="absolute left-0 right-0 top-full z-[2] mt-[6px] overflow-hidden rounded-[14px] border border-field-border bg-white shadow-[0_14px_30px_-14px_rgba(63,54,46,.4)]">
                       {rooms.map((room) => (
                         <button
-                          key={room}
+                          key={room.id}
                           type="button"
-                          onClick={() => selectRoom(room)}
+                          onClick={() => selectRoom(room.id)}
                           className={`block w-full px-4 py-[11px] text-left text-[15px] hover:bg-surface-soft ${
-                            room === form.room
+                            room.id === form.roomId
                               ? "font-extrabold text-ink"
                               : "font-semibold text-ink-soft"
                           }`}
                         >
-                          {room}
+                          {room.name}
                         </button>
                       ))}
                     </div>
                   </>
                 )}
               </div>
+              {errors.roomId && <InlineError message={errors.roomId} />}
             </div>
+          </div>
+
+          <div className="mb-[18px]">
+            <FieldLabel>FECHA DE INGRESO</FieldLabel>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={form.enrolledAt}
+              onChange={(event) => updateEnrolledAt(event.target.value)}
+              placeholder="dd/mm/aaaa"
+              className={inputClass(Boolean(errors.enrolledAt))}
+            />
+            {errors.enrolledAt && <InlineError message={errors.enrolledAt} />}
           </div>
 
           <div className="mb-[18px]">
@@ -236,7 +289,7 @@ export default function AddKidModal({
             />
           </div>
 
-          <div>
+          <div className="mb-[18px]">
             <FieldLabel>NOTAS MÉDICAS</FieldLabel>
             <textarea
               value={form.note}
@@ -246,6 +299,18 @@ export default function AddKidModal({
               className="w-full resize-y rounded-[14px] border-[1.5px] border-field-border bg-white px-4 py-[13px] text-[15px] leading-[1.5] text-ink outline-none placeholder:text-placeholder min-h-[90px]"
             />
           </div>
+
+          <label className="flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={form.photoConsent}
+              onChange={(event) => updatePhotoConsent(event.target.checked)}
+              className="h-5 w-5 flex-none accent-[#EE8164]"
+            />
+            <span className="text-[14.5px] font-semibold text-ink">
+              Tiene consentimiento para fotos
+            </span>
+          </label>
         </div>
       </div>
     </div>
@@ -285,11 +350,7 @@ function applyDateMask(raw: string): string {
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
 }
 
-function parseBirthDate(value: string): {
-  day: number;
-  month: number;
-  year: number;
-} | null {
+function parseMaskedDate(value: string): DateParts | null {
   const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (!match) {
     return null;
@@ -297,11 +358,26 @@ function parseBirthDate(value: string): {
   return { day: Number(match[1]), month: Number(match[2]), year: Number(match[3]) };
 }
 
+function toIsoDate(parts: DateParts): string {
+  const day = String(parts.day).padStart(2, "0");
+  const month = String(parts.month).padStart(2, "0");
+  return `${parts.year}-${month}-${day}`;
+}
+
+function toMidnight(parts: DateParts): Date {
+  return new Date(parts.year, parts.month - 1, parts.day);
+}
+
+function toMidnightToday(): Date {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
+}
+
 function validateBirthDate(value: string): string | undefined {
   if (value.trim() === "") {
     return "Ingresá la fecha de nacimiento";
   }
-  const parts = parseBirthDate(value);
+  const parts = parseMaskedDate(value);
   if (!parts) {
     return "Formato inválido (dd/mm/aaaa)";
   }
@@ -311,9 +387,35 @@ function validateBirthDate(value: string): string | undefined {
   if (parts.year < 2000) {
     return "El año debe ser mayor a 1999";
   }
-  const birthDate = new Date(parts.year, parts.month - 1, parts.day);
+  const birthDate = toMidnight(parts);
   if (birthDate > getMaxBirthDate()) {
     return "Debe tener al menos 2 años";
+  }
+  return undefined;
+}
+
+function validateEnrolledAt(value: string, birthValue: string): string | undefined {
+  if (value.trim() === "") {
+    return "Ingresá la fecha de ingreso";
+  }
+  const parts = parseMaskedDate(value);
+  if (!parts) {
+    return "Formato inválido (dd/mm/aaaa)";
+  }
+  if (!isRealDate(parts.day, parts.month, parts.year)) {
+    return "La fecha no existe";
+  }
+  const enrolledAt = toMidnight(parts);
+  if (enrolledAt > toMidnightToday()) {
+    return "La fecha de ingreso no puede ser futura";
+  }
+  const birthParts = parseMaskedDate(birthValue);
+  if (
+    birthParts &&
+    isRealDate(birthParts.day, birthParts.month, birthParts.year) &&
+    enrolledAt < toMidnight(birthParts)
+  ) {
+    return "La fecha de ingreso no puede ser anterior al nacimiento";
   }
   return undefined;
 }
