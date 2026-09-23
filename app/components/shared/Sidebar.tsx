@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { ComponentType, SVGProps } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState, useTransition, type ComponentType, type SVGProps } from "react";
+import { logout } from "@/app/actions/auth";
+import { createClient } from "@/utils/supabase/client";
 import SunIcon from "./SunIcon";
 
 type SidebarProps = {
@@ -17,6 +19,12 @@ type NavItem = {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
+type SessionUser = {
+  email: string;
+  fullName: string | null;
+  avatarUrl: string | null;
+};
+
 const navItems: NavItem[] = [
   { label: "Feed", href: "/", icon: FeedIcon },
   { label: "Niños", href: "/kids", icon: ChildrenIcon },
@@ -25,7 +33,51 @@ const navItems: NavItem[] = [
 ];
 
 export default function Sidebar({ isOpen, onClose, onNewPost }: SidebarProps) {
+  const router = useRouter();
   const pathname = usePathname();
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [isLoggingOut, startLogout] = useTransition();
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function loadSessionUser() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setSessionUser(null);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("users")
+        .select("full_name, avatar_url")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      setSessionUser({
+        email: user.email ?? "",
+        fullName: profile?.full_name ?? null,
+        avatarUrl: profile?.avatar_url ?? null,
+      });
+    }
+
+    loadSessionUser();
+  }, []);
+
+  function handleLogout() {
+    startLogout(async () => {
+      await logout();
+      setSessionUser(null);
+      router.push("/login");
+      router.refresh();
+    });
+  }
+
+  const displayName = sessionUser?.fullName || sessionUser?.email || "";
+  const initial = displayName.charAt(0).toUpperCase() || "?";
 
   return (
     <>
@@ -99,27 +151,42 @@ export default function Sidebar({ isOpen, onClose, onNewPost }: SidebarProps) {
           })}
         </nav>
 
-        <div className="mt-2.5 border-t border-border pt-[14px]">
-          <div className="flex items-center gap-[11px] px-2 py-1.5">
-            <div className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-accent font-heading text-[16px] font-semibold text-white">
-              C
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[14px] font-extrabold text-ink">
-                Caro Giménez
+        {sessionUser && (
+          <div className="mt-2.5 border-t border-border pt-[14px]">
+            <div className="flex items-center gap-[11px] px-2 py-1.5">
+              {sessionUser.avatarUrl ? (
+                <img
+                  src={sessionUser.avatarUrl}
+                  alt={displayName}
+                  className="h-[38px] w-[38px] flex-none rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-full bg-accent font-heading text-[16px] font-semibold text-white">
+                  {initial}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-[14px] font-extrabold text-ink">
+                  {displayName}
+                </div>
+                {sessionUser.fullName && (
+                  <div className="truncate text-xs text-ink-soft">
+                    {sessionUser.email}
+                  </div>
+                )}
               </div>
-              <div className="text-xs text-ink-soft">Maestra · Soles</div>
+              <button
+                type="button"
+                title="Cerrar sesión"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-background text-ink-muted disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <LogoutIcon />
+              </button>
             </div>
-            <Link
-              href="/login"
-              title="Cerrar sesión"
-              onClick={onClose}
-              className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-background text-ink-muted"
-            >
-              <LogoutIcon />
-            </Link>
           </div>
-        </div>
+        )}
       </aside>
     </>
   );
