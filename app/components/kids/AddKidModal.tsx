@@ -19,6 +19,8 @@ type AddKidModalProps = {
   rooms: RoomOption[];
   onClose: () => void;
   onSave: (fields: NewChildFields) => void;
+  isSaving: boolean;
+  saveError: string | null;
 };
 
 type FormState = {
@@ -61,6 +63,8 @@ export default function AddKidModal({
   rooms,
   onClose,
   onSave,
+  isSaving,
+  saveError,
 }: AddKidModalProps) {
   const [form, setForm] = useState<FormState>(() => getEmptyForm(rooms));
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -186,13 +190,22 @@ export default function AddKidModal({
           <button
             type="button"
             onClick={handleSave}
-            className="text-[15px] font-extrabold text-primary"
+            disabled={isSaving}
+            className="text-[15px] font-extrabold text-primary disabled:opacity-50"
           >
-            Guardar
+            {isSaving ? "Guardando…" : "Guardar"}
           </button>
         </div>
 
         <div className="px-[26px] py-6">
+          {saveError && (
+            <p
+              role="alert"
+              className="mb-[18px] rounded-[14px] border border-error-border bg-surface px-4 py-3 text-[13.5px] font-semibold text-error-text"
+            >
+              {saveError}
+            </p>
+          )}
           <div className="mb-[18px]">
             <FieldLabel>NOMBRE COMPLETO</FieldLabel>
             <input

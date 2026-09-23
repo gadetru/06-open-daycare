@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import type { SVGProps } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "../components/shared/Sidebar";
 import KidCard from "../components/kids/KidCard";
 import AddKidModal from "../components/kids/AddKidModal";
 import type { Kid } from "../data/kids";
-import { childRowToKid, type NewChildFields } from "../lib/kids-utils";
+import type { NewChildFields } from "../lib/kids-utils";
+import { createClient } from "@/utils/supabase/client";
 
 export type RoomGroup = {
   id: string;
@@ -20,26 +22,16 @@ type KidsClientProps = {
 };
 
 export default function KidsClient({ rooms, notice }: KidsClientProps) {
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [addedKids, setAddedKids] = useState<Kid[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const groupsWithNew = rooms.map((group) => ({
-    ...group,
-    kids: [
-      ...group.kids,
-      ...addedKids.filter((kid) => kid.room === group.name),
-    ],
-  }));
-  const totalKids = groupsWithNew.reduce(
-    (total, group) => total + group.kids.length,
-    0,
-  );
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const trimmedQuery = searchQuery.trim().toLowerCase();
   const visibleGroups = trimmedQuery
-    ? groupsWithNew
+    ? rooms
         .map((group) => ({
           ...group,
           kids: group.kids.filter((kid) =>
@@ -47,26 +39,46 @@ export default function KidsClient({ rooms, notice }: KidsClientProps) {
           ),
         }))
         .filter((group) => group.kids.length > 0)
-    : groupsWithNew;
+    : rooms;
 
-  function handleSaveKid(fields: NewChildFields) {
-    const roomName = rooms.find((group) => group.id === fields.roomId)?.name ?? "";
-    const tempKid = childRowToKid(
-      {
-        id: `temp-${addedKids.length}-${fields.roomId}`,
+  function openModal() {
+    setSaveError(null);
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    if (isSaving) {
+      return;
+    }
+    setSaveError(null);
+    setIsModalOpen(false);
+  }
+
+  async function handleSaveKid(fields: NewChildFields) {
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from("children").insert({
         room_id: fields.roomId,
-        room_name: roomName,
         full_name: fields.fullName,
         birth_date: fields.birthDate,
         enrolled_at: fields.enrolledAt,
-        medical_notes: fields.medicalNotes,
+        medical_notes: fields.medicalNotes ? fields.medicalNotes : null,
         allergy_tags: fields.allergyTags,
         photo_consent: fields.photoConsent,
-      },
-      totalKids,
-    );
-    setAddedKids((current) => [...current, tempKid]);
-    setIsModalOpen(false);
+        status: "active",
+      });
+      if (error) {
+        throw error;
+      }
+      setIsModalOpen(false);
+      router.refresh();
+    } catch {
+      setSaveError("No se pudo guardar, reintentá");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -96,7 +108,7 @@ export default function KidsClient({ rooms, notice }: KidsClientProps) {
             </div>
             <button
               type="button"
-              onClick={() => setIsModalOpen(true)}
+              onClick={openModal}
               className="flex items-center gap-2 rounded-[14px] bg-gradient-to-b from-accent-1 to-accent-2 px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.7)]"
             >
               <PlusIcon />
@@ -161,8 +173,10 @@ export default function KidsClient({ rooms, notice }: KidsClientProps) {
         <AddKidModal
           isOpen={isModalOpen}
           rooms={rooms.map((group) => ({ id: group.id, name: group.name }))}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeModal}
           onSave={handleSaveKid}
+          isSaving={isSaving}
+          saveError={saveError}
         />
       )}
     </div>
