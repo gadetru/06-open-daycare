@@ -1,6 +1,6 @@
 # SPEC 10 — Lista /kids y alta de niños contra Supabase
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 04 (modal agregar niño), SPEC 08 (`public.users` + RLS)
 > **Date:** 2026-09-23
 > **Objective:** La vista `/kids` lista salas y niños desde Supabase y el modal "Agregar niño" persiste en `public.children` asignado a su sala.
@@ -82,17 +82,17 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `/kids` muestra headers `SALA SOLES · 8 niños`, `ESTRELLAS · 0`, `ARCOÍRIS · 0` (o conteos reales) desde DB, sin datos hardcodeados.
-- [ ] Buscador filtra por nombre en cliente ("mateo" → 1 card).
-- [ ] Alta válida con sala Estrellas persiste en `children` (`room_id` correcto) y la card aparece bajo ESTRELLAS tras guardar.
-- [ ] Alta sin padres es válida (cero filas asociadas, sin error).
-- [ ] Nombre vacío → "El nombre es obligatorio"; fecha inválida/futura/<2000 → error inline; no cierra ni inserta.
-- [ ] `enrolled_at` futura o anterior a nacimiento → error; default hoy; `photo_consent` default true persistido.
-- [ ] Alergias "maní, gluten" → `allergy_tags {peanut,gluten}`; vacío → `{}`.
-- [ ] Error de red/RLS muestra "No se pudo guardar, reintentá", modal abierto, sin duplicar fila.
-- [ ] `/kids/[id]` sin cambios (sigue mock SPEC 02/05).
-- [ ] `lint`, `tsc --noEmit`, `build` pasan; `advisors` sin issues nuevos.
-- [ ] Screenshots `.playwright-mcp/` en 1280/768/375 (lista + modal + alta).
+- [x] `/kids` muestra headers `SALA SOLES · 8 niños`, `ESTRELLAS · 0`, `ARCOÍRIS · 0` (o conteos reales) desde DB, sin datos hardcodeados.
+- [x] Buscador filtra por nombre en cliente ("mateo" → 1 card).
+- [x] Alta válida con sala Estrellas persiste en `children` (`room_id` correcto) y la card aparece bajo ESTRELLAS tras guardar.
+- [x] Alta sin padres es válida (cero filas asociadas, sin error).
+- [x] Nombre vacío → "El nombre es obligatorio"; fecha inválida/futura/<2000 → error inline; no cierra ni inserta.
+- [x] `enrolled_at` futura o anterior a nacimiento → error; default hoy; `photo_consent` default true persistido.
+- [x] Alergias "maní, gluten" → `allergy_tags {peanut,gluten}`; vacío → `{}`.
+- [x] Error de red/RLS muestra "No se pudo guardar, reintentá", modal abierto, sin duplicar fila.
+- [x] `/kids/[id]` sin cambios (sigue mock SPEC 02/05).
+- [x] `lint`, `tsc --noEmit`, `build` pasan; `advisors` sin issues nuevos.
+- [x] Screenshots `.playwright-mcp/` en 1280/768/375 (lista + modal + alta).
 
 ---
 
