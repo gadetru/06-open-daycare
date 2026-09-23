@@ -1,4 +1,4 @@
-const SHORT_MONTHS = [
+export const SHORT_MONTHS = [
   "ene",
   "feb",
   "mar",
@@ -55,6 +55,16 @@ export function getCurrentMonthYear(): string {
 export function getMaxBirthDate(): Date {
   const today = new Date();
   return new Date(today.getFullYear() - 2, today.getMonth(), today.getDate());
+}
+
+export function formatMaskedDate(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${day}/${month}/${date.getFullYear()}`;
+}
+
+export function getTodayMasked(): string {
+  return formatMaskedDate(new Date());
 }
 
 function runStructureTests(): void {

@@ -1,6 +1,6 @@
 # SPEC 09 — Login real contra Supabase y protección de rutas
 
-> **Status:** aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 03 (página `/login` estática que se convierte), SPEC 08 (`public.users`, staff `gabriel@google.com`/`1q2w3e4r5t`, RLS `users_select_own`)
 > **Date:** 2026-09-22
 > **Objective:** Convertir `/login` en un formulario real de email+password contra Supabase Auth, proteger `/`, `/kids` y `/kids/[id]` redirigiendo a `/login` vía `proxy.ts`, redirigir a `/` a quien ya tenga sesión y mostrar el usuario + "Cerrar sesión" en el Sidebar.
