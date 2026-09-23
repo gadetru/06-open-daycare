@@ -50,15 +50,15 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] Sin sesión, visitar `/`, `/kids` o `/kids/[id]` redirige a `/login` (sin render de contenido, redirect vía proxy).
-- [ ] Autenticado, visitar `/login` redirige a `/`.
-- [ ] `/login` muestra el form con email prefill `caro@opendaycare.com` editable, password enmascarada y CTA "Iniciar sesión"; con `gabriel@google.com` / `1q2w3e4r5t` se crea la sesión, redirige a `/` y el feed carga; recargar mantiene la sesión y `/` sigue accesible.
-- [ ] Credenciales inválidas muestran error inline en español ("Email o contraseña incorrectos"), no redirigen, permiten reintentar y el error se limpia al escribir.
-- [ ] El Sidebar muestra "Gabriel" (o el email como fallback) y el botón "Cerrar sesión"; al pulsarlo vuelve a `/login` y las rutas protegidas vuelven a bloquear.
-- [ ] `/activar-cuenta` persiste pública y sin cambios de comportamiento (estática).
-- [ ] `utils/supabase/middleware.ts` decide con `getClaims()` (grep: sin uso de `getSession()` para la decisión).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots de referencia en `.playwright-mcp/` (login con error, login ok, post-login con Sidebar mostrando el usuario, rutas protegidas tras logout).
+- [x] Sin sesión, visitar `/`, `/kids` o `/kids/[id]` redirige a `/login` (sin render de contenido, redirect vía proxy).
+- [x] Autenticado, visitar `/login` redirige a `/`.
+- [x] `/login` muestra el form con email prefill `caro@opendaycare.com` editable, password enmascarada y CTA "Iniciar sesión"; con `gabriel@google.com` / `1q2w3e4r5t` se crea la sesión, redirige a `/` y el feed carga; recargar mantiene la sesión y `/` sigue accesible.
+- [x] Credenciales inválidas muestran error inline en español ("Email o contraseña incorrectos"), no redirigen, permiten reintentar y el error se limpia al escribir.
+- [x] El Sidebar muestra "Gabriel" (o el email como fallback) y el botón "Cerrar sesión"; al pulsarlo vuelve a `/login` y las rutas protegidas vuelven a bloquear.
+- [x] `/activar-cuenta` persiste pública y sin cambios de comportamiento (estática).
+- [x] `utils/supabase/middleware.ts` decide con `getClaims()` (grep: sin uso de `getSession()` para la decisión).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots de referencia en `.playwright-mcp/` (login con error, login ok, post-login con Sidebar mostrando el usuario, rutas protegidas tras logout).
 
 ---
 

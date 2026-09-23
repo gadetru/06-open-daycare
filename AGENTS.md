@@ -74,7 +74,7 @@ Cubre 8 categorías de rendimiento priorizadas por impacto (query performance, c
  
 - /spec Utilizaremos esta skill para crear especificaciones.
 - /spec-impl Usaremos esta skill para implementar las especificaciones.
-- **Los specs de base de datos se guardan en `specs/db/`** (p.ej. `specs/db/08-crear-tabla-usuarios.md`), no en la raíz de `specs/`. Los specs de frontend/UI siguen en `specs/`. La numeración es global y secuencial entre ambas carpetas.
+- **Todo spec relacionado con base de datos / Supabase va en `specs/db/`** (tablas, columnas, RLS/policies, Auth, migraciones, seeds/data, Storage, etc. — p.ej. `specs/db/08-crear-tabla-usuarios.md`, `specs/db/09-auth-y-proteccion-de-rutas.md`), nunca en la raíz de `specs/`. Los specs puramente de frontend/UI (sin tocar Supabase ni la DB) siguen en `specs/`. La numeración es global y secuencial entre ambas carpetas.
 
 ## Agente spec-verifier
 
