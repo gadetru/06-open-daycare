@@ -1,6 +1,6 @@
 # SPEC 11 — Perfil del niño contra Supabase con edición
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 02, SPEC 04, SPEC 05, SPEC 10
 > **Date:** 2026-09-23
 > **Objective:** La vista `/kids/[id]` lee el niño desde Supabase por UUID y permite editarlo con los mismos campos del alta, conservando el botón de vincular padre en memoria hasta el spec de padres.
