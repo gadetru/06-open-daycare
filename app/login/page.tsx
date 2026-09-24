@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import SunIcon from "../components/shared/SunIcon";
+import LoginSuccessBanner from "./LoginSuccessBanner";
 import { createClient } from "@/utils/supabase/client";
 
 export default function LoginPage() {
@@ -74,6 +75,10 @@ export default function LoginPage() {
           <p className="mb-[28px] text-[15px] text-ink-muted">
             Ingresá para ver el día de hoy.
           </p>
+
+          <Suspense fallback={null}>
+            <LoginSuccessBanner />
+          </Suspense>
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-[8px] text-[12px] font-bold tracking-[.7px] text-ink-muted">
