@@ -49,3 +49,7 @@
  GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 784ms (next.js: 10ms, proxy.ts: 4ms, application-code: 771ms)
  GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 740ms (next.js: 10ms, proxy.ts: 4ms, application-code: 726ms)
  GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 664ms (next.js: 10ms, proxy.ts: 4ms, application-code: 650ms)
+ GET / 200 in 866ms (next.js: 5ms, proxy.ts: 811ms, application-code: 49ms)
+ GET /kids 200 in 737ms (next.js: 32ms, proxy.ts: 4ms, application-code: 701ms)
+ GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 535ms (next.js: 12ms, proxy.ts: 4ms, application-code: 520ms)
+[?25h
