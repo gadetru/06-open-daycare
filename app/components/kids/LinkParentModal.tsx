@@ -2,21 +2,19 @@
 
 import { useEffect, useState } from "react";
 import type { MouseEvent, SVGProps } from "react";
+import {
+  createParentInvitation,
+  type ParentRelationshipValue,
+} from "@/app/actions/invitations";
 
 export type ParentRelationship = "Mamá" | "Papá" | "Tutor/a";
 
-export type NewParentFields = {
-  name: string;
-  email: string;
-  relationship: ParentRelationship;
-};
-
 type LinkParentModalProps = {
   isOpen: boolean;
+  childId: string;
   kidName: string;
   kidFirstName: string;
   onClose: () => void;
-  onSaveParent: (parent: NewParentFields) => void;
 };
 
 type FieldErrors = {
@@ -24,7 +22,21 @@ type FieldErrors = {
   email?: string;
 };
 
+type SentResult = {
+  code: string;
+  expiresAt: string;
+};
+
 const RELATIONSHIPS: ParentRelationship[] = ["Mamá", "Papá", "Tutor/a"];
+
+const RELATIONSHIP_TO_VALUE: Record<
+  ParentRelationship,
+  ParentRelationshipValue
+> = {
+  "Mamá": "mother",
+  "Papá": "father",
+  "Tutor/a": "guardian",
+};
 
 export function isValidEmail(value: string): boolean {
   const email = value.trim();
@@ -33,15 +45,18 @@ export function isValidEmail(value: string): boolean {
 
 export default function LinkParentModal({
   isOpen,
+  childId,
   kidName,
   kidFirstName,
   onClose,
-  onSaveParent,
 }: LinkParentModalProps) {
   const [parentName, setParentName] = useState("");
   const [parentEmail, setParentEmail] = useState("");
   const [relationship, setRelationship] = useState<ParentRelationship>("Mamá");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sentResult, setSentResult] = useState<SentResult | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -68,6 +83,8 @@ export default function LinkParentModal({
     return null;
   }
 
+  const isSent = sentResult !== null;
+
   function updateName(value: string) {
     setParentName(value);
     setErrors((current) => ({ ...current, name: undefined }));
@@ -84,7 +101,7 @@ export default function LinkParentModal({
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const nameError = parentName.trim()
       ? undefined
       : "El nombre es obligatorio";
@@ -96,11 +113,27 @@ export default function LinkParentModal({
       return;
     }
 
-    onSaveParent({
-      name: parentName.trim(),
-      email: parentEmail.trim(),
-      relationship,
-    });
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const result = await createParentInvitation({
+        childId,
+        fullName: parentName.trim(),
+        email: parentEmail.trim(),
+        relationship: RELATIONSHIP_TO_VALUE[relationship],
+      });
+
+      if (result.ok) {
+        setSentResult({ code: result.code, expiresAt: result.expiresAt });
+      } else {
+        setSubmitError(result.error);
+      }
+    } catch {
+      setSubmitError("No se pudo enviar la invitación");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -133,82 +166,105 @@ export default function LinkParentModal({
         </div>
 
         <div className="px-[26px] py-[22px]">
-          <div className="mb-5 flex gap-[11px] rounded-[14px] bg-[#E3ECFB] px-4 py-[13px]">
-            <InfoIcon />
-            <span className="text-[13.5px] leading-[1.45] text-[#3F5694]">
-              Le enviaremos un correo con un código para que active su cuenta.
-              Solo verá el feed de {kidFirstName}.
-            </span>
-          </div>
+          {!isSent && (
+            <>
+              <div className="mb-5 flex gap-[11px] rounded-[14px] bg-[#E3ECFB] px-4 py-[13px]">
+                <InfoIcon />
+                <span className="text-[13.5px] leading-[1.45] text-[#3F5694]">
+                  Le enviaremos un correo con un código para que active su
+                  cuenta. Solo verá el feed de {kidFirstName}.
+                </span>
+              </div>
 
-          <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
-            NOMBRE DEL PADRE/MADRE
-          </div>
-          <input
-            type="text"
-            value={parentName}
-            onChange={(event) => updateName(event.target.value)}
-            placeholder="Ej. Diego Fernández"
-            className={inputClass(Boolean(errors.name))}
-          />
-          {errors.name ? (
-            <InlineError message={errors.name} />
-          ) : (
-            <div className="mb-[18px]" />
+              <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
+                NOMBRE DEL PADRE/MADRE
+              </div>
+              <input
+                type="text"
+                value={parentName}
+                onChange={(event) => updateName(event.target.value)}
+                placeholder="Ej. Diego Fernández"
+                disabled={isSubmitting}
+                className={inputClass(Boolean(errors.name), isSubmitting)}
+              />
+              {errors.name ? (
+                <InlineError message={errors.name} />
+              ) : (
+                <div className="mb-[18px]" />
+              )}
+
+              <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
+                EMAIL
+              </div>
+              <input
+                type="email"
+                value={parentEmail}
+                onChange={(event) => updateEmail(event.target.value)}
+                placeholder="correo@ejemplo.com"
+                disabled={isSubmitting}
+                className={inputClass(Boolean(errors.email), isSubmitting)}
+              />
+              {errors.email ? (
+                <InlineError message={errors.email} />
+              ) : (
+                <div className="mb-[18px]" />
+              )}
+
+              <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
+                PARENTESCO
+              </div>
+              <div className="mb-5 flex gap-[9px]">
+                {RELATIONSHIPS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setRelationship(option)}
+                    disabled={isSubmitting}
+                    aria-pressed={relationship === option}
+                    className={relationshipClass(relationship === option)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+
+              {submitError && (
+                <p
+                  role="alert"
+                  className="mb-[18px] rounded-[12px] border border-error-border bg-surface px-4 py-[11px] text-[13.5px] font-semibold text-error-text"
+                >
+                  {submitError}
+                </p>
+              )}
+            </>
           )}
 
-          <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
-            EMAIL
-          </div>
-          <input
-            type="email"
-            value={parentEmail}
-            onChange={(event) => updateEmail(event.target.value)}
-            placeholder="correo@ejemplo.com"
-            className={inputClass(Boolean(errors.email))}
-          />
-          {errors.email ? (
-            <InlineError message={errors.email} />
-          ) : (
-            <div className="mb-[18px]" />
+          {isSent && sentResult && (
+            <div className="mb-[22px] rounded-[16px] border-[1.5px] border-dashed border-[#E6D08A] bg-[#FBF1D6] px-[18px] py-[18px] text-center">
+              <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-[#A88526]">
+                CÓDIGO DE INVITACIÓN
+              </div>
+              <div className="font-heading text-[34px] font-semibold tracking-[7px] text-[#8A7234]">
+                {sentResult.code}
+              </div>
+              <div className="mt-[6px] text-[13px] text-[#A88526]">
+                Vence en 7 días
+              </div>
+            </div>
           )}
-
-          <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
-            PARENTESCO
-          </div>
-          <div className="mb-5 flex gap-[9px]">
-            {RELATIONSHIPS.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setRelationship(option)}
-                aria-pressed={relationship === option}
-                className={relationshipClass(relationship === option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-
-          <div className="mb-5 rounded-[16px] border-[1.5px] border-dashed border-[#E6D08A] bg-[#FBF1D6] px-[18px] py-[18px] text-center">
-            <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-[#A88526]">
-              CÓDIGO DE INVITACIÓN
-            </div>
-            <div className="font-heading text-[34px] font-semibold tracking-[7px] text-[#8A7234]">
-              7K4P9
-            </div>
-            <div className="mt-[6px] text-[13px] text-[#A88526]">
-              Vence en 7 días
-            </div>
-          </div>
 
           <button
             type="button"
             onClick={handleSubmit}
-            className="flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] px-4 py-[14px] text-[15.5px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)]"
+            disabled={isSubmitting || isSent}
+            className="flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] px-4 py-[14px] text-[15.5px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <PlaneIcon />
-            Enviar invitación
+            {!isSent && <PlaneIcon />}
+            {isSubmitting
+              ? "Enviando…"
+              : isSent
+                ? "Invitación enviada"
+                : "Enviar invitación"}
           </button>
         </div>
       </div>
@@ -226,15 +282,17 @@ function validateEmail(value: string): string | undefined {
   return undefined;
 }
 
-function inputClass(hasError: boolean): string {
+function inputClass(hasError: boolean, isDisabled: boolean): string {
   const base =
     "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-placeholder";
-  return `${base} ${hasError ? "border-error-border" : "border-field-border"}`;
+  return `${base} ${hasError ? "border-error-border" : "border-field-border"} ${
+    isDisabled ? "disabled:opacity-60" : ""
+  }`;
 }
 
 function relationshipClass(isSelected: boolean): string {
   const base =
-    "flex-1 rounded-full border-[1.5px] px-2 py-[11px] text-[14px] font-extrabold";
+    "flex-1 rounded-full border-[1.5px] px-2 py-[11px] text-[14px] font-extrabold disabled:opacity-60";
   if (isSelected) {
     return `${base} border-[#9FB8EC] bg-[#CCD8F4] text-[#4E72C8]`;
   }

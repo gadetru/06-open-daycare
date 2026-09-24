@@ -9,7 +9,6 @@ import SunIcon from "../../components/shared/SunIcon";
 import AddKidModal from "../../components/kids/AddKidModal";
 import type { RoomOption } from "../../components/kids/AddKidModal";
 import LinkParentModal from "../../components/kids/LinkParentModal";
-import type { NewParentFields } from "../../components/kids/LinkParentModal";
 import { childRowToKid } from "../../lib/kids-utils";
 import type { ChildRow, NewChildFields } from "../../lib/kids-utils";
 import type { LinkedParent } from "../../data/kids";
@@ -32,11 +31,15 @@ export default function KidProfileClient({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [linkModalCount, setLinkModalCount] = useState(0);
 
   const kid = child ? childRowToKid(child, 0) : null;
   const kidFirstName = kid?.name.split(" ")[0] ?? "";
 
-  const [parents, setParents] = useState<LinkedParent[]>(kid?.parents ?? []);
+  function openLinkModal() {
+    setIsLinkModalOpen(true);
+    setLinkModalCount((current) => current + 1);
+  }
 
   async function handleSaveKid(fields: NewChildFields) {
     if (!child) {
@@ -69,17 +72,6 @@ export default function KidProfileClient({
     } finally {
       setIsSaving(false);
     }
-  }
-
-  function handleSaveParent(fields: NewParentFields) {
-    const nextParent: LinkedParent = {
-      name: fields.name,
-      email: fields.email,
-      role: `${fields.relationship} · invitación enviada`,
-      status: "PENDIENTE",
-    };
-    setParents((current) => [...current, nextParent]);
-    setIsLinkModalOpen(false);
   }
 
   return (
@@ -181,7 +173,7 @@ export default function KidProfileClient({
                     PADRES VINCULADOS
                   </div>
                   <div className="flex flex-col gap-[14px]">
-                    {parents.map((parent, index) => (
+                    {kid.parents.map((parent, index) => (
                       <ParentRow
                         key={`${parent.name}-${index}`}
                         parent={parent}
@@ -190,7 +182,7 @@ export default function KidProfileClient({
                     ))}
                     <button
                       type="button"
-                      onClick={() => setIsLinkModalOpen(true)}
+                      onClick={openLinkModal}
                       className="flex items-center gap-3 px-0 pb-2 pt-2"
                     >
                       <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
@@ -241,13 +233,14 @@ export default function KidProfileClient({
         />
       )}
 
-      {isLinkModalOpen && kid && (
+      {isLinkModalOpen && child && kid && (
         <LinkParentModal
+          key={linkModalCount}
           isOpen={isLinkModalOpen}
+          childId={child.id}
           kidName={kid.name}
           kidFirstName={kidFirstName}
           onClose={() => setIsLinkModalOpen(false)}
-          onSaveParent={handleSaveParent}
         />
       )}
     </div>
