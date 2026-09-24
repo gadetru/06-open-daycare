@@ -4,306 +4,48 @@
 
 ▲ Next.js 16.3.5 (Turbopack)
 - Local:         http://localhost:3000
-- Network:       http://192.168.7.6:3000
-✓ Ready in 486ms
-✓ Running next.config.ts took 39ms
+- Network:       http://192.168.7.9:3000
+- Environments: .env.local, .env
+✓ Ready in 489ms
+✓ Running next.config.ts took 38ms
 
- GET / 200 in 573ms (next.js: 407ms, application-code: 165ms)
- GET /login 200 in 320ms (next.js: 268ms, application-code: 52ms)
- GET /activar-cuenta 200 in 177ms (next.js: 136ms, application-code: 41ms)
- GET /familia-feed 404 in 52ms (next.js: 32ms, application-code: 20ms)
- GET /familia-feed 404 in 34ms (next.js: 7ms, application-code: 26ms)
- GET /login 200 in 41ms (next.js: 10ms, application-code: 32ms)
- GET /activar-cuenta 200 in 36ms (next.js: 7ms, application-code: 29ms)
- GET /login 200 in 38ms (next.js: 6ms, application-code: 31ms)
- GET /activar-cuenta 200 in 37ms (next.js: 5ms, application-code: 32ms)
- GET /familia-feed 404 in 39ms (next.js: 9ms, application-code: 30ms)
- GET /login 200 in 34ms (next.js: 5ms, application-code: 29ms)
- GET /login 200 in 31ms (next.js: 4ms, application-code: 27ms)
- GET /activar-cuenta 200 in 31ms (next.js: 4ms, application-code: 26ms)
- GET /familia-feed 404 in 32ms (next.js: 7ms, application-code: 24ms)
- GET / 200 in 40ms (next.js: 9ms, application-code: 31ms)
- GET /login 200 in 38ms (next.js: 6ms, application-code: 31ms)
- GET /activar-cuenta 200 in 34ms (next.js: 6ms, application-code: 28ms)
- GET / 200 in 33ms (next.js: 5ms, application-code: 28ms)
-✓ Compiled in 92ms
- GET / 200 in 43ms (next.js: 6ms, application-code: 37ms)
- GET /kids 200 in 126ms (next.js: 110ms, application-code: 17ms)
- GET /kids/mateo 200 in 532ms (next.js: 514ms, application-code: 18ms)
- GET /mi-cuenta 404 in 21ms (next.js: 7ms, application-code: 14ms)
- GET /mi-cuenta 404 in 34ms (next.js: 9ms, application-code: 25ms)
- GET /kids/mateo 200 in 46ms (next.js: 10ms, application-code: 36ms)
- GET /crear-publicacion 404 in 22ms (next.js: 7ms, application-code: 15ms)
- GET /crear-publicacion 404 in 33ms (next.js: 8ms, application-code: 25ms)
- GET / 200 in 17ms (next.js: 5ms, application-code: 12ms)
- GET / 200 in 37ms (next.js: 5ms, application-code: 33ms)
- GET /login 200 in 39ms (next.js: 6ms, application-code: 32ms)
- GET /familia-feed 404 in 23ms (next.js: 7ms, application-code: 16ms)
- GET /familia-feed 404 in 33ms (next.js: 8ms, application-code: 25ms)
- GET /login/familia-feed 404 in 45ms (next.js: 10ms, application-code: 35ms)
- GET /activar-cuenta 200 in 50ms (next.js: 5ms, application-code: 44ms)
- GET /login 200 in 43ms (next.js: 10ms, application-code: 33ms)
- GET /login 200 in 35ms (next.js: 6ms, application-code: 29ms)
- GET /activar-cuenta 200 in 35ms (next.js: 5ms, application-code: 30ms)
- GET /login 200 in 32ms (next.js: 4ms, application-code: 28ms)
- GET /activar-cuenta 200 in 31ms (next.js: 5ms, application-code: 26ms)
- GET /familia-feed 404 in 32ms (next.js: 7ms, application-code: 26ms)
- GET /login 200 in 33ms (next.js: 5ms, application-code: 28ms)
- GET /activar-cuenta 200 in 33ms (next.js: 5ms, application-code: 28ms)
- GET /login 200 in 34ms (next.js: 6ms, application-code: 28ms)
- GET /activar-cuenta 200 in 33ms (next.js: 4ms, application-code: 29ms)
- GET /login 200 in 36ms (next.js: 5ms, application-code: 31ms)
- GET /activar-cuenta 200 in 34ms (next.js: 6ms, application-code: 29ms)
- GET /login 200 in 33ms (next.js: 5ms, application-code: 28ms)
- GET /activar-cuenta 200 in 35ms (next.js: 5ms, application-code: 29ms)
- GET /activar-cuenta 200 in 36ms (next.js: 6ms, application-code: 30ms)
- GET / 200 in 167ms (next.js: 60ms, application-code: 108ms)
- GET /login 200 in 59ms (next.js: 14ms, application-code: 45ms)
- GET /activar-cuenta 200 in 48ms (next.js: 14ms, application-code: 34ms)
- GET /kids 200 in 46ms (next.js: 12ms, application-code: 34ms)
- GET /kids 200 in 34ms (next.js: 5ms, application-code: 30ms)
- GET /kids 200 in 39ms (next.js: 8ms, application-code: 31ms)
- GET /kids 200 in 39ms (next.js: 7ms, application-code: 32ms)
- GET /kids 200 in 38ms (next.js: 6ms, application-code: 32ms)
- GET / 200 in 49ms (next.js: 6ms, application-code: 43ms)
- GET / 200 in 31ms (next.js: 4ms, application-code: 27ms)
- GET /kids 200 in 30ms (next.js: 6ms, application-code: 24ms)
- GET /kids/pepito 200 in 90ms (next.js: 63ms, application-code: 27ms)
- GET /kids 200 in 19ms (next.js: 4ms, application-code: 14ms)
- GET /kids/benjamin 200 in 25ms (next.js: 9ms, application-code: 15ms)
- GET /kids 200 in 17ms (next.js: 4ms, application-code: 13ms)
-⨯ ./app/kids/page.tsx:7:1
-Error: Module not found: Can't resolve '../components/kids/AddKidModal'
-  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
-  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
-[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m10 |[0m
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:7:1
-Error: Module not found: Can't resolve '../components/kids/AddKidModal'
-  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
-  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
-[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m10 |[0m
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:7:1
-Error: Module not found: Can't resolve '../components/kids/AddKidModal'
-  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
-  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
-[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m10 |[0m
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:7:1
-Error: Module not found: Can't resolve '../components/kids/AddKidModal'
-  [90m 5 |[0m [36mimport[0m [33mSidebar[0m [36mfrom[0m [32m"../components/shared/Sidebar"[0m;
-  [90m 6 |[0m [36mimport[0m [33mKidCard[0m [36mfrom[0m [32m"../components/kids/KidCard"[0m;
-[31m[1m>[0m [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-  [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m10 |[0m
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:9:1
-Error: Module not found: Can't resolve '../data/rooms'
-  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m10 |[0m
-  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
-  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:9:1
-Error: Module not found: Can't resolve '../data/rooms'
-  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m10 |[0m
-  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
-  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:9:1
-Error: Module not found: Can't resolve '../data/rooms'
-  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m10 |[0m
-  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
-  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-⨯ ./app/kids/page.tsx:9:1
-Error: Module not found: Can't resolve '../data/rooms'
-  [90m 7 |[0m [36mimport[0m [33mAddKidModal[0m [36mfrom[0m [32m"../components/kids/AddKidModal"[0m;
-  [90m 8 |[0m [36mimport[0m { kids, [36mtype[0m [33mKid[0m } [36mfrom[0m [32m"../data/kids"[0m;
-[31m[1m>[0m [90m 9 |[0m [36mimport[0m { rooms } [36mfrom[0m [32m"../data/rooms"[0m;
-  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
-  [90m10 |[0m
-  [90m11 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mKidsPage[0m() {
-  [90m12 |[0m   [36mconst[0m [isSidebarOpen, setIsSidebarOpen] = useState([36mfalse[0m);
-
-
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found
-
-
- GET /kids 200 in 27ms (next.js: 10ms, application-code: 17ms)
-[browser] ./app/kids/page.tsx:7:1
-Error: Module not found: Can't resolve '../components/kids/AddKidModal'
-   5 | import Sidebar from "../components/shared/Sidebar";
-   6 | import KidCard from "../components/kids/KidCard";
->  7 | import AddKidModal from "../components/kids/AddKidModal";
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 | import { kids, type Kid } from "../data/kids";
-   9 | import { rooms } from "../data/rooms";
-  10 |
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found 
-[browser] ./app/kids/page.tsx:9:1
-Error: Module not found: Can't resolve '../data/rooms'
-   7 | import AddKidModal from "../components/kids/AddKidModal";
-   8 | import { kids, type Kid } from "../data/kids";
->  9 | import { rooms } from "../data/rooms";
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  10 |
-  11 | export default function KidsPage() {
-  12 |   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-Import traces:
-  Client Component Browser:
-    ./app/kids/page.tsx [Client Component Browser]
-    ./app/kids/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./app/kids/page.tsx [Client Component SSR]
-    ./app/kids/page.tsx [Server Component]
-
-https://nextjs.org/docs/messages/module-not-found 
- GET /kids 200 in 27ms (next.js: 10ms, application-code: 17ms)
-✓ Compiled in 245ms
+ GET /login 200 in 250ms (next.js: 76ms, proxy.ts: 4ms, application-code: 170ms)
+ GET /login 200 in 36ms (next.js: 5ms, proxy.ts: 4ms, application-code: 27ms)
+ GET /login 200 in 37ms (next.js: 5ms, proxy.ts: 4ms, application-code: 28ms)
+ GET /login 200 in 132ms (next.js: 97ms, proxy.ts: 6ms, application-code: 29ms)
+ GET /login 200 in 122ms (next.js: 86ms, proxy.ts: 7ms, application-code: 29ms)
+ GET /login 200 in 122ms (next.js: 89ms, proxy.ts: 8ms, application-code: 25ms)
+ GET /login 200 in 118ms (next.js: 88ms, proxy.ts: 5ms, application-code: 25ms)
+ GET /login 200 in 128ms (next.js: 91ms, proxy.ts: 4ms, application-code: 32ms)
+ GET /login 200 in 50ms (next.js: 13ms, proxy.ts: 6ms, application-code: 32ms)
+ GET / 200 in 412ms (next.js: 61ms, proxy.ts: 330ms, application-code: 22ms)
+ GET / 200 in 35ms (next.js: 6ms, proxy.ts: 12ms, application-code: 17ms)
+ GET /login 200 in 41ms (next.js: 5ms, proxy.ts: 4ms, application-code: 32ms)
+ GET / 200 in 24ms (next.js: 6ms, proxy.ts: 6ms, application-code: 13ms)
+ GET / 200 in 25ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 1816ms (next.js: 493ms, proxy.ts: 5ms, application-code: 1319ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 587ms (next.js: 14ms, proxy.ts: 6ms, application-code: 568ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 649ms (next.js: 11ms, proxy.ts: 5ms, application-code: 632ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 673ms (next.js: 11ms, proxy.ts: 4ms, application-code: 657ms)
+ GET /kids/mateo 200 in 331ms (next.js: 11ms, proxy.ts: 4ms, application-code: 316ms)
+ GET /kids/00000000-0000-4000-a000-000000000000 200 in 502ms (next.js: 12ms, proxy.ts: 5ms, application-code: 485ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 483ms (next.js: 11ms, proxy.ts: 3ms, application-code: 468ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 700ms (next.js: 13ms, proxy.ts: 6ms, application-code: 681ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 456ms (next.js: 100ms, proxy.ts: 5ms, application-code: 352ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 683ms (next.js: 12ms, proxy.ts: 5ms, application-code: 665ms)
+ GET /login 200 in 36ms (next.js: 5ms, proxy.ts: 3ms, application-code: 28ms)
+ GET / 200 in 22ms (next.js: 5ms, proxy.ts: 4ms, application-code: 13ms)
+ GET / 200 in 24ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
+ GET /kids/079ba370-b304-4117-8244-ef323818d2fe 200 in 1201ms (next.js: 16ms, proxy.ts: 7ms, application-code: 1178ms)
+ GET /login 200 in 33ms (next.js: 4ms, proxy.ts: 3ms, application-code: 25ms)
+ GET / 200 in 23ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
+ GET / 200 in 25ms (next.js: 5ms, proxy.ts: 5ms, application-code: 15ms)
+ GET /kids/6887c60a-ac0d-4db2-ac66-ba13ff1aefe1 200 in 1422ms (next.js: 11ms, proxy.ts: 4ms, application-code: 1407ms)
+ GET /login 200 in 33ms (next.js: 4ms, proxy.ts: 3ms, application-code: 26ms)
+ GET / 200 in 23ms (next.js: 5ms, proxy.ts: 5ms, application-code: 13ms)
+ GET / 200 in 24ms (next.js: 5ms, proxy.ts: 4ms, application-code: 15ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 996ms (next.js: 11ms, proxy.ts: 4ms, application-code: 981ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 837ms (next.js: 12ms, proxy.ts: 5ms, application-code: 820ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 784ms (next.js: 10ms, proxy.ts: 4ms, application-code: 771ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 740ms (next.js: 10ms, proxy.ts: 4ms, application-code: 726ms)
+ GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 664ms (next.js: 10ms, proxy.ts: 4ms, application-code: 650ms)

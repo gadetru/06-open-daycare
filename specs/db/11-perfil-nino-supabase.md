@@ -70,18 +70,18 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `/kids/<uuid-real>` muestra nombre, sala, fechas, alergias y notas desde DB, sin datos hardcodeados.
-- [ ] `/kids/mateo` (slug viejo) y UUID inexistente muestran "Niño no encontrado".
-- [ ] Niño de otro `daycare` muestra "Niño no encontrado" (no fuga por RLS).
-- [ ] Botón Editar abre el modal precargado con los 7 valores actuales del niño.
-- [ ] Guardar nombre + sala + alergias válidos persiste en `children` y el perfil refleja el cambio tras recargar.
-- [ ] Nombre vacío → "El nombre es obligatorio"; fecha inválida/futura/<2000 → error inline; no cierra ni actualiza.
-- [ ] `enrolled_at` futura o anterior a nacimiento → error; `photo_consent` se persiste.
-- [ ] Alergias "maní, gluten" → `allergy_tags {peanut,gluten}`; vacío → `{}`.
-- [ ] Error de red/RLS muestra "No se pudo guardar, reintentá", modal abierto, sin duplicar.
-- [ ] Botón "Vincular otro padre" sigue abriendo el modal y agregando en memoria con pill PENDIENTE.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan; `advisors` sin issues nuevos.
-- [ ] Screenshots `.playwright-mcp/` en 1280/768/375 (perfil + modal edición + guardado).
+- [x] `/kids/<uuid-real>` muestra nombre, sala, fechas, alergias y notas desde DB, sin datos hardcodeados.
+- [x] `/kids/mateo` (slug viejo) y UUID inexistente muestran "Niño no encontrado".
+- [x] Niño de otro `daycare` muestra "Niño no encontrado" (no fuga por RLS).
+- [x] Botón Editar abre el modal precargado con los 7 valores actuales del niño.
+- [x] Guardar nombre + sala + alergias válidos persiste en `children` y el perfil refleja el cambio tras recargar.
+- [x] Nombre vacío → "El nombre es obligatorio"; fecha inválida/futura/<2000 → error inline; no cierra ni actualiza.
+- [x] `enrolled_at` futura o anterior a nacimiento → error; `photo_consent` se persiste.
+- [x] Alergias "maní, gluten" → `allergy_tags {peanut,gluten}`; vacío → `{}`.
+- [x] Error de red/RLS muestra "No se pudo guardar, reintentá", modal abierto, sin duplicar.
+- [x] Botón "Vincular otro padre" sigue abriendo el modal y agregando en memoria con pill PENDIENTE.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan; `advisors` sin issues nuevos.
+- [x] Screenshots `.playwright-mcp/` en 1280/768/375 (perfil + modal edición + guardado).
 
 ---
 
