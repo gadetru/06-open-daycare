@@ -9,21 +9,33 @@ import SunIcon from "../../components/shared/SunIcon";
 import AddKidModal from "../../components/kids/AddKidModal";
 import type { RoomOption } from "../../components/kids/AddKidModal";
 import LinkParentModal from "../../components/kids/LinkParentModal";
-import { childRowToKid } from "../../lib/kids-utils";
-import type { ChildRow, NewChildFields } from "../../lib/kids-utils";
-import type { LinkedParent } from "../../data/kids";
+import {
+  buildParentRows,
+  childRowToKid,
+} from "../../lib/kids-utils";
+import type {
+  AcceptedParentRow,
+  ChildRow,
+  NewChildFields,
+  ParentRowData,
+  PendingInvitationRow,
+} from "../../lib/kids-utils";
 import { createClient } from "@/utils/supabase/client";
 
 type KidProfileClientProps = {
   child: ChildRow | null;
   rooms: RoomOption[];
   notice: string | null;
+  pendingInvitations: PendingInvitationRow[];
+  acceptedParents: AcceptedParentRow[];
 };
 
 export default function KidProfileClient({
   child,
   rooms,
   notice,
+  pendingInvitations,
+  acceptedParents,
 }: KidProfileClientProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -35,6 +47,7 @@ export default function KidProfileClient({
 
   const kid = child ? childRowToKid(child, 0) : null;
   const kidFirstName = kid?.name.split(" ")[0] ?? "";
+  const parentRows = buildParentRows(pendingInvitations, acceptedParents);
 
   function openLinkModal() {
     setIsLinkModalOpen(true);
@@ -173,7 +186,7 @@ export default function KidProfileClient({
                     PADRES VINCULADOS
                   </div>
                   <div className="flex flex-col gap-[14px]">
-                    {kid.parents.map((parent, index) => (
+                    {parentRows.map((parent, index) => (
                       <ParentRow
                         key={`${parent.name}-${index}`}
                         parent={parent}
@@ -280,7 +293,7 @@ function ParentRow({
   parent,
   avatar,
 }: {
-  parent: LinkedParent;
+  parent: ParentRowData;
   avatar: { bg: string; ink: string };
 }) {
   return (
