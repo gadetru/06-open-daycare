@@ -7,7 +7,12 @@ import {
   getTodayMasked,
   isRealDate,
 } from "../../lib/dates";
-import { parseAllergyTags, type NewChildFields } from "../../lib/kids-utils";
+import {
+  allergyTagsToText,
+  isoDateToMasked,
+  parseAllergyTags,
+  type NewChildFields,
+} from "../../lib/kids-utils";
 
 export type RoomOption = {
   id: string;
@@ -21,6 +26,8 @@ type AddKidModalProps = {
   onSave: (fields: NewChildFields) => void;
   isSaving: boolean;
   saveError: string | null;
+  initialValues?: NewChildFields | undefined;
+  submitLabel?: string | undefined;
 };
 
 type FormState = {
@@ -46,8 +53,8 @@ type DateParts = {
   year: number;
 };
 
-function getEmptyForm(rooms: RoomOption[]): FormState {
-  return {
+function getEmptyForm(rooms: RoomOption[], initialValues?: NewChildFields): FormState {
+  const defaultForm: FormState = {
     name: "",
     birthDate: "",
     roomId: rooms[0]?.id ?? "",
@@ -56,6 +63,20 @@ function getEmptyForm(rooms: RoomOption[]): FormState {
     enrolledAt: getTodayMasked(),
     photoConsent: true,
   };
+
+  if (initialValues) {
+    return {
+      name: initialValues.fullName ?? defaultForm.name,
+      birthDate: isoDateToMasked(initialValues.birthDate) || defaultForm.birthDate,
+      roomId: initialValues.roomId ?? defaultForm.roomId,
+      allergies: allergyTagsToText(initialValues.allergyTags) || defaultForm.allergies,
+      note: initialValues.medicalNotes ?? defaultForm.note,
+      enrolledAt: isoDateToMasked(initialValues.enrolledAt) || defaultForm.enrolledAt,
+      photoConsent: initialValues.photoConsent ?? defaultForm.photoConsent,
+    };
+  }
+
+  return defaultForm;
 }
 
 export default function AddKidModal({
@@ -65,8 +86,10 @@ export default function AddKidModal({
   onSave,
   isSaving,
   saveError,
+  initialValues,
+  submitLabel,
 }: AddKidModalProps) {
-  const [form, setForm] = useState<FormState>(() => getEmptyForm(rooms));
+  const [form, setForm] = useState<FormState>(() => getEmptyForm(rooms, initialValues));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isRoomsOpen, setIsRoomsOpen] = useState(false);
 
@@ -181,11 +204,11 @@ export default function AddKidModal({
           >
             Cancelar
           </button>
-          <span
+<span
             id="add-kid-title"
             className="font-heading text-[18px] font-semibold text-ink"
           >
-            Agregar niño
+            {submitLabel ?? "Agregar niño"}
           </span>
           <button
             type="button"
@@ -193,7 +216,7 @@ export default function AddKidModal({
             disabled={isSaving}
             className="text-[15px] font-extrabold text-primary disabled:opacity-50"
           >
-            {isSaving ? "Guardando…" : "Guardar"}
+            {isSaving ? "Guardando…" : submitLabel ?? "Guardar"}
           </button>
         </div>
 

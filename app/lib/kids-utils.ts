@@ -1,5 +1,11 @@
 import type { Kid, KidBadge } from "../data/kids";
-import { formatShortDate, getAgeInYears, SHORT_MONTHS } from "./dates";
+import {
+  formatMaskedDate,
+  formatShortDate,
+  getAgeInYears,
+  isRealDate,
+  SHORT_MONTHS,
+} from "./dates";
 
 const AVATAR_PALETTES: ReadonlyArray<{ bg: string; ink: string }> = [
   { bg: "#A9D9E8", ink: "#1F7A93" },
@@ -81,6 +87,12 @@ const ALLERGY_TAG_TRANSLATIONS: Record<string, string> = {
   gluten: "gluten",
 };
 
+const ALLERGY_TAG_TO_TEXT: Record<string, string> = {
+  peanut: "maní",
+  lactose: "lactosa",
+  gluten: "gluten",
+};
+
 export function parseAllergyTags(raw: string): string[] {
   const tags: string[] = [];
   for (const part of raw.split(",")) {
@@ -98,6 +110,20 @@ export function parseAllergyTags(raw: string): string[] {
     }
   }
   return tags;
+}
+
+export function allergyTagsToText(tags: string[]): string {
+  return tags
+    .map((tag) => ALLERGY_TAG_TO_TEXT[tag.toLowerCase()] ?? tag.toLowerCase())
+    .join(", ");
+}
+
+export function isoDateToMasked(iso: string): string {
+  const [year, month, day] = iso.slice(0, 10).split("-").map(Number);
+  if (!isRealDate(day, month, year)) {
+    return "";
+  }
+  return formatMaskedDate(new Date(year, month - 1, day));
 }
 
 export function getInitial(name: string): string {
