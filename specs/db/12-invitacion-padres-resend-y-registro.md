@@ -103,18 +103,18 @@ Mapeo: `relationship_type` ↔ UI: `mother→Mamá`, `father→Papá`, `guardian
 
 ## Acceptance criteria
 
-- [ ] Env: `.env` tiene `RESEND_API_KEY`, `RESEND_FROM_EMAIL` y `SUPABASE_SERVICE_ROLE_KEY` (grep: no usadas en ningún client component); `resend` está en `package.json`.
-- [ ] `invitations` + `parent_children` existen en `public` con los enums y UNIQUE(`code`) / UNIQUE(`parent_id`,`child_id`); advisors sin issues nuevos.
-- [ ] Modal: submit válido como `gabriel@google.com` crea la fila en `invitations` (status `pending`, `expires_at` ≈ +7d, `relationship` correcto: Mamá→`mother`, Papá→`father`, Tutor/a→`guardian`), se dispara el email de Resend con código + link `?code=&email=`, y el modal pasa a estado "sent" mostrando el **código real** y "Vence en 7 días" con el CTA deshabilitado "Invitación enviada".
-- [ ] Modal: nombre/email inválidos muestran los errores inline existentes (SPEC 05) y no crean fila; fallo de red/Resend muestra "No se pudo enviar la invitación" sin cerrar.
-- [ ] Perfil: al recargar `/kids/[id]`, la invitación aparece en PADRES VINCULADOS con pill **PENDIENTE** y `role "Mamá · invitación enviada"` (leída de DB, no en memoria). Una invitación de un niño de otro daycare no es visible (RLS).
-- [ ] `/activar-cuenta?code=7K4P9&email=lucia@x.com` prefill código y email; el email es readonly; sin query params muestra el form con invitado "Niño · Sala Soles" desde la invitación o error claro si el código falta/es inválido.
-- [ ] Contraseña <6 chars → error inline "La contraseña debe tener al menos 6 caracteres"; checkbox sin marcar → no activa.
-- [ ] Código válido + email + contraseña: crea el `auth.user` (email confirmado, login funciona), la fila en `public.users` (`role parent`, `status active`, `daycare_id` del niño), la fila en `parent_children` con el `relationship` correcto, y la invitación pasa a `status accepted` con `accepted_at`.
-- [ ] Código inexistente o vencido → "El código es inválido o venció"; email con cuenta previa → "Ya existe una cuenta con ese email"; en ambos casos no hay filas nuevas.
-- [ ] Tras activar: redirect a `/login?activated=1` y banner "Tu cuenta fue activada. Ingresá con tu email y contraseña."; el login con las credenciales del padre funciona y perfil muestra la fila con pill **ACTIVA** (`role "Mamá · activa"`) sin duplicados.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots `.playwright-mcp/` en 1280/768/375 (modal form + estado sent, perfil con PENDIENTE, `/activar-cuenta` prefill + error, `/login` con banner, perfil con ACTIVA).
+- [x] Env: `.env` tiene `RESEND_API_KEY`, `RESEND_FROM_EMAIL` y `SUPABASE_SERVICE_ROLE_KEY` (grep: no usadas en ningún client component); `resend` está en `package.json`.
+- [x] `invitations` + `parent_children` existen en `public` con los enums y UNIQUE(`code`) / UNIQUE(`parent_id`,`child_id`); advisors sin issues nuevos.
+- [x] Modal: submit válido como `gabriel@google.com` crea la fila en `invitations` (status `pending`, `expires_at` ≈ +7d, `relationship` correcto: Mamá→`mother`, Papá→`father`, Tutor/a→`guardian`), se dispara el email de Resend con código + link `?code=&email=`, y el modal pasa a estado "sent" mostrando el **código real** y "Vence en 7 días" con el CTA deshabilitado "Invitación enviada".
+- [x] Modal: nombre/email inválidos muestran los errores inline existentes (SPEC 05) y no crean fila; fallo de red/Resend muestra "No se pudo enviar la invitación" sin cerrar.
+- [x] Perfil: al recargar `/kids/[id]`, la invitación aparece en PADRES VINCULADOS con pill **PENDIENTE** y `role "Mamá · invitación enviada"` (leída de DB, no en memoria). Una invitación de un niño de otro daycare no es visible (RLS).
+- [x] `/activar-cuenta?code=7K4P9&email=lucia@x.com` prefill código y email; el email es readonly; sin query params muestra el form con invitado "Niño · Sala Soles" desde la invitación o error claro si el código falta/es inválido.
+- [x] Contraseña <6 chars → error inline "La contraseña debe tener al menos 6 caracteres"; checkbox sin marcar → no activa.
+- [x] Código válido + email + contraseña: crea el `auth.user` (email confirmado, login funciona), la fila en `public.users` (`role parent`, `status active`, `daycare_id` del niño), la fila en `parent_children` con el `relationship` correcto, y la invitación pasa a `status accepted` con `accepted_at`.
+- [x] Código inexistente o vencido → "El código es inválido o venció"; email con cuenta previa → "Ya existe una cuenta con ese email"; en ambos casos no hay filas nuevas.
+- [x] Tras activar: redirect a `/login?activated=1` y banner "Tu cuenta fue activada. Ingresá con tu email y contraseña."; el login con las credenciales del padre funciona y perfil muestra la fila con pill **ACTIVA** (`role "Mamá · activa"`) sin duplicados.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots `.playwright-mcp/` en 1280/768/375 (modal form + estado sent, perfil con PENDIENTE, `/activar-cuenta` prefill + error, `/login` con banner, perfil con ACTIVA).
 
 ---
 

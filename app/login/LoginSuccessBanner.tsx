@@ -1,12 +1,32 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginSuccessBanner() {
   const searchParams = useSearchParams();
   const justActivated = searchParams.get("activated") === "1";
+  const [dismissed, setDismissed] = useState(false);
 
-  if (!justActivated) {
+  useEffect(() => {
+    if (!justActivated || dismissed) return;
+    function hideBanner() {
+      setDismissed(true);
+    }
+    window.addEventListener("input", hideBanner);
+    window.addEventListener("keydown", hideBanner);
+    return () => {
+      window.removeEventListener("input", hideBanner);
+      window.removeEventListener("keydown", hideBanner);
+    };
+  }, [justActivated, dismissed]);
+
+  useEffect(() => {
+    if (justActivated) setDismissed(false);
+  }, [justActivated]);
+
+  if (!justActivated || dismissed) {
     return null;
   }
 
