@@ -12,6 +12,7 @@ import LinkParentModal from "../../components/kids/LinkParentModal";
 import {
   buildParentRows,
   childRowToKid,
+  getInitial,
 } from "../../lib/kids-utils";
 import type {
   AcceptedParentRow,
@@ -43,7 +44,6 @@ export default function KidProfileClient({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
-  const [linkModalCount, setLinkModalCount] = useState(0);
 
   const kid = child ? childRowToKid(child, 0) : null;
   const kidFirstName = kid?.name.split(" ")[0] ?? "";
@@ -51,7 +51,6 @@ export default function KidProfileClient({
 
   function openLinkModal() {
     setIsLinkModalOpen(true);
-    setLinkModalCount((current) => current + 1);
   }
 
   async function handleSaveKid(fields: NewChildFields) {
@@ -165,11 +164,17 @@ export default function KidProfileClient({
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-[16px] border border-border bg-surface">
-                  <InfoRow label="Fecha de nacimiento" value={kid.birthDate} divider />
+                <dl
+                  className="overflow-hidden rounded-[16px] border border-border bg-surface"
+                >
+                  <InfoRow
+                    label="Fecha de nacimiento"
+                    value={kid.birthDate}
+                    divider
+                  />
                   <InfoRow label="Sala" value={kid.room} divider />
                   <InfoRow label="Ingreso" value={kid.enrolledDate} />
-                </div>
+                </dl>
               </div>
 
               <div className="flex w-full flex-none flex-col gap-[14px] lg:w-[300px]">
@@ -248,7 +253,6 @@ export default function KidProfileClient({
 
       {isLinkModalOpen && child && kid && (
         <LinkParentModal
-          key={linkModalCount}
           isOpen={isLinkModalOpen}
           childId={child.id}
           kidName={kid.name}
@@ -283,8 +287,8 @@ function InfoRow({
         divider ? "border-b border-border-soft" : ""
       }`}
     >
-      <span className="text-[14.5px] text-ink-muted">{label}</span>
-      <span className="text-[14.5px] font-extrabold text-ink">{value}</span>
+      <dt className="m-0 text-[14.5px] text-ink-muted">{label}</dt>
+      <dd className="m-0 text-[14.5px] font-extrabold text-ink">{value}</dd>
     </div>
   );
 }
@@ -302,7 +306,7 @@ function ParentRow({
         className="flex h-10 w-10 flex-none items-center justify-center rounded-full font-heading text-[16px] font-semibold"
         style={{ backgroundColor: avatar.bg, color: avatar.ink }}
       >
-        {parent.name.charAt(0)}
+        {getInitial(parent.name)}
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate text-[14.5px] font-extrabold text-ink">
@@ -315,18 +319,16 @@ function ParentRow({
   );
 }
 
-function StatusPill({ status }: { status: "ACTIVA" | "PENDIENTE" }) {
-  if (status === "PENDIENTE") {
-    return (
-      <span className="flex-none rounded-full bg-pending-bg px-[9px] py-1 text-[10.5px] font-extrabold text-pending-ink">
-        PENDIENTE
-      </span>
-    );
-  }
+function StatusPill({ status }: { status: ParentRowData["status"] }) {
+  const isPending = status === "PENDIENTE";
 
   return (
-    <span className="flex-none rounded-full bg-[#CFEBD8] px-[9px] py-1 text-[10.5px] font-extrabold text-[#3E9B6C]">
-      ACTIVA
+    <span
+      className={`flex-none rounded-full px-[9px] py-1 text-[10.5px] font-extrabold ${
+        isPending ? "bg-pending-bg text-pending-ink" : "bg-[#CFEBD8] text-[#3E9B6C]"
+      }`}
+    >
+      {status}
     </span>
   );
 }
@@ -334,6 +336,7 @@ function StatusPill({ status }: { status: "ACTIVA" | "PENDIENTE" }) {
 function MenuIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="20"
       height="20"
       viewBox="0 0 24 24"
@@ -352,6 +355,7 @@ function MenuIcon(props: SVGProps<SVGSVGElement>) {
 function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -370,6 +374,7 @@ function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
 function AlertIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="22"
       height="22"
       viewBox="0 0 24 24"
@@ -389,6 +394,7 @@ function AlertIcon(props: SVGProps<SVGSVGElement>) {
 function PlusIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"
