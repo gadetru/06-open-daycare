@@ -19,7 +19,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Supabase
 
 - El proyecto tiene MCP de Supabase activo (herramientas `supabase_*`). No asumas la config: revisa tablas/RLS reales antes de migrar.
-- El schema de referencia (no implementado aún) vive en `../07-DB-Schema` (reference `docs`).
+- El schema de referencia vive en `../07-DB-Schema` (reference `docs`): define el modelo completo (también `posts`, etc.); se implementa por etapas según specs. Antes de migrar a una tabla nueva, compará contra ese documento.
 - **Regla general**: activa RLS en toda tabla de `public`, no expongas secretos en el cliente, y verifica los cambios con `supabase_get_advisors` (security/performance) después de cada DDL.
 - **Siempre crear el archivo de migración local**: toda manipulación de la base de datos (crear/alterar/drop de tablas, columnas, tipos, policies, funciones, triggers, seeds/data) se aplica por MCP (`supabase_apply_migration`) y **además** se versiona el SQL idéntico (réplica 1:1) en `supabase/migrations/<version>_<nombre>.sql` (formato `<YYYY-MM-DD_HHMMSS>_<snake_case>.sql`, ejemplo `2026-09-22_105250_create_users_table.sql`), historial para git sin depender de la CLI local. Sin excepción: si hay DDL/data change hacia la DB remota, hay archivo local asociado.
 - Para auth/sesiones usa el patrón `@supabase/ssr` con cookies; nunca confíes en `user_metadata` para decisiones de autorización.
@@ -27,11 +27,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - `server.ts` → `createClient(cookieStore)` para Server Components, Server Actions y Route Handlers (usa `@supabase/ssr` con cookies).
   - `client.ts` → `createClient()` para Client Components (browser).
   - `middleware.ts` → `updateSession(request)` que refresca la sesión con `supabase.auth.getClaims()`; se engancha desde el root `proxy.ts` (**Next.js 16 renombró `middleware.ts` → `proxy.ts`**, un root `middleware.ts` se ignora) y corre en todas las rutas via matcher.
-  - Env vars en `.env.local` (y `.env.template`): `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (**publishable key**, no usar anon/service_role en el cliente). Verificarlas con las herramientas MCP `supabase_get_project_url` / `supabase_get_publishable_keys`.
+  - Env vars en `.env` (el archivo de entorno del proyecto es `.env`, no `.env.local`; `.env.template` las documenta): `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (**publishable key**, no usar anon/service_role en el cliente), y server-only `RESEND_API_KEY` + `RESEND_FROM_EMAIL` (emails de invitación), `SUPABASE_SERVICE_ROLE_KEY` (solo server actions, nunca en client components) y `SUPABASE_DB_PASSWORD`. Verificar URL/keys con las herramientas MCP `supabase_get_project_url` / `supabase_get_publishable_keys`.
   - Para proteger páginas/datos usar `auth.getClaims()`; no confiar en `getSession()` para autorización (lee la cookie sin revalidar).
-- Estado actual de la DB remota: `public.daycares` (seed de 4 guarderías) y `public.users` (RLS + policy `users_select_own`; 1 staff seed: `gabriel@google.com` / pass `1q2w3e4r5t`, email confirmado, `role staff`, atado a "Guardería Sala Soles" por subquery de nombre). `daycare_id` indexado (`users_daycare_id_idx`). La capa Supabase ya está integrada en la app, pero la UI todavía usa datos hardcodeados y modales en memoria.
+- Estado actual de la DB remota (specs 07–12; réplica 1:1 en `supabase/migrations/`):
+  - `public.daycares` (4 seeds) y `public.rooms` (3 salas por daycare: Soles / Estrellas / Arcoíris).
+  - `public.users` (enum `user_role` `staff|parent|admin`, `user_status` `pending|active`; policies `users_select_own` + `users_staff_same_daycare_select` vía RPC `is_same_daycare_staff`, que evita la recursión). Staff seed: `gabriel@google.com` / pass `1q2w3e4r5t`, email confirmado, `role staff`, atado a "Guardería Sala Soles".
+  - `public.children` (`status` default `active`, `allergy_tags text[]`, `photo_consent`; policies por comando: `children_select_same_daycare` + `children_staff_insert/update/delete`).
+  - `public.invitations` (spec 12; enums `relationship_type` `father|mother|guardian` e `invitation_status` `pending|accepted|expired|cancelled`; `code text unique`; policies `invitations_staff_insert/select` por daycare del niño).
+  - `public.parent_children` (spec 12; `UNIQUE(parent_id, child_id)`; solo SELECT con `parent_children_select` staff/padre propio — el INSERT lo hace el service role al activar).
+  - RPC `public.is_same_daycare_staff(uuid, uuid)` (SECURITY DEFINER, `search_path` fijo; EXECUTE solo `authenticated`/`service_role`). RLS activa en toda tabla de `public`; GRANT a `authenticated` por comando, nunca `FOR ALL`. Verificar cambios con `supabase_get_advisors`.
+- La app ya lee/escribe la DB: login real, `/kids`, `/kids/[id]`, invitaciones con Resend y activación de cuenta. El único módulo que sigue hardcodeado es el **feed** (`/` y `CreatePostModal`) — candidato a spec futuro con tabla `posts`.
 
 ## Skills instaladas
+
+Instaladas con `npx skills` y bloqueadas en `skills-lock.json` (fuentes: `supabase/agent-skills` y `klerith/fernando-skills`), replicadas en `.agents/skills/` (spec, spec-impl, supabase, supabase-postgres-best-practices) y `.claude/skills/`.
 
 ### Supabase (`.agents/skills/supabase/`)
 
@@ -62,11 +71,18 @@ Cubre 8 categorías de rendimiento priorizadas por impacto (query performance, c
 
 # Arquitectura y toolchain
 
-- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Las rutas de negocio son client components (`"use client"`) que reusan `Sidebar` y manejo de hamburguesa/overlay; en `app/kids/[id]/page.tsx` se usa `use(params)` para `params: Promise<{ id: string }>`. Rutas: `app/page.tsx` (feed), `app/kids/page.tsx`, `app/kids/[id]/page.tsx`, `app/login/page.tsx` (estático) y `app/activar-cuenta/page.tsx` (estático).
+- Next.js 16 + App Router. **No hay `src/`**: el código vive en `app/` en la raíz. Rutas:
+  - `app/page.tsx` (feed, `/`) → **client component** con datos en memoria (`seedPosts` + `CreatePostModal`). Único módulo sin conectar a la DB.
+  - `app/kids/page.tsx` (`/kids`) → **server component** que fetchea `rooms` + `children` del daycare del staff con `createClient(cookieStore)` y delega la UI en `KidsClient` (client: buscador + alta). `app/kids/loading.tsx` es el fallback de carga.
+  - `app/kids/[id]/page.tsx` (`/kids/[id]`) → **server component** que fetchea el niño + `invitations` (pending vigentes) + `parent_children`→`users`; usa `await params` (`params: Promise<{ id: string }>`). La UI vive en `KidProfileClient` (client) que arma `ParentRowData` con `buildParentRows` (`kids-utils.ts`).
+  - `app/login/page.tsx` → client, login real con `supabase.auth.signInWithPassword` (spec 09) + `LoginSuccessBanner` (banner `?activated=1`).
+  - `app/activar-cuenta/page.tsx` → client, `ActivationForm` lee `?code`/`?email` y llama a las server actions de activación (spec 12).
+- **Server actions** (`"use server"`) en `app/actions/`: `auth.ts` (`logout`), `invitations.ts` (`createParentInvitation`: inserta en `invitations` con RLS staff, genera código único con retry y envía el email vía `resend`), `activations.ts` (`getActivationContext` + `activateParentAccount` con client admin `SUPABASE_SERVICE_ROLE_KEY` server-only: crea el `auth.user`, la fila en `users`, el vínculo `parent_children` y marca la invitación `accepted`).
+- Deps: `@supabase/ssr`, `@supabase/supabase-js` y `resend`.
 - Tailwind v4 (CSS-first): **no existe `tailwind.config.js`**. El tema y fuentes se configuran en `app/globals.css` vía `@import "tailwindcss"` y `@theme`. PostCSS usa `@tailwindcss/postcss`.
 - Alias de path `@/*` → raíz del repo (ver `tsconfig.json`).
-- Datos hardcodeados tipados en `app/data/`: `kids.ts` (tipos `Kid`, `LinkedParent`, `KidBadge`; 8 niños, padres con status `ACTIVA | PENDIENTE`) y `rooms.ts` (salas `Soles | Estrellas | Arcoíris`). Utilidades de dominio en `app/lib/` (`dates.ts`, `kids-utils.ts`, `posts-utils.ts`); la capa de datos sigue hardcodeada, pero la conexión a la DB vía Supabase ya está lista (`utils/supabase/` + `proxy.ts`) para migrar los módulos a fetch real.
-- Modales de alta en memoria (sin persistencia): `CreatePostModal` (feed), `AddKidModal` (`/kids`) y `LinkParentModal` (`/kids/[id]`). Validan en español y actualizan el estado local de la página.
+- Tipos y utilidades de dominio en `app/lib/`: `dates.ts`, `kids-utils.ts` (`ChildRow`, `childRowToKid`, `buildParentRows`, alergias), `posts-utils.ts` (feed). `app/data/kids.ts` conserva los tipos (`Kid`, `KidBadge`, `LinkedParent`) y el seed de 8 niños **solo** para `CreatePostModal` (feed); `app/data/rooms.ts` quedó sin uso (las salas vienen de la DB).
+- Modales: `AddKidModal` (`/kids`) y `LinkParentModal` (`/kids/[id]`) ya **persisten en la DB** (spec 10 y 12; el segundo envía el email de invitación con Resend y muestra el código real en estado "sent"). Solo `CreatePostModal` (feed) sigue en memoria. Todos validan en español y reusan estados `submitting | sent | error`.
 - `.env*` está en `.gitignore` silenciosamente (línea `*.tsbuildinfo`/`next-env.d.ts` también gitignoreados). No asumas que hay env config en el repo.
 - `CLAUDE.md` solo referencia `@AGENTS.md`.
 
