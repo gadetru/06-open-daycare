@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { SVGProps } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -9,9 +9,11 @@ import SunIcon from "../../components/shared/SunIcon";
 import AddKidModal from "../../components/kids/AddKidModal";
 import type { RoomOption } from "../../components/kids/AddKidModal";
 import LinkParentModal from "../../components/kids/LinkParentModal";
+import type { Kid } from "../../data/kids";
 import {
   buildParentRows,
   childRowToKid,
+  getInitial,
 } from "../../lib/kids-utils";
 import type {
   AcceptedParentRow,
@@ -43,16 +45,35 @@ export default function KidProfileClient({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
-  const [linkModalCount, setLinkModalCount] = useState(0);
 
   const kid = child ? childRowToKid(child, 0) : null;
   const kidFirstName = kid?.name.split(" ")[0] ?? "";
   const parentRows = buildParentRows(pendingInvitations, acceptedParents);
 
+  function openSidebar() {
+    setIsSidebarOpen(true);
+  }
+
+  function closeSidebar() {
+    setIsSidebarOpen(false);
+  }
+
+  function openEditModal() {
+    setIsEditing(true);
+  }
+
   function openLinkModal() {
     setIsLinkModalOpen(true);
-    setLinkModalCount((current) => current + 1);
   }
+
+  const closeEditModal = useCallback(() => {
+    setSaveError(null);
+    setIsEditing(false);
+  }, []);
+
+  const closeLinkModal = useCallback(() => {
+    setIsLinkModalOpen(false);
+  }, []);
 
   async function handleSaveKid(fields: NewChildFields) {
     if (!child) {
@@ -89,12 +110,12 @@ export default function KidProfileClient({
 
   return (
     <div className="flex min-h-full bg-background">
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
       {!isSidebarOpen && (
         <button
           type="button"
-          onClick={() => setIsSidebarOpen(true)}
+          onClick={openSidebar}
           className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-ink lg:hidden"
           aria-label="Abrir menú"
         >
@@ -124,52 +145,19 @@ export default function KidProfileClient({
           {kid ? (
             <div className="flex flex-wrap items-start gap-[26px]">
               <div className="flex min-w-[300px] flex-1 flex-col gap-[18px]">
-                <div className="flex flex-wrap items-center gap-[18px]">
-                  <div
-                    className="flex h-[84px] w-[84px] flex-none items-center justify-center rounded-full font-heading text-[34px] font-semibold"
-                    style={{
-                      backgroundColor: kid.avatarBg,
-                      color: kid.avatarInk,
-                    }}
-                  >
-                    {kid.initial}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h1 className="m-0 font-heading text-[28px] font-semibold leading-tight text-ink">
-                      {kid.name}
-                    </h1>
-                    <p className="mt-1 m-0 text-[15px] text-ink-muted">
-                      {kid.age} años · Sala {kid.room}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    className="flex-none rounded-[12px] border-[1.5px] border-border bg-surface px-4 py-[9px] text-[14px] font-bold text-[#6e6359]"
-                  >
-                    Editar
-                  </button>
-                </div>
+                <KidHeader kid={kid} onEdit={openEditModal} />
 
-                <div className="flex gap-[14px] rounded-[16px] bg-alert-bg px-[18px] py-4">
-                  <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px] bg-alert-icon-bg">
-                    <AlertIcon />
-                  </div>
-                  <div>
-                    <div className="mb-0.5 text-[15px] font-extrabold text-alert-title">
-                      Alergias y notas
-                    </div>
-                    <div className="text-[14.5px] leading-normal text-alert-text">
-                      {kid.note}
-                    </div>
-                  </div>
-                </div>
+                <KidNotesPanel note={kid.note} />
 
-                <div className="overflow-hidden rounded-[16px] border border-border bg-surface">
-                  <InfoRow label="Fecha de nacimiento" value={kid.birthDate} divider />
+                <dl className="overflow-hidden rounded-[16px] border border-border bg-surface">
+                  <InfoRow
+                    label="Fecha de nacimiento"
+                    value={kid.birthDate}
+                    divider
+                  />
                   <InfoRow label="Sala" value={kid.room} divider />
                   <InfoRow label="Ingreso" value={kid.enrolledDate} />
-                </div>
+                </dl>
               </div>
 
               <div className="flex w-full flex-none flex-col gap-[14px] lg:w-[300px]">
@@ -181,43 +169,14 @@ export default function KidProfileClient({
                   Resumen del día
                 </Link>
 
-                <div className="rounded-[16px] border border-border bg-surface px-[18px] py-4">
-                  <div className="mb-[14px] text-[12.5px] font-extrabold tracking-[.8px] text-[#8A7C6D]">
-                    PADRES VINCULADOS
-                  </div>
-                  <div className="flex flex-col gap-[14px]">
-                    {parentRows.map((parent, index) => (
-                      <ParentRow
-                        key={`${parent.name}-${index}`}
-                        parent={parent}
-                        avatar={parentAvatarPalette[index % parentAvatarPalette.length]}
-                      />
-                    ))}
-                    <button
-                      type="button"
-                      onClick={openLinkModal}
-                      className="flex items-center gap-3 px-0 pb-2 pt-2"
-                    >
-                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
-                        <PlusIcon />
-                      </span>
-                      <span className="text-[14.5px] font-extrabold text-coral-deep">
-                        Vincular otro padre
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                <LinkedParentsPanel
+                  parentRows={parentRows}
+                  onLinkParent={openLinkModal}
+                />
               </div>
             </div>
           ) : (
-            <div className="rounded-[16px] border border-border bg-surface p-6">
-              <h1 className="m-0 font-heading text-[24px] font-semibold text-ink">
-                Niño no encontrado
-              </h1>
-              <p className="mt-2 text-[15px] text-ink-soft">
-                El niño que buscas no está registrado en esta sala.
-              </p>
-            </div>
+            <KidNotFoundCard />
           )}
         </div>
       </main>
@@ -226,10 +185,7 @@ export default function KidProfileClient({
         <AddKidModal
           isOpen={isEditing}
           rooms={rooms}
-          onClose={() => {
-            setSaveError(null);
-            setIsEditing(false);
-          }}
+          onClose={closeEditModal}
           onSave={handleSaveKid}
           isSaving={isSaving}
           saveError={saveError}
@@ -248,14 +204,60 @@ export default function KidProfileClient({
 
       {isLinkModalOpen && child && kid && (
         <LinkParentModal
-          key={linkModalCount}
           isOpen={isLinkModalOpen}
           childId={child.id}
           kidName={kid.name}
           kidFirstName={kidFirstName}
-          onClose={() => setIsLinkModalOpen(false)}
+          onClose={closeLinkModal}
         />
       )}
+    </div>
+  );
+}
+
+function KidHeader({ kid, onEdit }: { kid: Kid; onEdit: () => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-[18px]">
+      <div
+        aria-hidden="true"
+        className="flex h-[84px] w-[84px] flex-none items-center justify-center rounded-full font-heading text-[34px] font-semibold"
+        style={{ backgroundColor: kid.avatarBg, color: kid.avatarInk }}
+      >
+        {kid.initial}
+      </div>
+      <div className="min-w-0 flex-1">
+        <h1 className="m-0 font-heading text-[28px] font-semibold leading-tight text-ink">
+          {kid.name}
+        </h1>
+        <p className="mt-1 m-0 text-[15px] text-ink-muted">
+          {kid.age} años · Sala {kid.room}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="flex-none rounded-[12px] border-[1.5px] border-border bg-surface px-4 py-[9px] text-[14px] font-bold text-[#6e6359]"
+      >
+        Editar
+      </button>
+    </div>
+  );
+}
+
+function KidNotesPanel({ note }: { note: string }) {
+  return (
+    <div className="flex gap-[14px] rounded-[16px] bg-alert-bg px-[18px] py-4">
+      <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px] bg-alert-icon-bg">
+        <AlertIcon />
+      </div>
+      <div>
+        <h2 className="mb-0.5 text-[15px] font-extrabold text-alert-title">
+          Alergias y notas
+        </h2>
+        <div className="text-[14.5px] leading-normal text-alert-text">
+          {note}
+        </div>
+      </div>
     </div>
   );
 }
@@ -267,6 +269,59 @@ const parentAvatarPalette = [
   { bg: "#B9DEC4", ink: "#FFFFFF" },
   { bg: "#F4DC8E", ink: "#FFFFFF" },
 ];
+
+function LinkedParentsPanel({
+  parentRows,
+  onLinkParent,
+}: {
+  parentRows: ParentRowData[];
+  onLinkParent: () => void;
+}) {
+  return (
+    <div className="rounded-[16px] border border-border bg-surface px-[18px] py-4">
+      <h2 className="mb-[14px] text-[12.5px] font-extrabold tracking-[.8px] text-[#8A7C6D]">
+        PADRES VINCULADOS
+      </h2>
+      <div className="flex flex-col gap-[14px]">
+        <ul className="flex flex-col gap-[14px]">
+          {parentRows.map((parent, index) => (
+            <li key={`${parent.name}-${index}`}>
+              <ParentRow
+                parent={parent}
+                avatar={parentAvatarPalette[index % parentAvatarPalette.length]}
+              />
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          onClick={onLinkParent}
+          className="flex items-center gap-3 px-0 pb-2 pt-2"
+        >
+          <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
+            <PlusIcon />
+          </span>
+          <span className="text-[14.5px] font-extrabold text-coral-deep">
+            Vincular otro padre
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function KidNotFoundCard() {
+  return (
+    <div className="rounded-[16px] border border-border bg-surface p-6">
+      <h1 className="m-0 font-heading text-[24px] font-semibold text-ink">
+        Niño no encontrado
+      </h1>
+      <p className="mt-2 text-[15px] text-ink-soft">
+        El niño que buscas no está registrado en esta sala.
+      </p>
+    </div>
+  );
+}
 
 function InfoRow({
   label,
@@ -283,8 +338,8 @@ function InfoRow({
         divider ? "border-b border-border-soft" : ""
       }`}
     >
-      <span className="text-[14.5px] text-ink-muted">{label}</span>
-      <span className="text-[14.5px] font-extrabold text-ink">{value}</span>
+      <dt className="m-0 text-[14.5px] text-ink-muted">{label}</dt>
+      <dd className="m-0 text-[14.5px] font-extrabold text-ink">{value}</dd>
     </div>
   );
 }
@@ -299,10 +354,11 @@ function ParentRow({
   return (
     <div className="flex items-center gap-3">
       <div
+        aria-hidden="true"
         className="flex h-10 w-10 flex-none items-center justify-center rounded-full font-heading text-[16px] font-semibold"
         style={{ backgroundColor: avatar.bg, color: avatar.ink }}
       >
-        {parent.name.charAt(0)}
+        {getInitial(parent.name)}
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate text-[14.5px] font-extrabold text-ink">
@@ -315,18 +371,16 @@ function ParentRow({
   );
 }
 
-function StatusPill({ status }: { status: "ACTIVA" | "PENDIENTE" }) {
-  if (status === "PENDIENTE") {
-    return (
-      <span className="flex-none rounded-full bg-pending-bg px-[9px] py-1 text-[10.5px] font-extrabold text-pending-ink">
-        PENDIENTE
-      </span>
-    );
-  }
+function StatusPill({ status }: { status: ParentRowData["status"] }) {
+  const isPending = status === "PENDIENTE";
 
   return (
-    <span className="flex-none rounded-full bg-[#CFEBD8] px-[9px] py-1 text-[10.5px] font-extrabold text-[#3E9B6C]">
-      ACTIVA
+    <span
+      className={`flex-none rounded-full px-[9px] py-1 text-[10.5px] font-extrabold ${
+        isPending ? "bg-pending-bg text-pending-ink" : "bg-[#CFEBD8] text-[#3E9B6C]"
+      }`}
+    >
+      {status}
     </span>
   );
 }
@@ -334,6 +388,7 @@ function StatusPill({ status }: { status: "ACTIVA" | "PENDIENTE" }) {
 function MenuIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="20"
       height="20"
       viewBox="0 0 24 24"
@@ -352,6 +407,7 @@ function MenuIcon(props: SVGProps<SVGSVGElement>) {
 function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -370,6 +426,7 @@ function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
 function AlertIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="22"
       height="22"
       viewBox="0 0 24 24"
@@ -389,6 +446,7 @@ function AlertIcon(props: SVGProps<SVGSVGElement>) {
 function PlusIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"

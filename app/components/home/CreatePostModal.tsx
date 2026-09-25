@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MouseEvent, ReactNode, SVGProps } from "react";
 import { kids } from "../../data/kids";
 import type { PostCardProps, PostType } from "../shared/PostCard";
@@ -60,14 +60,25 @@ export default function CreatePostModal({
   const [type, setType] = useState<PostType | null>(null);
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
 
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previouslyFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeButtonRef.current?.focus();
+    return () => previouslyFocusedElement?.focus();
   }, [isOpen]);
 
   useEffect(() => {
@@ -92,7 +103,7 @@ export default function CreatePostModal({
 
   function toggleKid(kidId: string) {
     setRecipients((current) => {
-      const kidIds = isKidSelected(kidId)
+      const kidIds = current.kidIds.includes(kidId)
         ? current.kidIds.filter((id) => id !== kidId)
         : [...current.kidIds, kidId];
       return { roomWide: false, kidIds };
@@ -147,18 +158,19 @@ export default function CreatePostModal({
       <div className="max-h-[92vh] w-full max-w-[580px] overflow-y-auto rounded-[24px] border border-border bg-auth-bg shadow-[0_20px_50px_-24px_rgba(63,54,46,.35)]">
         <div className="flex items-center justify-between border-b border-border px-[26px] py-5">
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             className="text-[15px] font-bold text-ink-muted"
           >
             Cancelar
           </button>
-          <span
+          <h2
             id="create-post-title"
             className="font-heading text-[18px] font-semibold text-ink"
           >
             Nueva publicación
-          </span>
+          </h2>
           <button
             type="button"
             onClick={handlePublish}
@@ -170,8 +182,15 @@ export default function CreatePostModal({
 
         <div className="px-[26px] py-6">
           <div className="mb-[18px]">
-            <SectionLabel>PARA</SectionLabel>
-            <div className="mb-[6px] flex flex-wrap gap-[9px]">
+            <SectionLabel id="create-post-recipient-label">PARA</SectionLabel>
+            <div
+              role="group"
+              aria-labelledby="create-post-recipient-label"
+              aria-describedby={
+                errors.recipient ? "create-post-recipient-error" : undefined
+              }
+              className="mb-[6px] flex flex-wrap gap-[9px]"
+            >
               <button
                 type="button"
                 onClick={selectRoomWide}
@@ -199,15 +218,23 @@ export default function CreatePostModal({
               ))}
             </div>
             {errors.recipient ? (
-              <InlineError message={errors.recipient} />
+              <InlineError
+                id="create-post-recipient-error"
+                message={errors.recipient}
+              />
             ) : (
               <div className="mb-[22px]" />
             )}
           </div>
 
           <div className="mb-[18px]">
-            <SectionLabel>TIPO</SectionLabel>
-            <div className="mb-[6px] flex flex-wrap gap-[9px]">
+            <SectionLabel id="create-post-type-label">TIPO</SectionLabel>
+            <div
+              role="group"
+              aria-labelledby="create-post-type-label"
+              aria-describedby={errors.type ? "create-post-type-error" : undefined}
+              className="mb-[6px] flex flex-wrap gap-[9px]"
+            >
               {TYPE_OPTIONS.map((option) => (
                 <button
                   key={option.type}
@@ -225,24 +252,39 @@ export default function CreatePostModal({
               ))}
             </div>
             {errors.type ? (
-              <InlineError message={errors.type} />
+              <InlineError id="create-post-type-error" message={errors.type} />
             ) : (
               <div className="mb-[22px]" />
             )}
           </div>
 
           <div className="mb-[22px]">
-            <SectionLabel>DESCRIPCIÓN</SectionLabel>
+            <label
+              htmlFor="create-post-description"
+              className="mb-[10px] block text-[12px] font-extrabold tracking-[0.7px] text-ink-muted"
+            >
+              DESCRIPCIÓN
+            </label>
             <textarea
+              id="create-post-description"
               value={description}
               onChange={(event) => updateDescription(event.target.value)}
               placeholder="Contá cómo le fue hoy…"
               rows={4}
+              aria-invalid={Boolean(errors.description)}
+              aria-describedby={
+                errors.description ? "create-post-description-error" : undefined
+              }
               className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] leading-[1.5] text-ink outline-none placeholder:text-placeholder ${
                 errors.description ? "border-error-border" : "border-field-border"
               }`}
             />
-            {errors.description && <InlineError message={errors.description} />}
+            {errors.description && (
+              <InlineError
+                id="create-post-description-error"
+                message={errors.description}
+              />
+            )}
           </div>
 
           <div>
@@ -308,17 +350,26 @@ function pillClass(isSelected: boolean): string {
   return `${base} border-border bg-surface text-[#6E6359]`;
 }
 
-function SectionLabel({ children }: { children: ReactNode }) {
+function SectionLabel({ children, id }: { children: ReactNode; id?: string }) {
   return (
-    <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-ink-muted">
+    <div
+      id={id}
+      className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-ink-muted"
+    >
       {children}
     </div>
   );
 }
 
-function InlineError({ message }: { message: string }) {
+function InlineError({ id, message }: { id: string; message: string }) {
   return (
-    <p className="mt-[6px] text-[13px] font-semibold text-error-text">{message}</p>
+    <p
+      id={id}
+      role="alert"
+      className="mt-[6px] text-[13px] font-semibold text-error-text"
+    >
+      {message}
+    </p>
   );
 }
 

@@ -90,7 +90,7 @@ Cada paso deja el sistema funcional.
 - [x] `enrolled_at` futura o anterior a nacimiento → error; default hoy; `photo_consent` default true persistido.
 - [x] Alergias "maní, gluten" → `allergy_tags {peanut,gluten}`; vacío → `{}`.
 - [x] Error de red/RLS muestra "No se pudo guardar, reintentá", modal abierto, sin duplicar fila.
-- [x] `/kids/[id]` sin cambios (sigue mock SPEC 02/05).
+- [ ] `/kids/[id]` sin cambios (sigue mock SPEC 02/05).
 - [x] `lint`, `tsc --noEmit`, `build` pasan; `advisors` sin issues nuevos.
 - [x] Screenshots `.playwright-mcp/` en 1280/768/375 (lista + modal + alta).
 

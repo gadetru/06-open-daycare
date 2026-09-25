@@ -1,7 +1,7 @@
 ---
 description: Verifica y marca los checks de Acceptance criteria que pasen los criterios de un spec contra Next.js 16 y screenshots reales
 mode: subagent
-model: opencode/muse-spark-1.2-contributor-free
+model: opencode/muse-spark-1.3-contributor-free
 temperature: 0.1
 permission:
   read: allow
@@ -29,8 +29,8 @@ Si el código verificado no pasa algún check, su casilla queda sin marcar (`[ ]
 
 ## Modelo con visión
 
-Modelo principal: `opencode/muse-spark-1.2-contributor-free` (visión).
-Si el modelo no está disponible o falla por falta de crédito/cuota, cambia a un modelo con visión free, opciones gratuitas con visión disponibles. Para proponer, ejecuta `opencode models` y filtra por visión/free. Candidatos típicos gratuitos: `opencode/muse-spark-1.2-contributor-free`, `opencode/qwen3-vl-plus`, `qwen/qwen3-vl-plus`, `google/gemini-2.0-flash`, `opencode/gemini-2.5-flash`. Presenta 2-4 opciones, recomienda la primera y explica por qué.
+Modelo principal: revisar modelo con vision free del momento.
+Si el modelo no está disponible o falla por falta de crédito/cuota, cambia a un modelo con visión free, opciones gratuitas con visión disponibles. Para proponer, ejecuta `opencode models` y filtra por visión/free. Candidatos típicos gratuitos: `opencode/muse-spark-1.3-contributor-free`, `opencode/qwen3-vl-plus`, `qwen/qwen3-vl-plus`, `google/gemini-2.0-flash`, `opencode/gemini-2.5-flash`. Presenta 2-4 opciones, recomienda la primera y explica por qué.
 
 ## Invocación
 

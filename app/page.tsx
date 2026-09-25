@@ -7,6 +7,7 @@ import PostCard from "./components/shared/PostCard";
 import type { PostCardProps } from "./components/shared/PostCard";
 import FeedHeader from "./components/home/FeedHeader";
 import FeedInput from "./components/home/FeedInput";
+import Counter from "./components/home/Counter";
 import CreatePostModal from "./components/home/CreatePostModal";
 
 const seedPosts: PostCardProps[] = [
@@ -81,6 +82,7 @@ export default function Home() {
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[760px] px-6 pb-20 pt-[34px] sm:px-10">
           <FeedHeader />
+          <Counter />
           <FeedInput onClick={openCreateModal} />
 
           <div className="mb-[14px] flex items-center gap-[14px]">
