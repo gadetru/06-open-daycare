@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const POKE_API_URL = "https://pokeapi.co/api/v2";
@@ -222,9 +223,12 @@ export default function PokemonBrowser() {
           >
             <div className="relative flex h-[190px] items-center justify-center">
               {pokemonImage ? (
-                <img
+                <Image
                   src={pokemonImage}
                   alt={`Ilustración de ${formatPokemonName(pokemon.name)}`}
+                  width={475}
+                  height={475}
+                  sizes="190px"
                   className="h-full w-full object-contain drop-shadow-[0_16px_14px_rgba(67,56,45,.18)]"
                 />
               ) : (

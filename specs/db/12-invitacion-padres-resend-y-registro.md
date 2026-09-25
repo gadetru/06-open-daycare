@@ -114,7 +114,7 @@ Mapeo: `relationship_type` ↔ UI: `mother→Mamá`, `father→Papá`, `guardian
 - [x] Código inexistente o vencido → "El código es inválido o venció"; email con cuenta previa → "Ya existe una cuenta con ese email"; en ambos casos no hay filas nuevas.
 - [x] Tras activar: redirect a `/login?activated=1` y banner "Tu cuenta fue activada. Ingresá con tu email y contraseña."; el login con las credenciales del padre funciona y perfil muestra la fila con pill **ACTIVA** (`role "Mamá · activa"`) sin duplicados.
 - [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots `.playwright-mcp/` en 1280/768/375 (modal form + estado sent, perfil con PENDIENTE, `/activar-cuenta` prefill + error, `/login` con banner, perfil con ACTIVA).
+- [x] Screenshots `.playwright-mcp/` en 1280/768/375 (modal form + estado sent, perfil con PENDIENTE, `/activar-cuenta` prefill + error, `/login` con banner, perfil con ACTIVA).
 
 ---
 
