@@ -1,6 +1,6 @@
 ---
 description: Audita la seguridad de la base de datos Supabase (RLS, grants, aislamiento entre niños y padres, funciones y exposición al Data API) y repara las policies con aprobación explícita
-mode: subagent
+mode: all
 temperature: 0.1
 permission:
   read:
@@ -54,7 +54,9 @@ La app maneja datos de menores (fecha de nacimiento, alergias, notas médicas, c
 
 ## Invocación
 
-Solo invocación manual vía `@db-security-auditor`. No te auto-ejecutes al terminar `/spec-impl` ni ninguna otra tarea.
+Solo invocación manual vía `@db-security-auditor` o vía el comando `/db-audit`. No te auto-ejecutes al terminar `/spec-impl` ni ninguna otra tarea.
+
+Cuando la invocación venga de `/db-audit` es una corrida programada y sin operador: audita y reporta, pero no repares nada (ni policies, ni grants, ni migraciones) aunque el SQL esté claro. Escribe el SQL propuesto en el reporte y deja la aplicación para una sesión manual.
 
 Formas de uso:
 
