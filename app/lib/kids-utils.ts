@@ -133,3 +133,50 @@ export function getInitial(name: string): string {
 export function getAvatarFor(index: number): { bg: string; ink: string } {
   return AVATAR_PALETTES[index % AVATAR_PALETTES.length];
 }
+
+export type ParentRelationshipValue = "father" | "mother" | "guardian";
+
+export type PendingInvitationRow = {
+  full_name: string;
+  email: string;
+  relationship: ParentRelationshipValue;
+};
+
+export type AcceptedParentRow = {
+  full_name: string;
+  relationship: ParentRelationshipValue;
+};
+
+export type ParentRowData = {
+  name: string;
+  email: string;
+  role: string;
+  status: "ACTIVA" | "PENDIENTE";
+};
+
+const PARENT_RELATIONSHIP_LABELS: Record<ParentRelationshipValue, string> = {
+  mother: "Mamá",
+  father: "Papá",
+  guardian: "Tutor/a",
+};
+
+export function buildParentRows(
+  pendingInvitations: PendingInvitationRow[],
+  acceptedParents: AcceptedParentRow[],
+): ParentRowData[] {
+  const pending = pendingInvitations.map((invitation) => ({
+    name: invitation.full_name,
+    email: invitation.email,
+    role: `${PARENT_RELATIONSHIP_LABELS[invitation.relationship]} · invitación enviada`,
+    status: "PENDIENTE" as const,
+  }));
+
+  const accepted = acceptedParents.map((parent) => ({
+    name: parent.full_name,
+    email: "",
+    role: `${PARENT_RELATIONSHIP_LABELS[parent.relationship]} · activa`,
+    status: "ACTIVA" as const,
+  }));
+
+  return [...accepted, ...pending];
+}
