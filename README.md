@@ -339,6 +339,7 @@ El proyecto sigue Spec Driven Development:
 1. Crear una especificación frontend en `specs/` o una especificación de Supabase en `specs/db/`.
 2. Implementarla con `/spec-impl`.
 3. Verificar los acceptance criteria con `@spec-verifier`.
+4. Si el spec toca Supabase, auditar RLS y aislamiento con `@db-security-auditor`.
 
 Las instrucciones operativas del repositorio están en `AGENTS.md`.
 

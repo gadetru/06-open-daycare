@@ -112,6 +112,17 @@ Cubre 8 categorías de rendimiento priorizadas por impacto (query performance, c
 4. Aplica fixes menores si es necesario y re-verifica.
 5. Solo marca la casilla `[x]`/`[ ]` de cada check (sin reescribir el criterio) y reporta PASS/FAIL con evidencia en el resumen final.
 
+## Agente db-security-auditor
+
+- `db-security-auditor` es un subagente de opencode que audita la seguridad de la base de datos Supabase y previene **fugas de datos entre niños y padres** y entre guarderías (datos de menores: fecha de nacimiento, alergias, notas médicas).
+- Vive en `.opencode/agents/db-security-auditor.md` (proyecto, trackeado en git) y se invoca **solo a mano**: `@db-security-auditor` (baseline completo), `@db-security-auditor audita el delta de specs/db/12-*.sql`, o `@db-security-auditor arregla el hallazgo F-01`.
+- Auditoría en 7 bloques: (A) RLS, grants y exposición real al Data API; (B) funciones `SECURITY DEFINER`, ACL y `search_path`; (C) matriz de aislamiento rol × recurso; (D) server actions y endpoints públicos que usan service role; (E) secretos y bundle; (F) `supabase_get_advisors`; (G) controles que hoy funcionan. Cada bloque cierra en `PASS`/`FAIL`/`PARTIAL`/`SKIP`.
+- El foco es que la policy de `children` use `parent_children` para los padres: una policy que solo comprueba "soy de este daycare" entrega **todos** los niños de la guardería a cualquier padre, porque `parent` tiene `daycare_id` igual que `staff`. También audita la enumeración de UUIDs desde la app (`/kids`, `/kids/[id]`), que anula el aislamiento de la DB.
+- **Trampa que el agente debe respetar**: el MCP `supabase_execute_sql` corre como owner y las tablas no tienen `FORCE ROW LEVEL SECURITY`, así que **bypassa RLS**. Nunca se puede concluir "RLS OK" solo con queries del MCP. El aislamiento se prueba simulando el actor con `SET LOCAL role` + `set local "request.jwt.claims"` dentro de `BEGIN … ROLLBACK`; si eso no está disponible, el caso se marca `SKIP` y se recomienda el RLS Tester de Studio.
+- **Remediación con aprobación explícita**: puede corregir policies RLS y grants, pero solo bajo estas reglas: migraciones **append-only** (nunca edita una ya aplicada, siempre archivo nuevo `<YYYY-MM-DD_HHMMSS>_<snake_case>.sql`), orden obligatorio escribir archivo local → mostrar diff y SQL al usuario → `supabase_apply_migration` con ese mismo SQL (réplica 1:1), un approval por migración, y post-verificación con query de prueba + simulación de aislamiento + `supabase_get_advisors`. Queda prohibido "arreglar hacia abajo" (`using (true)`, `to anon` sobre PII, `FOR ALL`, grants más amplios, o eliminar los controles que ya funcionan) y todo lo que no sea RLS/grants (seeds, funciones, triggers, Storage, código de app, `.env`) se reporta sin aplicar.
+- No inventa fixtures: para el caso de un padre real pregunta al usuario; si no hay, reporta `SKIP (fixture no disponible)`. El reporte lleva conteos, nombres de objeto y `archivo:línea`, nunca PII de menores, claves ni UUIDs completos.
+- Cualquier cambio de DB que repair sigue siendo spec-driven: necesita su spec en `specs/db/NN-*.md` y el agente nunca reescribe el texto de un Acceptance criteria existente.
+
 ## Reglas de código.
 
 - Usar código limpio, nombres y variables etc en inglés. 
