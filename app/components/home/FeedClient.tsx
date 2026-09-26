@@ -107,6 +107,8 @@ export default function FeedClient({
             </p>
           )}
 
+          {dayGroups.length === 0 && !notice && <EmptyFeed />}
+
           {dayGroups.map((dayGroup) => (
             <section key={dayGroup.dayKey} className="mb-[22px]">
               <div className="mb-[14px] flex items-center gap-[14px]">
@@ -137,6 +139,20 @@ export default function FeedClient({
         publishError={publishError}
       />
     </div>
+  );
+}
+
+// Cuando el feed está vacío mostramos un mensaje en lugar del primer divider.
+function EmptyFeed() {
+  return (
+    <section className="rounded-[18px] border border-border bg-surface px-6 py-10 text-center">
+      <p className="font-heading text-[19px] font-semibold text-ink">
+        Todavía no hay publicaciones
+      </p>
+      <p className="mx-auto mt-1 max-w-[42ch] text-[13.5px] text-ink-muted">
+        Cuando compartas un momento de la sala, el primero va a aparecer acá.
+      </p>
+    </section>
   );
 }
 
