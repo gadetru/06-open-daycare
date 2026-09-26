@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import {
   isValidPostAudience,
   isValidPostType,
+  validatePhoto,
   type PostAudience,
   type PostTypeValue,
 } from "@/app/lib/posts-utils";
@@ -22,10 +23,7 @@ type StaffRow = { room_id: string | null };
 type PostRowWithId = { id: string };
 type ChildConsentRow = { id: string; full_name: string; photo_consent: boolean };
 
-// SPEC 14: una sola foto por publicación, como máximo.
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-const ALLOWED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
+// La extensión sale del mime validado, nunca del nombre del archivo.
 function getPhotoExtension(mimeType: string): string | null {
   if (mimeType === "image/jpeg") {
     return "jpg";
@@ -35,16 +33,6 @@ function getPhotoExtension(mimeType: string): string | null {
   }
   if (mimeType === "image/webp") {
     return "webp";
-  }
-  return null;
-}
-
-function validatePhotoFile(photo: File): string | null {
-  if (!ALLOWED_PHOTO_TYPES.includes(photo.type)) {
-    return "La foto tiene que ser JPG, PNG o WebP";
-  }
-  if (photo.size > MAX_PHOTO_BYTES) {
-    return "La foto es muy grande: máximo 5 MB";
   }
   return null;
 }
@@ -76,7 +64,7 @@ export async function createPost(
 
   const hasPhoto = photo !== null && photo !== undefined;
   if (photo) {
-    const photoError = validatePhotoFile(photo);
+    const photoError = validatePhoto(photo);
     if (photoError) {
       return { ok: false, error: photoError };
     }

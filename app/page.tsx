@@ -90,6 +90,9 @@ async function loadPostRows(supabase: SupabaseClient): Promise<PostRow[]> {
     author_name: post.author?.full_name ?? "",
     room_name: post.room?.name ?? null,
     child_names: childNamesByPostId.get(post.id) ?? [],
+    // SPEC 14 paso 6 firma la foto acá; mientras tanto no hay foto.
+    photo_path: null,
+    photo_signed_url: null,
   }));
 }
 
