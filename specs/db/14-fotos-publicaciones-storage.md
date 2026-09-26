@@ -217,6 +217,7 @@ Cada paso deja el sistema funcional.
 - **Yes:** se sigue usando el `<img>` de `PhotoPlaceholder` en vez de `next/image`. `next.config.ts` solo tiene `remotePatterns` para `raw.githubusercontent.com`, así que `next/image` obligaría a agregar el host de Storage al config sin ganar nada (las imágenes ya vienen con un ancho de banda acotado y un TTL de 1 h).
 - **Yes:** sin seed de foto. Una migración no puede subir binarios y un `storage_path` que apunta a un archivo inexistente solo produce un fallback roto. Se verifica subiendo una imagen real desde el modal con Playwright.
 - **Yes:** los 11 niños tienen hoy `photo_consent = true`, así que el camino del bloqueo se prueba con un `update` temporal. Queda documentado como fixture de prueba, no como seed.
+- **Yes (fix E2E, migración `fix_post_photos_staff_read`):** las policies de lectura de `storage.objects` y de `post_photos` exigen además que **el lector sea `staff`**. `is_same_daycare_staff(autor, daycare_lector)` solo mira el rol del autor, así que un padre de la misma guardería pasaba el predicado y leía el bucket por la API directa (verificado: 1 fila antes del fix, 0 después; staff intacto).
 - **No:** `next/image`, resize en el cliente, varias fotos, reordenar o cambiar la foto después, medir `width`/`height`, galería de fotos, avatar en Storage.
 
 ---
