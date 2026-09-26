@@ -13,14 +13,20 @@ import { createPost, type CreatePostInput } from "@/app/actions/posts";
 import type { PostDayGroup } from "@/app/lib/posts-utils";
 
 type FeedClientProps = {
+  daycareName: string | null;
+  staffName: string | null;
   roomName: string | null;
+  todayLabel: string;
   kids: PostChildOption[];
   dayGroups: PostDayGroup[];
   notice: string | null;
 };
 
 export default function FeedClient({
+  daycareName,
+  staffName,
   roomName,
+  todayLabel,
   kids,
   dayGroups,
   notice,
@@ -83,7 +89,13 @@ export default function FeedClient({
 
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[760px] px-6 pb-20 pt-[34px] sm:px-10">
-          <FeedHeader />
+          <FeedHeader
+            daycareName={daycareName}
+            staffName={staffName}
+            roomName={roomName}
+            kidsCount={kids.length}
+            todayLabel={todayLabel}
+          />
           <FeedInput onClick={openCreateModal} />
 
           {notice && (

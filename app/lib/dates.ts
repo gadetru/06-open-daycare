@@ -110,6 +110,22 @@ export function formatDayDividerLabel(publishedAt: string | Date): string {
   return `Publicado el ${publishedDate.getDate()} de ${monthName}`;
 }
 
+const WEEKDAY_NAMES = [
+  "domingo",
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+] as const;
+
+// Fecha del encabezado del feed: "sábado 26 sep".
+export function formatHeaderDate(date: Date): string {
+  const weekdayName = WEEKDAY_NAMES[date.getDay()];
+  return `${weekdayName} ${date.getDate()} ${SHORT_MONTHS[date.getMonth()]}`;
+}
+
 // Días de calendario entre dos fechas, sin fracciones y sin que el cambio de
 // hora del verano corra el resultado.
 function countDaysBetween(from: Date, to: Date): number {
@@ -155,6 +171,10 @@ function runStructureTests(): void {
   check(
     "formatDayDividerLabel names the month of older posts",
     /^Publicado el \d{1,2} de [a-záéíóúñ]+$/.test(formatDayDividerLabel(new Date(2020, 0, 5)))
+  );
+  check(
+    "formatHeaderDate shows weekday, day and short month",
+    formatHeaderDate(new Date(2026, 8, 26)) === "sábado 26 sep"
   );
 }
 

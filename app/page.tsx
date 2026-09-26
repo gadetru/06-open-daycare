@@ -5,9 +5,11 @@ import FeedClient from "./components/home/FeedClient";
 import type { PostChildOption } from "./components/home/CreatePostModal";
 import { getAvatarFor, getInitial } from "./lib/kids-utils";
 import { groupPostsByDay, type PostRow } from "./lib/posts-utils";
+import { formatHeaderDate } from "./lib/dates";
 
-type StaffRow = { room_id: string | null };
+type StaffRow = { full_name: string; daycare_id: string; room_id: string | null };
 type RoomRow = { name: string };
+type DaycareRow = { name: string };
 type ChildRow = { id: string; full_name: string };
 type AuthorRow = { full_name: string } | null;
 type RoomNameRow = { name: string } | null;
@@ -30,7 +32,10 @@ type PostChildQueryRow = {
 };
 
 type FeedData = {
+  daycareName: string | null;
+  staffName: string | null;
   roomName: string | null;
+  todayLabel: string;
   kids: PostChildOption[];
   postsByDay: ReturnType<typeof groupPostsByDay>;
   notice: string | null;
@@ -49,7 +54,10 @@ export default async function HomePage() {
 
   return (
     <FeedClient
+      daycareName={feed.daycareName}
+      staffName={feed.staffName}
       roomName={feed.roomName}
+      todayLabel={feed.todayLabel}
       kids={feed.kids}
       dayGroups={feed.postsByDay}
       notice={feed.notice}
@@ -166,6 +174,24 @@ async function loadRoomKids(
   });
 }
 
+// El nombre de la guardería se lee una vez y se muestra en el encabezado.
+async function loadDaycareName(
+  supabase: SupabaseClient,
+  daycareId: string
+): Promise<string | null> {
+  const { data: daycareData, error: daycareError } = await supabase
+    .from("daycares")
+    .select("name")
+    .eq("id", daycareId)
+    .maybeSingle();
+
+  if (daycareError) {
+    throw daycareError;
+  }
+
+  return (daycareData as DaycareRow | null)?.name ?? null;
+}
+
 async function loadRoomName(
   supabase: SupabaseClient,
   roomId: string
@@ -185,7 +211,10 @@ async function loadRoomName(
 
 async function loadFeedData(supabase: SupabaseClient): Promise<FeedData> {
   const emptyFeed: FeedData = {
+    daycareName: null,
+    staffName: null,
     roomName: null,
+    todayLabel: formatHeaderDate(new Date()),
     kids: [],
     postsByDay: [],
     notice: null,
@@ -201,7 +230,7 @@ async function loadFeedData(supabase: SupabaseClient): Promise<FeedData> {
 
     const { data: userData, error: userError } = await supabase
       .from("users")
-      .select("room_id")
+      .select("full_name, daycare_id, room_id")
       .eq("id", userId)
       .maybeSingle();
 
@@ -209,12 +238,24 @@ async function loadFeedData(supabase: SupabaseClient): Promise<FeedData> {
       throw userError;
     }
 
-    const roomId = (userData as StaffRow | null)?.room_id ?? null;
+    const staff = userData as StaffRow | null;
+    const roomId = staff?.room_id ?? null;
+    const daycareName = staff
+      ? await loadDaycareName(supabase, staff.daycare_id)
+      : null;
     const roomName = roomId ? await loadRoomName(supabase, roomId) : null;
     const kids = roomId ? await loadRoomKids(supabase, roomId) : [];
     const postsByDay = groupPostsByDay(await loadPostRows(supabase));
 
-    return { roomName, kids, postsByDay, notice: null };
+    return {
+      daycareName,
+      staffName: staff?.full_name ?? null,
+      roomName,
+      todayLabel: formatHeaderDate(new Date()),
+      kids,
+      postsByDay,
+      notice: null,
+    };
   } catch {
     return {
       ...emptyFeed,
