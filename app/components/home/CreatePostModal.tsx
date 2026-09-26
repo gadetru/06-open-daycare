@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { MouseEvent, ReactNode } from "react";
+import type { ChangeEvent, MouseEvent, ReactNode } from "react";
 import type { CreatePostInput } from "@/app/actions/posts";
-import type { PostAudience, PostTypeValue } from "@/app/lib/posts-utils";
+import { validatePhoto, type PostAudience, type PostTypeValue } from "@/app/lib/posts-utils";
 
 export type PostChildOption = {
   id: string;
@@ -18,7 +18,7 @@ type CreatePostModalProps = {
   roomName: string | null;
   kids: PostChildOption[];
   onClose: () => void;
-  onPublish: (fields: CreatePostInput) => void;
+  onPublish: (fields: CreatePostInput, photo: File | null) => void;
   isPublishing: boolean;
   publishError: string | null;
 };
@@ -96,10 +96,26 @@ export default function CreatePostModal({
   const [type, setType] = useState<PostTypeValue | null>(null);
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const hasRoom = roomName !== null;
   const canPickChildren = hasRoom && kids.length > 0;
+
+  // Libera la preview local al desmontar (al reabrir, el modal remonta y el
+  // input empieza vacío).
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -174,6 +190,50 @@ export default function CreatePostModal({
     setErrors((current) => ({ ...current, description: undefined }));
   }
 
+  function revokePreview() {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+  }
+
+  function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const selectedFile = event.target.files?.[0] ?? null;
+
+    if (!selectedFile) {
+      return;
+    }
+
+    const validationError = validatePhoto(selectedFile);
+    if (validationError) {
+      // Archivo inválido: se muestra inline y no queda nada seleccionado.
+      event.target.value = "";
+      revokePreview();
+      setPhotoFile(null);
+      setPreviewUrl(null);
+      setPhotoError(validationError);
+      return;
+    }
+
+    // Preview local: no sube nada, solo muestra el archivo elegido.
+    revokePreview();
+    const objectUrl = URL.createObjectURL(selectedFile);
+    previewUrlRef.current = objectUrl;
+    setPhotoError(null);
+    setPhotoFile(selectedFile);
+    setPreviewUrl(objectUrl);
+  }
+
+  function removePhoto() {
+    revokePreview();
+    setPhotoFile(null);
+    setPreviewUrl(null);
+    setPhotoError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
   function handleBackdropClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
       onClose();
@@ -190,16 +250,27 @@ export default function CreatePostModal({
     };
     setErrors(nextErrors);
 
-    if (nextErrors.recipient || nextErrors.type || nextErrors.description) {
+    const nextPhotoError = validatePhoto(photoFile);
+    setPhotoError(nextPhotoError);
+
+    if (
+      nextErrors.recipient ||
+      nextErrors.type ||
+      nextErrors.description ||
+      nextPhotoError
+    ) {
       return;
     }
 
-    onPublish({
-      type: type as PostTypeValue,
-      body: description.trim(),
-      audience: audience as PostAudience,
-      childIds,
-    });
+    onPublish(
+      {
+        type: type as PostTypeValue,
+        body: description.trim(),
+        audience: audience as PostAudience,
+        childIds,
+      },
+      photoFile
+    );
   }
 
   return (
@@ -369,6 +440,72 @@ export default function CreatePostModal({
                 id="create-post-description-error"
                 message={errors.description}
               />
+            )}
+          </div>
+
+          <div className="mt-[18px]">
+            <label
+              htmlFor="create-post-photo"
+              className="mb-[10px] block text-[12px] font-extrabold tracking-[0.7px] text-ink-muted"
+            >
+              FOTO <span className="font-bold normal-case tracking-normal">(opcional)</span>
+            </label>
+            <div className="rounded-[14px] border-[1.5px] border-dashed border-field-border bg-white px-4 py-[14px]">
+              {photoFile && previewUrl ? (
+                <div className="flex items-start gap-4">
+                  <img
+                    src={previewUrl}
+                    alt="Vista previa de la foto"
+                    className="h-[96px] w-[96px] flex-none rounded-[12px] object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[14px] font-bold text-ink">
+                      {photoFile.name}
+                    </p>
+                    <p className="mt-[2px] text-[12.5px] text-ink-soft">
+                      {(photoFile.size / 1024 / 1024).toFixed(1)} MB
+                    </p>
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      disabled={isPublishing}
+                      className="mt-[8px] text-[13.5px] font-extrabold text-error-text disabled:opacity-60"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label
+                    htmlFor="create-post-photo"
+                    className={`inline-block cursor-pointer rounded-full border-[1.5px] border-border bg-surface px-[14px] py-[6px] text-[14px] font-bold text-[#6E6359] ${
+                      isPublishing ? "pointer-events-none opacity-60" : ""
+                    }`}
+                  >
+                    Elegir foto
+                  </label>
+                  <p className="mt-[8px] text-[12.5px] leading-[1.45] text-ink-soft">
+                    JPG, PNG o WebP · máximo 5 MB · una foto por publicación
+                  </p>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                id="create-post-photo"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handlePhotoChange}
+                disabled={isPublishing}
+                aria-invalid={Boolean(photoError)}
+                aria-describedby={
+                  photoError ? "create-post-photo-error" : undefined
+                }
+                className="sr-only"
+              />
+            </div>
+            {photoError && (
+              <InlineError id="create-post-photo-error" message={photoError} />
             )}
           </div>
         </div>

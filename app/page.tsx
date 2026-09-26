@@ -24,6 +24,11 @@ type PostQueryRow = {
   published_at: string;
   author: AuthorRow;
   room: RoomNameRow;
+  post_photos: PostPhotoQueryRow[] | null;
+};
+
+type PostPhotoQueryRow = {
+  storage_path: string;
 };
 
 type PostChildQueryRow = {
@@ -44,7 +49,8 @@ type FeedData = {
 const POST_SELECT =
   "id, author_id, room_id, type, title, body, published_at, " +
   "author:users!posts_author_id_fkey(full_name), " +
-  "room:rooms!posts_room_id_fkey(name)";
+  "room:rooms!posts_room_id_fkey(name), " +
+  "post_photos(storage_path)";
 
 export default async function HomePage() {
   const cookieStore = await cookies();
@@ -78,6 +84,7 @@ async function loadPostRows(supabase: SupabaseClient): Promise<PostRow[]> {
 
   const postRows = (postsData ?? []) as unknown as PostQueryRow[];
   const childNamesByPostId = await loadChildNamesByPostId(supabase, postRows);
+  const signedUrlByPostId = await loadSignedUrlByPostId(supabase, postRows);
 
   return postRows.map((post) => ({
     id: post.id,
@@ -90,7 +97,45 @@ async function loadPostRows(supabase: SupabaseClient): Promise<PostRow[]> {
     author_name: post.author?.full_name ?? "",
     room_name: post.room?.name ?? null,
     child_names: childNamesByPostId.get(post.id) ?? [],
+    // Sin foto el path queda null y la card se ve igual que en SPEC 13.
+    photo_path: photoPathOf(post),
+    photo_signed_url: signedUrlByPostId.get(post.id) ?? null,
   }));
+}
+
+// Máximo una foto por publicación: si algún día hubiera más filas, la card solo
+// sabe mostrar la primera.
+function photoPathOf(post: PostQueryRow): string | null {
+  const photos = post.post_photos ?? [];
+  return photos.length > 0 ? photos[0].storage_path : null;
+}
+
+// Cada render firma de nuevo: la URL vence en una hora y así sobrevive al F5.
+// Si la firma falla (o la imagen no existe), ese post queda sin URL y la card
+// cae al fallback punteado de `PhotoPlaceholder`.
+async function loadSignedUrlByPostId(
+  supabase: SupabaseClient,
+  postRows: PostQueryRow[]
+): Promise<Map<string, string>> {
+  const signedUrlByPostId = new Map<string, string>();
+
+  for (const post of postRows) {
+    const storagePath = photoPathOf(post);
+    if (!storagePath) {
+      continue;
+    }
+
+    const { data, error } = await supabase.storage
+      .from("post-photos")
+      .createSignedUrl(storagePath, 3600);
+
+    if (error || !data?.signedUrl) {
+      continue;
+    }
+    signedUrlByPostId.set(post.id, data.signedUrl);
+  }
+
+  return signedUrlByPostId;
 }
 
 // Los nombres de los destinatarios se resuelven con dos consultas planas

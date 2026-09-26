@@ -31,6 +31,26 @@ const POST_TYPE_CHIP: Record<PostTypeValue, PostType> = {
   announcement: "ANUNCIO",
 };
 
+// SPEC 14: una sola foto por publicación, como máximo 5 MB y solo estos tipos.
+// El bucket `post-photos` repite el límite y los mimes como defense in depth.
+export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+export const ALLOWED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+// Valida la foto del modal y de la server action con los mismos mensajes en
+// español. `null` (publicar sin foto) siempre es válido.
+export function validatePhoto(photo: File | null | undefined): string | null {
+  if (!photo) {
+    return null;
+  }
+  if (!ALLOWED_PHOTO_TYPES.includes(photo.type)) {
+    return "La foto tiene que ser JPG, PNG o WebP";
+  }
+  if (photo.size > MAX_PHOTO_BYTES) {
+    return "La foto es muy grande: máximo 5 MB";
+  }
+  return null;
+}
+
 // Fila de `posts` con lo que ya resolvió el server component (joins a `users`,
 // `rooms` y `children`).
 export type PostRow = {
@@ -44,6 +64,8 @@ export type PostRow = {
   author_name: string;
   room_name: string | null;
   child_names: string[];
+  photo_path: string | null;
+  photo_signed_url: string | null;
 };
 
 // Un día del feed, con su divisor y las publicaciones de ese día.
@@ -99,7 +121,24 @@ export function postRowToCard(row: PostRow): PostCardProps {
     recipient: buildRecipient(childFirstNames, row.room_name),
     likes: 0,
     comments: 0,
+    image: toCardImage(row.photo_signed_url, childFirstNames),
   };
+}
+
+// La card solo sabe renderizar una imagen: si no hay URL firmada, no hay foto
+// y la card se ve igual que en SPEC 13.
+function toCardImage(
+  photoSignedUrl: string | null,
+  childFirstNames: string[]
+): PostCardProps["image"] {
+  if (!photoSignedUrl) {
+    return undefined;
+  }
+  const alt =
+    childFirstNames.length > 0
+      ? `Foto de ${childFirstNames[0]}`
+      : "Foto del anuncio";
+  return { src: photoSignedUrl, alt };
 }
 
 // Agrupa las publicaciones por día local, de la más reciente a la más antigua.

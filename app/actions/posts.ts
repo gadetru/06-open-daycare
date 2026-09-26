@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import {
   isValidPostAudience,
   isValidPostType,
+  validatePhoto,
   type PostAudience,
   type PostTypeValue,
 } from "@/app/lib/posts-utils";
@@ -20,8 +21,26 @@ export type CreatePostResult = { ok: true } | { ok: false; error: string };
 
 type StaffRow = { room_id: string | null };
 type PostRowWithId = { id: string };
+type ChildConsentRow = { id: string; full_name: string; photo_consent: boolean };
 
-export async function createPost(input: CreatePostInput): Promise<CreatePostResult> {
+// La extensión sale del mime validado, nunca del nombre del archivo.
+function getPhotoExtension(mimeType: string): string | null {
+  if (mimeType === "image/jpeg") {
+    return "jpg";
+  }
+  if (mimeType === "image/png") {
+    return "png";
+  }
+  if (mimeType === "image/webp") {
+    return "webp";
+  }
+  return null;
+}
+
+export async function createPost(
+  input: CreatePostInput,
+  photo?: File | null
+): Promise<CreatePostResult> {
   if (!isValidPostType(input.type)) {
     return { ok: false, error: "Elegí un tipo" };
   }
@@ -41,6 +60,14 @@ export async function createPost(input: CreatePostInput): Promise<CreatePostResu
 
   if (input.audience === "children" && childIds.length === 0) {
     return { ok: false, error: "Elegí al menos un destinatario" };
+  }
+
+  const hasPhoto = photo !== null && photo !== undefined;
+  if (photo) {
+    const photoError = validatePhoto(photo);
+    if (photoError) {
+      return { ok: false, error: photoError };
+    }
   }
 
   const cookieStore = await cookies();
@@ -73,15 +100,29 @@ export async function createPost(input: CreatePostInput): Promise<CreatePostResu
   // Los niños se verifican antes de crear el post: si el insert de
   // post_children fallara después no habría forma de borrar el post (esta tabla
   // no tiene DELETE) y quedaría una publicación sin destinatarios.
+  // El consentimiento también se verifica acá, antes de crear el post y de
+  // subir nada: si se rechaza, no queda ni post ni archivo en el bucket.
   if (input.audience === "children") {
     const { data: existingChildren, error: childrenError } = await supabase
       .from("children")
-      .select("id")
+      .select("id, full_name, photo_consent")
       .in("id", childIds);
 
-    const foundChildren = (existingChildren ?? []) as unknown[];
+    const foundChildren = (existingChildren ?? []) as ChildConsentRow[];
     if (childrenError || foundChildren.length !== childIds.length) {
       return { ok: false, error: "No se pudo verificar los niños elegidos" };
+    }
+
+    if (hasPhoto) {
+      const blockedChild = [...foundChildren].sort((firstChild, secondChild) =>
+        firstChild.full_name.localeCompare(secondChild.full_name)
+      ).find((child) => !child.photo_consent);
+      if (blockedChild) {
+        return {
+          ok: false,
+          error: `No se puede publicar la foto: ${blockedChild.full_name} no tiene consentimiento para fotos`,
+        };
+      }
     }
   }
 
@@ -100,16 +141,67 @@ export async function createPost(input: CreatePostInput): Promise<CreatePostResu
     return { ok: false, error: "No se pudo publicar" };
   }
 
+  const postId = (insertedPost as PostRowWithId).id;
+
+  // La primera carpeta del path es el autor: así la policy de
+  // `storage.objects` autoriza la subida con una sola comparación.
+  let storagePath: string | null = null;
+  if (photo) {
+    const extension = getPhotoExtension(photo.type);
+    if (!extension) {
+      return { ok: false, error: "La foto tiene que ser JPG, PNG o WebP" };
+    }
+    storagePath = `${authorId}/${postId}.${extension}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("post-photos")
+      .upload(storagePath, photo, {
+        contentType: photo.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return { ok: false, error: "No se pudo subir la foto" };
+    }
+  }
+
   if (input.audience === "children") {
-    const postId = (insertedPost as PostRowWithId).id;
     const { error: recipientsError } = await supabase
       .from("post_children")
       .insert(childIds.map((childId) => ({ post_id: postId, child_id: childId })));
 
     if (recipientsError) {
+      await removeUploadedPhoto(supabase, storagePath);
       return { ok: false, error: "No se pudo guardar los destinatarios" };
     }
   }
 
+  if (storagePath) {
+    const { error: photoRowError } = await supabase
+      .from("post_photos")
+      .insert({ post_id: postId, storage_path: storagePath, position: 0 });
+
+    if (photoRowError) {
+      await removeUploadedPhoto(supabase, storagePath);
+      return { ok: false, error: "No se pudo guardar la foto" };
+    }
+  }
+
   return { ok: true };
+}
+
+// Best-effort: si la DB rechaza la fila después de subir el archivo, se borra
+// el objeto para no dejar huérfanos en el bucket. Nunca filtra paths.
+async function removeUploadedPhoto(
+  supabase: ReturnType<typeof createClient>,
+  storagePath: string | null
+): Promise<void> {
+  if (!storagePath) {
+    return;
+  }
+  try {
+    await supabase.storage.from("post-photos").remove([storagePath]);
+  } catch {
+    // Intencionalmente vacío: el error ya se reporta arriba.
+  }
 }

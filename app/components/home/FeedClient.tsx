@@ -49,12 +49,14 @@ export default function FeedClient({
     setIsCreateOpen(false);
   }
 
-  async function handlePublish(fields: CreatePostInput) {
+  async function handlePublish(fields: CreatePostInput, photo: File | null) {
     setIsPublishing(true);
     setPublishError(null);
 
     try {
-      const result = await createPost(fields);
+      // El error del servidor (incluido el de consentimiento) se muestra en el
+      // modal sin cerrarlo; solo se cierra cuando la publicación sale bien.
+      const result = await createPost(fields, photo);
 
       if (result.ok) {
         setIsCreateOpen(false);
