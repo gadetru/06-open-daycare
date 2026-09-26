@@ -14,6 +14,12 @@ export const POST_TYPE_VALUES = [
 
 export type PostTypeValue = (typeof POST_TYPE_VALUES)[number];
 
+// Los tres destinos del modal. "room" y "daycare" no llevan niños: la diferencia
+// es si el post queda atado a la sala del staff o a toda la guardería.
+export const POST_AUDIENCES = ["room", "daycare", "children"] as const;
+
+export type PostAudience = (typeof POST_AUDIENCES)[number];
+
 // Traducción valor de DB → chip de la UI (el mapeo inverso de `@db-schema`).
 const POST_TYPE_CHIP: Record<PostTypeValue, PostType> = {
   meal: "COMIDA",
@@ -118,4 +124,20 @@ function formatTimeOfDay(publishedAt: string): string {
   const hours = String(publishedDate.getHours()).padStart(2, "0");
   const minutes = String(publishedDate.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
+}
+
+// La server action no confía en lo que le manda el navegador: valida que el tipo
+// y el destino sean valores del enum antes de tocar la base.
+export function isValidPostType(value: unknown): value is PostTypeValue {
+  return (
+    typeof value === "string" &&
+    (POST_TYPE_VALUES as readonly string[]).includes(value)
+  );
+}
+
+export function isValidPostAudience(value: unknown): value is PostAudience {
+  return (
+    typeof value === "string" &&
+    (POST_AUDIENCES as readonly string[]).includes(value)
+  );
 }
