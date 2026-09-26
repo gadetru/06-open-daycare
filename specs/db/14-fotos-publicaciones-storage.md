@@ -184,22 +184,22 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `public.post_photos` existe con `storage_path not null`, el índice `(post_id)` y el unique `(post_id, position)`; RLS activa; `SELECT` e `INSERT` para `authenticated`; `supabase_get_advisors` sin issues nuevos.
-- [ ] El bucket `post-photos` existe con `public = false` y `file_size_limit` de 5 MB.
-- [ ] Con el cliente real de un staff, `select name, owner from storage.objects where bucket_id = 'post-photos'` devuelve **0 filas** si el bucket está vacío: el `owner` nunca es `anon` y no hay objetos públicos.
-- [ ] El modal muestra un `<input type="file" accept="image/jpeg,image/png,image/webp">` con preview y botón para quitar; al reabrir el modal el input está vacío (reset).
-- [ ] Publicar **sin** foto funciona igual que en SPEC 13 y crea el post sin filas en `post_photos`.
-- [ ] Publicar **con** una foto JPEG válida crea: el post, 1 fila en `post_photos` con `storage_path` = `<author_id>/<post_id>.jpg`, y **1 objeto en el bucket** con ese mismo path.
-- [ ] La foto se ve en el feed de `/` y **sobrevive al F5** (la signed URL se regenera en cada render).
-- [ ] Una imagen de 6 MB se rechaza inline con un error de tamaño en español, **no** sube nada al bucket y no crea filas.
-- [ ] Un archivo que no sea `image/jpeg`, `image/png` o `image/webp` (por ejemplo un `.pdf` renombrado a `.jpg`) se rechaza inline con un error de tipo en español, no sube nada y no crea filas.
-- [ ] Con un niño etiquetado en `photo_consent = false`, publicar con foto se rechaza con un error en español que **nombra al niño**, no sube nada al bucket y no crea el post. (Los 11 niños están hoy en `true`, así que la prueba requiere poner uno en `false` con un `update`, verificar y revertirlo.)
-- [ ] Publicar con foto y **sin** consentimiento de un niño también se rechaza: el consentimiento se exige siempre que haya foto, sin importar el tipo de publicación.
-- [ ] Un padre no lee `post_photos` (0 filas) ni los objetos del bucket.
-- [ ] Un staff no puede subir a la carpeta de otro: un insert en `storage.objects` con una primera carpeta que no es su `auth.uid()` es rechazado por RLS.
-- [ ] Si la signed URL venció (o la imagen no existe), la card cae al fallback punteado de `PhotoPlaceholder` con el `alt`, sin romper la vista.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots en `.playwright-mcp/` (1280, 768, 375) del modal con preview, del feed con la foto cargada, y del error de consentimiento.
+- [x] `public.post_photos` existe con `storage_path not null`, el índice `(post_id)` y el unique `(post_id, position)`; RLS activa; `SELECT` e `INSERT` para `authenticated`; `supabase_get_advisors` sin issues nuevos.
+- [x] El bucket `post-photos` existe con `public = false` y `file_size_limit` de 5 MB.
+- [x] Con el cliente real de un staff, `select name, owner from storage.objects where bucket_id = 'post-photos'` devuelve **0 filas** si el bucket está vacío: el `owner` nunca es `anon` y no hay objetos públicos.
+- [x] El modal muestra un `<input type="file" accept="image/jpeg,image/png,image/webp">` con preview y botón para quitar; al reabrir el modal el input está vacío (reset).
+- [x] Publicar **sin** foto funciona igual que en SPEC 13 y crea el post sin filas en `post_photos`.
+- [x] Publicar **con** una foto JPEG válida crea: el post, 1 fila en `post_photos` con `storage_path` = `<author_id>/<post_id>.jpg`, y **1 objeto en el bucket** con ese mismo path.
+- [x] La foto se ve en el feed de `/` y **sobrevive al F5** (la signed URL se regenera en cada render).
+- [x] Una imagen de 6 MB se rechaza inline con un error de tamaño en español, **no** sube nada al bucket y no crea filas.
+- [x] Un archivo que no sea `image/jpeg`, `image/png` o `image/webp` (por ejemplo un `.pdf` renombrado a `.jpg`) se rechaza inline con un error de tipo en español, no sube nada y no crea filas.
+- [x] Con un niño etiquetado en `photo_consent = false`, publicar con foto se rechaza con un error en español que **nombra al niño**, no sube nada al bucket y no crea el post. (Los 11 niños están hoy en `true`, así que la prueba requiere poner uno en `false` con un `update`, verificar y revertirlo.)
+- [x] Publicar con foto y **sin** consentimiento de un niño también se rechaza: el consentimiento se exige siempre que haya foto, sin importar el tipo de publicación.
+- [x] Un padre no lee `post_photos` (0 filas) ni los objetos del bucket.
+- [x] Un staff no puede subir a la carpeta de otro: un insert en `storage.objects` con una primera carpeta que no es su `auth.uid()` es rechazado por RLS.
+- [x] Si la signed URL venció (o la imagen no existe), la card cae al fallback punteado de `PhotoPlaceholder` con el `alt`, sin romper la vista.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots en `.playwright-mcp/` (1280, 768, 375) del modal con preview, del feed con la foto cargada, y del error de consentimiento.
 
 ---
 
