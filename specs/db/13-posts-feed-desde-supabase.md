@@ -85,18 +85,24 @@ create index post_children_child_id_idx on public.post_children (child_id);
 
 `posts` **no tiene `daycare_id`** (así lo define `@db-schema` §7) y un "Anuncio general" tiene `room_id IS NULL`, o sea que por `room_id` no hay guardería que comparar. La regla que se aplica es:
 
-> **Un post pertenece a la guardería de su autor.**
+> **Un post pertenece a la guardería de su autor, y solo el staff de esa guardería lo lee.**
 
-Se reutiliza la RPC que ya existe y ya está auditada (`2026-09-24_194100`), que responde "¿es este usuario staff de esta guardería?":
+`is_same_daycare_staff` responde "¿es **este** usuario staff de **esta** guardería?", o sea que valida al **autor** del post, no al que está mirando. Como los padres también tienen `daycare_id`, hace falta un segundo chequeo: que **quien lee** sea staff. Sin él, un padre de la misma guardería leía el feed entero (criterio de aislamiento, ver *Decisions*).
 
 ```sql
--- posts: el autor del post es staff de la guardería del que está mirando
+-- posts: solo el staff de la guardería del autor puede leer el post
 create policy "posts_staff_same_daycare_select"
   on public.posts
   for select
   to authenticated
   using (
-    public.is_same_daycare_staff(
+    exists (
+      select 1
+      from public.users u
+      where u.id = (select auth.uid())
+        and u.role = 'staff'::public.user_role
+    )
+    and public.is_same_daycare_staff(
       posts.author_id,
       (select u.daycare_id from public.users u where u.id = (select auth.uid()))
     )
@@ -124,13 +130,19 @@ create policy "posts_staff_insert"
     )
   );
 
--- post_children: el post es mío y el niño es de mi guardería
+-- post_children: el post es de mi guardería y quien mira es staff
 create policy "post_children_staff_same_daycare_select"
   on public.post_children
   for select
   to authenticated
   using (
     exists (
+      select 1
+      from public.users u
+      where u.id = (select auth.uid())
+        and u.role = 'staff'::public.user_role
+    )
+    and exists (
       select 1
       from public.posts p
       where p.id = post_children.post_id
@@ -291,6 +303,7 @@ Cada paso deja el sistema funcional.
 - **Yes:** `app/page.tsx` pasa a **server component** y delega en un `FeedClient`. Es el patrón de `/kids` y `/kids/[id]`, y es lo que permite que los datos lleguen sin hardcodear.
 - **Yes:** el **insert va en una server action** (como `createParentInvitation`), no desde el browser. Motivo: en SPEC 14 esa misma acción tiene que recibir el archivo; si el insert viviera en el cliente, SPEC 14 rompería el diseño.
 - **Yes:** el aislamiento de un post se deriva del **`author_id`**, no del `room_id`. `room_id` es nullable y un anuncio general no tiene sala, así que por ahí no se puede saber la guardería. Se reutiliza la RPC `is_same_daycare_staff` que ya existe y ya está auditada en vez de crear una nueva.
+- **Corrección (Step 12):** la primera versión de las policies de `SELECT` solo pedía `is_same_daycare_staff(author_id, mi_daycare_id)`, que valida al **autor** pero no a **quien lee**. Como `parent` y `staff` comparten `daycare_id`, un padre autenticado de la misma guardería leía los 4 posts del feed. Se detectó probando el actor con `set local role` + `request.jwt.claims` (no leyendo el SQL), y se corrigió en `2026-09-26_101500_fix_posts_select_staff_only.sql` agregando el chequeo "el actor es staff" a `posts` y a `post_children`. El patrón es el mismo que ya usaba `posts_staff_insert`, así que no aparece recursión nueva. Nota: el criterio "un padre no lee `posts`" y la decisión "no: RLS de lectura para padres" de este spec se contradecían; el criterio es el que manda y la decisión queda corregida por este ítem.
 - **Yes:** `users.room_id` nuevo, nullable. No existe en `@db-schema` §2 ni en la DB; sin él el staff no tiene sala y el modal no puede armar las pills. Queda nullable (y no `NOT NULL`) para no bloquear a los padres y a los staff que aún no tengan sala asignada; si no tiene sala, el modal muestra un aviso y solo queda "Anuncio general".
 - **Yes:** `post_type` lleva **7 valores** y agrega `mood`. La UI ya tenía ÁNIMO desde SPEC 06 con sus tokens de color; el schema de referencia no lo tiene. Se prefiere la UI (que es la que el staff ve) y se actualiza `@db-schema` al final.
 - **Yes:** el feed muestra **toda la guardería** (las 3 salas), no solo la sala del staff. El staff coordina con las otras maestras; el scope de etiquetado sí es su sala.
@@ -303,7 +316,7 @@ Cada paso deja el sistema funcional.
 - **Yes:** el agrupador por día real en lugar del divider fijo "PUBLICADO HOY". Con posts reales el texto fijo deja de ser cierto al día siguiente.
 - **No:** paginación del feed. Se decidió a conscious que no entre en este spec; con volumen real va a hacer falta cursor por `published_at` (queda anotado en la sección de riesgos).
 - **No:** `daycare_id` en `posts` (habría resuelto el aislamiento sin el rodeo del `author_id`, pero agrega una columna que `@db-schema` no tiene y que queda desnormalizada).
-- **No:** fotos, reacciones, comentarios, edición, borrado, rutas nuevas, feed del padre, RLS de lectura para padres, `title` en el modal, `daily_summaries`.
+- **No:** fotos, reacciones, comentarios, edición, borrado, rutas nuevas, feed del padre, `title` en el modal, `daily_summaries`. (El feed del padre sigue fuera de scope, pero el `SELECT` de `posts` **sí** le cierra la puerta al padre: sin posts no hay nada que filtrar.)
 
 ---
 
