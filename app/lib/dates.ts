@@ -67,6 +67,58 @@ export function getTodayMasked(): string {
   return formatMaskedDate(new Date());
 }
 
+const MONTH_NAMES = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+] as const;
+
+// Clave de día en hora local ("2026-09-25"). El feed agrupa con esta clave, así
+// que el divisor cae en el día que la staff ve en su pantalla.
+export function getLocalDayKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// Etiqueta del divisor del feed: "Publicado hoy", "Publicado ayer" o
+// "Publicado el 12 de junio".
+export function formatDayDividerLabel(publishedAt: string | Date): string {
+  const publishedDate =
+    typeof publishedAt === "string" ? new Date(publishedAt) : publishedAt;
+  const daysAgo = countDaysBetween(publishedDate, new Date());
+
+  if (daysAgo === 0) {
+    return "Publicado hoy";
+  }
+
+  if (daysAgo === 1) {
+    return "Publicado ayer";
+  }
+
+  const monthName = MONTH_NAMES[publishedDate.getMonth()];
+  return `Publicado el ${publishedDate.getDate()} de ${monthName}`;
+}
+
+// Días de calendario entre dos fechas, sin fracciones y sin que el cambio de
+// hora del verano corra el resultado.
+function countDaysBetween(from: Date, to: Date): number {
+  const startOfFrom = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const startOfTo = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((startOfTo.getTime() - startOfFrom.getTime()) / millisecondsPerDay);
+}
+
 function runStructureTests(): void {
   const check = (description: string, condition: boolean): void => {
     if (!condition) {
@@ -91,6 +143,19 @@ function runStructureTests(): void {
   const threeYearsAgo = new Date(today.getFullYear() - 3, today.getMonth(), today.getDate());
   check("getAgeInYears returns completed years", getAgeInYears(threeYearsAgo) === 3);
   check("getMaxBirthDate returns a valid Date", getMaxBirthDate() instanceof Date);
+
+  const yesterday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 1
+  );
+  check("getLocalDayKey pads month and day", getLocalDayKey(new Date(2026, 8, 26)) === "2026-09-26");
+  check("formatDayDividerLabel labels a post from today", formatDayDividerLabel(today) === "Publicado hoy");
+  check("formatDayDividerLabel labels a post from yesterday", formatDayDividerLabel(yesterday) === "Publicado ayer");
+  check(
+    "formatDayDividerLabel names the month of older posts",
+    /^Publicado el \d{1,2} de [a-záéíóúñ]+$/.test(formatDayDividerLabel(new Date(2020, 0, 5)))
+  );
 }
 
 if (process.env.NODE_ENV === "development") {
