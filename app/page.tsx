@@ -12,6 +12,7 @@ import CreatePostModal from "./components/home/CreatePostModal";
 
 const seedPosts: PostCardProps[] = [
   {
+    id: "seed-logro-mateo",
     type: "LOGRO",
     childName: "Mateo",
     time: "14:20",
@@ -22,6 +23,7 @@ const seedPosts: PostCardProps[] = [
     comments: 1,
   },
   {
+    id: "seed-actividad-mateo",
     type: "ACTIVIDAD",
     childName: "Mateo",
     time: "09:40",
@@ -33,6 +35,7 @@ const seedPosts: PostCardProps[] = [
     image: { src: "/fotos/temperas.jpg", alt: "Foto · pintando con témperas" },
   },
   {
+    id: "seed-anuncio-general",
     type: "ANUNCIO",
     childName: "Anuncio general",
     time: "07:50",
@@ -94,7 +97,7 @@ export default function Home() {
 
           <div className="flex flex-col gap-4">
             {posts.map((post) => (
-              <PostCard key={`${post.type}-${post.time}`} {...post} />
+              <PostCard key={post.id} {...post} />
             ))}
           </div>
         </div>
