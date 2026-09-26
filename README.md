@@ -2,7 +2,7 @@
 
 Aplicación web responsive para guarderías, construida con Next.js 16, React 19, TypeScript y Tailwind CSS v4.
 
-La aplicación usa Supabase para autenticación y datos, con Row Level Security (RLS) activo en las tablas públicas. El flujo de staff puede invitar a un padre, enviarle un email con Resend y registrar/activar la cuenta del padre. El feed visual todavía funciona con datos locales en memoria.
+La aplicación usa Supabase para autenticación y datos, con Row Level Security (RLS) activo en las tablas públicas. El flujo de staff puede invitar a un padre, enviarle un email con Resend y registrar/activar la cuenta del padre. El feed (`/`) lee y escribe publicaciones reales en Supabase.
 
 ## Estado actual
 
@@ -17,18 +17,21 @@ La implementación actual incluye:
 - Envío de invitaciones desde una Server Action con Resend.
 - Activación de cuentas de padres desde `/activar-cuenta`.
 - Creación del `auth.user`, de la fila en `public.users` y del vínculo en `public.parent_children`.
+- Feed real: publicaciones del staff en `public.posts`/`public.post_children`, agrupadas por día y con alta desde el modal.
 - RLS y políticas por guardería para las tablas públicas.
 
 La instancia Supabase conectada fue verificada con estas tablas públicas:
 
 - `daycares`
-- `users`
+- `users` (con `room_id` a la sala del staff)
 - `rooms`
 - `children`
 - `invitations`
 - `parent_children`
+- `posts`
+- `post_children`
 
-Todas tienen RLS habilitado. La base actual también contiene datos seed de guardería, salas, niños y un usuario staff de demostración.
+Todas tienen RLS habilitado. La base actual también contiene datos seed de guardería, salas, niños, publicaciones de ejemplo y un usuario staff de demostración.
 
 ## Requisitos
 
@@ -154,7 +157,7 @@ Se utiliza, entre otras cosas, para:
 `utils/supabase/server.ts` crea un `createServerClient` usando las cookies de la request. Se utiliza en Server Components y Server Actions para:
 
 - Leer la sesión del usuario.
-- Consultar `daycares`, `rooms`, `children`, `users`, `invitations` y `parent_children`.
+- Consultar `daycares`, `rooms`, `children`, `users`, `invitations`, `parent_children`, `posts` y `post_children`.
 - Aplicar las políticas RLS usando la identidad del usuario autenticado.
 - Mantener la sesión y sus cookies sincronizadas.
 
@@ -189,6 +192,7 @@ Las Server Actions se encuentran en `app/actions/`:
 - `auth.ts`: cierra la sesión con el cliente de cookies.
 - `invitations.ts`: valida la invitation, comprueba la sesión staff, inserta la invitación y llama a Resend.
 - `activations.ts`: valida el código, crea el usuario con el cliente administrativo, inserta `users` y `parent_children`, acepta la invitación y redirige al login.
+- `posts.ts` (`createPost`): valida tipo/destino/descripción, inserta en `posts` y luego en `post_children` con la sesión del staff (RLS); devuelve `{ ok: true }` o `{ ok: false, error }` en español.
 
 `app/actions/activations.ts` es el único lugar donde se usa `SUPABASE_SERVICE_ROLE_KEY`. El cliente administrativo se crea con `createClient` de `@supabase/supabase-js` y no se expone al navegador.
 
@@ -196,7 +200,7 @@ Las Server Actions se encuentran en `app/actions/`:
 
 | Ruta | Estado | Descripción |
 | --- | --- | --- |
-| `/` | Implementada parcialmente | Feed visual con publicaciones seed y modal de creación en memoria. |
+| `/` | Implementada | Feed con publicaciones reales de Supabase, agrupadas por día, y modal de creación contra la server action. |
 | `/kids` | Implementada | Lista de salas y niños desde Supabase, buscador y alta. |
 | `/kids/[id]` | Implementada | Perfil, edición, invitaciones y padres aceptados desde Supabase. |
 | `/login` | Implementada | Login real con Supabase Auth. |
@@ -217,8 +221,9 @@ supabase/migrations/
 
 La aplicación espera encontrar en Supabase:
 
-- Las tablas `daycares`, `users`, `rooms`, `children`, `invitations` y `parent_children`.
-- Los enums `user_role`, `user_status`, `relationship_type` e `invitation_status`.
+- Las tablas `daycares`, `users`, `rooms`, `children`, `invitations`, `parent_children`, `posts` y `post_children`.
+- Los enums `user_role`, `user_status`, `relationship_type`, `invitation_status` y `post_type` (7 valores).
+- La columna `users.room_id` (sala del staff, nullable) con su índice.
 - Las políticas RLS y sus `GRANT` para los roles correspondientes.
 - La función `public.is_same_daycare_staff(uuid, uuid)` para resolver la política de usuarios sin recursión.
 
@@ -251,6 +256,7 @@ No se debe copiar ciegamente una migración sobre una base que ya tenga el schem
 - Las lecturas de niños y salas se limitan a la guardería del usuario.
 - Las invitaciones solo pueden ser insertadas/consultadas por staff del mismo daycare.
 - `parent_children` permite lectura al padre propietario o al staff del mismo daycare.
+- `posts`/`post_children` solo los lee el staff de la guardería del autor (el aislamiento deriva de `author_id`, porque un anuncio general tiene `room_id NULL`); solo el staff publica, y solo en salas de su guardería o como anuncio general. Sin `UPDATE`/`DELETE` (no hay edición en este spec).
 - El alta de vínculos durante la activación se realiza con service role, sin policy de escritura para clientes normales.
 - La aplicación usa políticas de base de datos; ocultar botones en la interfaz no reemplaza RLS.
 
@@ -299,12 +305,13 @@ npm run build
 ```text
 app/
 ├── layout.tsx
-├── page.tsx                       # Feed local
+├── page.tsx                       # Feed real
 ├── globals.css
 ├── actions/
 │   ├── auth.ts                    # Logout
 │   ├── invitations.ts             # Crear invitación + Resend
-│   └── activations.ts             # Activar padre con service role
+│   ├── activations.ts             # Activar padre con service role
+│   └── posts.ts                   # createPost (posts + post_children)
 ├── kids/
 │   ├── page.tsx                   # Server Component: salas y niños
 │   ├── loading.tsx
@@ -318,7 +325,7 @@ app/
 ├── activar-cuenta/
 │   ├── page.tsx                   # Wrapper con Suspense
 │   └── ActivationForm.tsx         # Formulario con ?code y ?email
-├── data/                          # Tipos y seeds del feed
+├── data/                          # Tipos de dominio (sin seeds: feed y niños salen de la DB)
 ├── lib/                           # Utilidades de dominio
 └── components/                    # Componentes compartidos y de features
 utils/supabase/

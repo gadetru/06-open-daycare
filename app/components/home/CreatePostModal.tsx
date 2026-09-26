@@ -1,20 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { MouseEvent, ReactNode, SVGProps } from "react";
-import { kids } from "../../data/kids";
-import type { PostCardProps, PostType } from "../shared/PostCard";
-import { buildRecipient } from "../../lib/posts-utils";
+import type { MouseEvent, ReactNode } from "react";
+import type { CreatePostInput } from "@/app/actions/posts";
+import type { PostAudience, PostTypeValue } from "@/app/lib/posts-utils";
+
+export type PostChildOption = {
+  id: string;
+  firstName: string;
+  initial: string;
+  avatarBg: string;
+  avatarInk: string;
+};
 
 type CreatePostModalProps = {
   isOpen: boolean;
+  roomName: string | null;
+  kids: PostChildOption[];
   onClose: () => void;
-  onPublish: (post: PostCardProps) => void;
-};
-
-type Recipients = {
-  roomWide: boolean;
-  kidIds: string[];
+  onPublish: (fields: CreatePostInput) => void;
+  isPublishing: boolean;
+  publishError: string | null;
 };
 
 type FieldErrors = {
@@ -24,43 +30,76 @@ type FieldErrors = {
 };
 
 type TypeOption = {
-  type: PostType;
+  value: PostTypeValue;
   label: string;
   chipClass: string;
+  selectedClass: string;
 };
 
+// El value es el valor del enum de la base; el label y los colores son de la UI.
 const TYPE_OPTIONS: TypeOption[] = [
-  { type: "COMIDA", label: "Comida", chipClass: "bg-pending-bg text-pending-ink" },
-  { type: "SIESTA", label: "Siesta", chipClass: "bg-type-siesta-bg text-type-siesta-ink" },
-  { type: "ACTIVIDAD", label: "Actividad", chipClass: "bg-info-bg text-info" },
-  { type: "LOGRO", label: "Logro", chipClass: "bg-success-bg text-success" },
-  { type: "ÁNIMO", label: "Ánimo", chipClass: "bg-type-mood-bg text-type-mood-ink" },
-  { type: "FOTO", label: "Foto", chipClass: "bg-type-photo-bg text-type-photo-ink" },
-  { type: "ANUNCIO", label: "Anuncio", chipClass: "bg-announce-bg text-announce" },
+  {
+    value: "meal",
+    label: "Comida",
+    chipClass: "bg-pending-bg text-pending-ink",
+    selectedClass: "bg-pending-ink text-white",
+  },
+  {
+    value: "nap",
+    label: "Siesta",
+    chipClass: "bg-type-siesta-bg text-type-siesta-ink",
+    selectedClass: "bg-type-siesta-ink text-white",
+  },
+  {
+    value: "activity",
+    label: "Actividad",
+    chipClass: "bg-info-bg text-info",
+    selectedClass: "bg-info text-white",
+  },
+  {
+    value: "achievement",
+    label: "Logro",
+    chipClass: "bg-success-bg text-success",
+    selectedClass: "bg-success text-white",
+  },
+  {
+    value: "mood",
+    label: "Ánimo",
+    chipClass: "bg-type-mood-bg text-type-mood-ink",
+    selectedClass: "bg-type-mood-ink text-white",
+  },
+  {
+    value: "photo",
+    label: "Foto",
+    chipClass: "bg-type-photo-bg text-type-photo-ink",
+    selectedClass: "bg-type-photo-ink text-white",
+  },
+  {
+    value: "announcement",
+    label: "Anuncio",
+    chipClass: "bg-announce-bg text-announce",
+    selectedClass: "bg-announce text-white",
+  },
 ];
-
-const SELECTED_TYPE_CLASS: Record<PostType, string> = {
-  COMIDA: "bg-pending-ink text-white",
-  SIESTA: "bg-type-siesta-ink text-white",
-  ACTIVIDAD: "bg-info text-white",
-  LOGRO: "bg-success text-white",
-  ÁNIMO: "bg-type-mood-ink text-white",
-  FOTO: "bg-type-photo-ink text-white",
-  ANUNCIO: "bg-announce text-white",
-};
-
-const EMPTY_RECIPIENTS: Recipients = { roomWide: false, kidIds: [] };
 
 export default function CreatePostModal({
   isOpen,
+  roomName,
+  kids,
   onClose,
   onPublish,
+  isPublishing,
+  publishError,
 }: CreatePostModalProps) {
-  const [recipients, setRecipients] = useState<Recipients>(EMPTY_RECIPIENTS);
-  const [type, setType] = useState<PostType | null>(null);
+  const [audience, setAudience] = useState<PostAudience | null>(null);
+  const [childIds, setChildIds] = useState<string[]>([]);
+  const [type, setType] = useState<PostTypeValue | null>(null);
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const hasRoom = roomName !== null;
+  const canPickChildren = hasRoom && kids.length > 0;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -97,26 +136,35 @@ export default function CreatePostModal({
     return null;
   }
 
-  function isKidSelected(kidId: string): boolean {
-    return recipients.kidIds.includes(kidId);
+  function isChildSelected(childId: string): boolean {
+    return childIds.includes(childId);
   }
 
-  function toggleKid(kidId: string) {
-    setRecipients((current) => {
-      const kidIds = current.kidIds.includes(kidId)
-        ? current.kidIds.filter((id) => id !== kidId)
-        : [...current.kidIds, kidId];
-      return { roomWide: false, kidIds };
-    });
-    setErrors((current) => ({ ...current, recipient: undefined }));
-  }
-
+  // Las tres pills son excluyentes: elegir una siempre borra lo anterior.
   function selectRoomWide() {
-    setRecipients({ roomWide: true, kidIds: [] });
+    setAudience("room");
+    setChildIds([]);
     setErrors((current) => ({ ...current, recipient: undefined }));
   }
 
-  function selectType(selectedType: PostType) {
+  function selectDaycareWide() {
+    setAudience("daycare");
+    setChildIds([]);
+    setErrors((current) => ({ ...current, recipient: undefined }));
+  }
+
+  function toggleChild(childId: string) {
+    const nextChildIds = childIds.includes(childId)
+      ? childIds.filter((id) => id !== childId)
+      : [...childIds, childId];
+
+    setChildIds(nextChildIds);
+    // Si se deselecciona el último niño, el destino vuelve a quedar vacío.
+    setAudience(nextChildIds.length > 0 ? "children" : null);
+    setErrors((current) => ({ ...current, recipient: undefined }));
+  }
+
+  function selectType(selectedType: PostTypeValue) {
     setType(selectedType);
     setErrors((current) => ({ ...current, type: undefined }));
   }
@@ -134,7 +182,9 @@ export default function CreatePostModal({
 
   function handlePublish() {
     const nextErrors: FieldErrors = {
-      recipient: hasRecipient(recipients) ? undefined : "Elegí al menos un destinatario",
+      recipient: hasRecipient(audience, childIds)
+        ? undefined
+        : "Elegí al menos un destinatario",
       type: type ? undefined : "Elegí un tipo",
       description: description.trim() ? undefined : "Escribí una descripción",
     };
@@ -144,7 +194,12 @@ export default function CreatePostModal({
       return;
     }
 
-    onPublish(buildPublishedPost(recipients, type as PostType, description.trim()));
+    onPublish({
+      type: type as PostTypeValue,
+      body: description.trim(),
+      audience: audience as PostAudience,
+      childIds,
+    });
   }
 
   return (
@@ -174,13 +229,23 @@ export default function CreatePostModal({
           <button
             type="button"
             onClick={handlePublish}
-            className="text-[15px] font-extrabold text-primary"
+            disabled={isPublishing}
+            className="text-[15px] font-extrabold text-primary disabled:opacity-50"
           >
-            Publicar
+            {isPublishing ? "Publicando…" : "Publicar"}
           </button>
         </div>
 
         <div className="px-[26px] py-6">
+          {publishError && (
+            <p
+              role="alert"
+              className="mb-[18px] rounded-[14px] border border-error-border bg-surface px-4 py-3 text-[13.5px] font-semibold text-error-text"
+            >
+              {publishError}
+            </p>
+          )}
+
           <div className="mb-[18px]">
             <SectionLabel id="create-post-recipient-label">PARA</SectionLabel>
             <div
@@ -191,32 +256,52 @@ export default function CreatePostModal({
               }
               className="mb-[6px] flex flex-wrap gap-[9px]"
             >
+              {hasRoom && (
+                <button
+                  type="button"
+                  onClick={selectRoomWide}
+                  disabled={isPublishing}
+                  aria-pressed={audience === "room"}
+                  className={pillClass(audience === "room")}
+                >
+                  Toda la sala
+                </button>
+              )}
               <button
                 type="button"
-                onClick={selectRoomWide}
-                aria-pressed={recipients.roomWide}
-                className={pillClass(recipients.roomWide)}
+                onClick={selectDaycareWide}
+                disabled={isPublishing}
+                aria-pressed={audience === "daycare"}
+                className={pillClass(audience === "daycare")}
               >
-                Toda la sala
+                Anuncio general
               </button>
-              {kids.map((kid) => (
-                <button
-                  key={kid.id}
-                  type="button"
-                  onClick={() => toggleKid(kid.id)}
-                  aria-pressed={isKidSelected(kid.id)}
-                  className={pillClass(isKidSelected(kid.id))}
-                >
-                  <span
-                    className="flex h-[26px] w-[26px] items-center justify-center rounded-full font-heading text-[13px] font-semibold"
-                    style={{ backgroundColor: kid.avatarBg, color: kid.avatarInk }}
+              {canPickChildren &&
+                kids.map((kid) => (
+                  <button
+                    key={kid.id}
+                    type="button"
+                    onClick={() => toggleChild(kid.id)}
+                    disabled={isPublishing}
+                    aria-pressed={isChildSelected(kid.id)}
+                    className={pillClass(isChildSelected(kid.id))}
                   >
-                    {kid.initial}
-                  </span>
-                  {getFirstName(kid.name)}
-                </button>
-              ))}
+                    <span
+                      className="flex h-[26px] w-[26px] items-center justify-center rounded-full font-heading text-[13px] font-semibold"
+                      style={{ backgroundColor: kid.avatarBg, color: kid.avatarInk }}
+                    >
+                      {kid.initial}
+                    </span>
+                    {kid.firstName}
+                  </button>
+                ))}
             </div>
+            {!hasRoom && (
+              <p className="mb-[10px] text-[13px] leading-[1.45] text-ink-soft">
+                No tenés una sala asignada, así que solo podés publicar anuncios
+                generales.
+              </p>
+            )}
             {errors.recipient ? (
               <InlineError
                 id="create-post-recipient-error"
@@ -237,14 +322,13 @@ export default function CreatePostModal({
             >
               {TYPE_OPTIONS.map((option) => (
                 <button
-                  key={option.type}
+                  key={option.value}
                   type="button"
-                  onClick={() => selectType(option.type)}
-                  aria-pressed={type === option.type}
-                  className={`rounded-full px-4 py-2 text-[13.5px] font-extrabold ${
-                    type === option.type
-                      ? SELECTED_TYPE_CLASS[option.type]
-                      : option.chipClass
+                  onClick={() => selectType(option.value)}
+                  disabled={isPublishing}
+                  aria-pressed={type === option.value}
+                  className={`rounded-full px-4 py-2 text-[13.5px] font-extrabold disabled:opacity-60 ${
+                    type === option.value ? option.selectedClass : option.chipClass
                   }`}
                 >
                   {option.label}
@@ -258,7 +342,7 @@ export default function CreatePostModal({
             )}
           </div>
 
-          <div className="mb-[22px]">
+          <div>
             <label
               htmlFor="create-post-description"
               className="mb-[10px] block text-[12px] font-extrabold tracking-[0.7px] text-ink-muted"
@@ -271,11 +355,12 @@ export default function CreatePostModal({
               onChange={(event) => updateDescription(event.target.value)}
               placeholder="Contá cómo le fue hoy…"
               rows={4}
+              disabled={isPublishing}
               aria-invalid={Boolean(errors.description)}
               aria-describedby={
                 errors.description ? "create-post-description-error" : undefined
               }
-              className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] leading-[1.5] text-ink outline-none placeholder:text-placeholder ${
+              className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] leading-[1.5] text-ink outline-none placeholder:text-placeholder disabled:opacity-60 ${
                 errors.description ? "border-error-border" : "border-field-border"
               }`}
             />
@@ -286,64 +371,22 @@ export default function CreatePostModal({
               />
             )}
           </div>
-
-          <div>
-            <SectionLabel>FOTOS</SectionLabel>
-            <div className="flex gap-3">
-              <div className="flex h-24 w-24 flex-none items-center justify-center rounded-[14px] border border-border bg-surface-soft text-chevron">
-                <ImageIcon />
-              </div>
-              <div className="flex h-24 w-24 flex-none flex-col items-center justify-center gap-[6px] rounded-[14px] border-[1.5px] border-dashed border-[#DBCDBA] bg-surface-soft text-[12px] text-[#B0A290]">
-                <PlusIcon />
-                Agregar
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function hasRecipient(recipients: Recipients): boolean {
-  return recipients.roomWide || recipients.kidIds.length > 0;
-}
-
-function buildPublishedPost(
-  recipients: Recipients,
-  type: PostType,
-  text: string
-): PostCardProps {
-  const selectedKids = kids.filter((kid) => recipients.kidIds.includes(kid.id));
-  const firstNames = selectedKids.map((kid) => getFirstName(kid.name));
-  const childName = recipients.roomWide ? "Anuncio general" : firstNames[0];
-
-  return {
-    type,
-    childName,
-    time: getCurrentTime(),
-    author: "vos",
-    text,
-    recipient: buildRecipient(firstNames),
-    likes: 0,
-    comments: 0,
-  };
-}
-
-function getFirstName(fullName: string): string {
-  return fullName.split(" ")[0];
-}
-
-function getCurrentTime(): string {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
+function hasRecipient(audience: PostAudience | null, childIds: string[]): boolean {
+  if (audience === "room" || audience === "daycare") {
+    return true;
+  }
+  return audience === "children" && childIds.length > 0;
 }
 
 function pillClass(isSelected: boolean): string {
   const base =
-    "flex items-center gap-2 rounded-full border-[1.5px] px-[14px] py-[6px] text-[14px] font-bold";
+    "flex items-center gap-2 rounded-full border-[1.5px] px-[14px] py-[6px] text-[14px] font-bold disabled:opacity-60";
   if (isSelected) {
     return `${base} border-ink bg-ink text-white`;
   }
@@ -370,43 +413,5 @@ function InlineError({ id, message }: { id: string; message: string }) {
     >
       {message}
     </p>
-  );
-}
-
-function ImageIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      width="26"
-      height="26"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <circle cx="9" cy="9" r="2" />
-      <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
-    </svg>
-  );
-}
-
-function PlusIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#C5503A"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M12 5v14M5 12h14" />
-    </svg>
   );
 }

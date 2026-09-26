@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { SVGProps } from "react";
 import PhotoPlaceholder from "./PhotoPlaceholder";
 
@@ -17,6 +16,7 @@ type PostImage = {
 };
 
 export type PostCardProps = {
+  id: string;
   type: PostType;
   childName: string;
   time: string;
@@ -86,17 +86,10 @@ export default function PostCard({
           <HeartIcon />
           {likes}
         </span>
-        <Link
-          href="/detalle-publicacion"
-          className="flex items-center gap-[7px] text-[14px] font-bold text-ink-muted"
-        >
+        <span className="flex items-center gap-[7px] text-[14px] font-bold text-ink-muted">
           <CommentIcon />
           {comments}
-        </Link>
-        <span className="flex-1" />
-        <Link href="/crear-publicacion" className="text-[14px] font-extrabold text-coral-deep">
-          Editar
-        </Link>
+        </span>
       </div>
     </article>
   );

@@ -1,6 +1,6 @@
 # SPEC 14 — Fotos de publicaciones con bucket privado y signed URLs
 
-> **Status:** borrador
+> **Status:** aprobado
 > **Depends on:** SPEC 13 (`posts`/`post_children` + feed real + server action `createPost`), SPEC 10 (`children.photo_consent`), SPEC 11 (`AddKidModal` que ya gestiona el consentimiento)
 > **Date:** 2026-09-25
 > **Objective:** Permitir que el staff adjunte **una** imagen por publicación subiéndola a un bucket privado de Supabase Storage y verla en el feed mediante una signed URL, bloqueando el envío cuando la familia del niño no dio consentimiento.
