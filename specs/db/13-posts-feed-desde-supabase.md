@@ -276,24 +276,24 @@ Cada paso deja el sistema funcional.
 
 ## Acceptance criteria
 
-- [ ] `users.room_id` existe y el staff tiene la sala "Soles" (`select room_id from public.users where role = 'staff'`); `/kids` sigue funcionando sin cambios.
-- [ ] `public.posts` y `public.post_children` existen en el esquema `public` con el enum `post_type` de 7 valores, la PK compuesta `(post_id, child_id)` y los 4 índices; `information_schema.role_table_grants` muestra `SELECT` e `INSERT` para `authenticated`.
-- [ ] RLS está activa en `posts` y `post_children`; `supabase_get_advisors` no reporta issues nuevos de security ni de performance.
-- [ ] Hay 4 posts de ejemplo del staff; al menos uno con `published_at` de ayer. El feed los muestra con el nombre real del autor (`full_name`), la hora real de `published_at` y el `recipient` correcto.
-- [ ] El feed agrupa por día real: los posts de hoy quedan bajo "Publicado hoy" y el de ayer bajo "Publicado ayer".
-- [ ] Con el feed vacío (ningún post para la guardería) se muestra un estado vacío y no aparece el divider "PUBLICADO HOY".
-- [ ] El modal ofrece pills **solo con los niños de la sala del staff** (8 en Soles), leídos de la DB, no del seed.
-- [ ] Las 3 pills son excluyentes: elegir "Toda la sala" limpia los niños, elegir un niño limpia las otras dos pills, y "Anuncio general" limpia todo lo demás.
-- [ ] Publicar con tipo + descripción + "Toda la sala" crea el post con `room_id` = sala del staff, `author_id` = el usuario logueado, `room_id` correcto y **sin** filas en `post_children`; el post aparece en el feed y sobrevive al F5.
-- [ ] Publicar con 2 niños concretos crea el post con `room_id IS NULL` y exactamente 2 filas en `post_children` con los `child_id` correctos; el `recipient` dice `"familias de X y Y"`.
-- [ ] Publicar con "Anuncio general" crea el post con `room_id IS NULL` y sin `post_children`; el `recipient` dice `"toda la guardería"`.
-- [ ] Sin tipo → error "Elegí un tipo"; descripción vacía o solo espacios → "Escribí una descripción"; sin destino → "Elegí al menos un destinatario". En los tres casos no se crea ninguna fila.
-- [ ] Durante el submit el botón queda deshabilitado con el texto "Publicando…"; un error de la server action se muestra inline arriba del form y **el modal no se cierra**.
-- [ ] El `PostCard` **no** tiene enlaces a `/crear-publicacion` ni a `/detalle-publicacion`; el componente `Counter` ya no está en el repo; `FeedHeader` muestra el nombre real del staff, el nombre real de la guardería y la cantidad real de niños (8 en Soles), no "Buenas, Caro" ni "12 niños".
-- [ ] Un staff **no puede** publicar en `room_id` de otra guardería: el insert directo con un `room_id` ajeno es rechazado por RLS (probado con `supabase_execute_sql` simulando el rol, o KPI desde el panel de Supabase).
-- [ ] Un padre no lee `posts`: con el cliente de un padre, `select * from posts` devuelve 0 filas.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
-- [ ] Screenshots en `.playwright-mcp/` (1280, 768, 375) del feed con posts reales, del divisor por día, del modal con las 3 pills y del estado de error.
+- [x] `users.room_id` existe y el staff tiene la sala "Soles" (`select room_id from public.users where role = 'staff'`); `/kids` sigue funcionando sin cambios.
+- [x] `public.posts` y `public.post_children` existen en el esquema `public` con el enum `post_type` de 7 valores, la PK compuesta `(post_id, child_id)` y los 4 índices; `information_schema.role_table_grants` muestra `SELECT` e `INSERT` para `authenticated`.
+- [x] RLS está activa en `posts` y `post_children`; `supabase_get_advisors` no reporta issues nuevos de security ni de performance.
+- [x] Hay 4 posts de ejemplo del staff; al menos uno con `published_at` de ayer. El feed los muestra con el nombre real del autor (`full_name`), la hora real de `published_at` y el `recipient` correcto.
+- [x] El feed agrupa por día real: los posts de hoy quedan bajo "Publicado hoy" y el de ayer bajo "Publicado ayer".
+- [x] Con el feed vacío (ningún post para la guardería) se muestra un estado vacío y no aparece el divider "PUBLICADO HOY".
+- [x] El modal ofrece pills **solo con los niños de la sala del staff** (8 en Soles), leídos de la DB, no del seed.
+- [x] Las 3 pills son excluyentes: elegir "Toda la sala" limpia los niños, elegir un niño limpia las otras dos pills, y "Anuncio general" limpia todo lo demás.
+- [x] Publicar con tipo + descripción + "Toda la sala" crea el post con `room_id` = sala del staff, `author_id` = el usuario logueado, `room_id` correcto y **sin** filas en `post_children`; el post aparece en el feed y sobrevive al F5.
+- [x] Publicar con 2 niños concretos crea el post con `room_id IS NULL` y exactamente 2 filas en `post_children` con los `child_id` correctos; el `recipient` dice `"familias de X y Y"`.
+- [x] Publicar con "Anuncio general" crea el post con `room_id IS NULL` y sin `post_children`; el `recipient` dice `"toda la guardería"`.
+- [x] Sin tipo → error "Elegí un tipo"; descripción vacía o solo espacios → "Escribí una descripción"; sin destino → "Elegí al menos un destinatario". En los tres casos no se crea ninguna fila.
+- [x] Durante el submit el botón queda deshabilitado con el texto "Publicando…"; un error de la server action se muestra inline arriba del form y **el modal no se cierra**.
+- [x] El `PostCard` **no** tiene enlaces a `/crear-publicacion` ni a `/detalle-publicacion`; el componente `Counter` ya no está en el repo; `FeedHeader` muestra el nombre real del staff, el nombre real de la guardería y la cantidad real de niños (8 en Soles), no "Buenas, Caro" ni "12 niños".
+- [x] Un staff **no puede** publicar en `room_id` de otra guardería: el insert directo con un `room_id` ajeno es rechazado por RLS (probado con `supabase_execute_sql` simulando el rol, o KPI desde el panel de Supabase).
+- [x] Un padre no lee `posts`: con el cliente de un padre, `select * from posts` devuelve 0 filas.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan.
+- [x] Screenshots en `.playwright-mcp/` (1280, 768, 375) del feed con posts reales, del divisor por día, del modal con las 3 pills y del estado de error.
 
 ---
 
