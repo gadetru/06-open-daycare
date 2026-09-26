@@ -1,6 +1,6 @@
 # SPEC 12 — Invitación de padres con Resend y registro de cuenta
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 05 (modal vincular padre), SPEC 08 (`public.users` + RLS), SPEC 09 (auth real + rutas públicas/protegidas), SPEC 10 (`rooms`/`children` + policies staff), SPEC 11 (perfil `/kids/[id]` contra DB)
 > **Date:** 2026-09-24
 > **Objective:** Hacer funcional el vínculo de un padre a un niño: el modal crea una invitación real (`invitations`), envía el código por email vía Resend y el padre activa su cuenta en `/activar-cuenta` con ese código, creando su `auth.user` (rol `parent`), su fila en `public.users` y el vínculo `parent_children`.
