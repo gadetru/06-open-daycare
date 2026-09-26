@@ -222,7 +222,7 @@ Mapeo de tipo DB → chip de UI: `meal→COMIDA`, `nap→SIESTA`, `activity→AC
 export type PostCardProps = {
   id: string;
   type: PostType;
-  childName: string;   // primer nombre del primer niño, o "Anuncio general"
+  childName: string;   // título de la card (ver getCardTitle abajo)
   time: string;        // "HH:MM" derivado de published_at
   author: string;      // users.full_name real
   text: string;
@@ -232,6 +232,12 @@ export type PostCardProps = {
   image?: { src: string; alt: string };  // lo usa SPEC 14
 };
 ```
+
+El título de la card (`childName`) tiene **tres** variantes, en el mismo orden que `buildRecipient`:
+
+- 1..n niños → primer nombre del primer niño
+- 0 niños + `room_name` → `"Toda la sala"`
+- 0 niños + sin `room_name` → `"Anuncio general"`
 
 El campo `image` se mantiene aunque en este spec ningún post lo tenga: es el punto de enganche de SPEC 14.
 
@@ -291,6 +297,7 @@ Cada paso deja el sistema funcional.
 - **Yes:** **3 pills** de destino, no 2. Con 2 no había forma de crear el "Anuncio general" (`room_id NULL` sin niños) que ya estaba decidido.
 - **Yes:** los posts de ejemplo son **seeds dentro de la migración**. Un feed con cero entradas se ve roto y no ejercita el agrupador por día.
 - **Yes:** la firma de `buildRecipient` cambia para admitir los tres destinos. Se mantiene el nombre porque la lógica de "familia de X / familias de X, Y y Z" no cambia.
+- **Yes:** el título de la card (`childName`) tiene tres variantes y no dos: sin niños pero con `room_id` muestra `"Toda la sala"`, no `"Anuncio general"`. Sin esto, 3 de las 4 cards del seed se titulaban "Anuncio general" aunque fueran de COMIDA o SIESTA. Queda asentado acá porque `PostCardProps.childName` estaba especificado con un solo fallback.
 - **Yes:** los likes y comentarios **siguen estáticos en 0** y no se tocan `reactions`/`comments`. No hay UI para eso y son dos tablas más de RLS.
 - **Yes:** se borran los enlaces a `/crear-publicacion` y `/detalle-publicacion` en lugar de crear esas rutas. Un enlace a un 404 en una card real es peor que ningún enlace.
 - **Yes:** el agrupador por día real en lugar del divider fijo "PUBLICADO HOY". Con posts reales el texto fijo deja de ser cierto al día siguiente.

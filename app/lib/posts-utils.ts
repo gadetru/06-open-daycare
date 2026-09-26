@@ -73,13 +73,26 @@ export function buildRecipient(
   return `familias de ${allButLast} y ${childFirstNames[childFirstNames.length - 1]}`;
 }
 
+// El título de la card tiene tres variantes: el primer niño si el post es para
+// niños concretos, "Toda la sala" si el post tiene sala, y "Anuncio general" si
+// es un anuncio de toda la guardería.
+export function getCardTitle(
+  childFirstNames: string[],
+  roomName: string | null
+): string {
+  if (childFirstNames.length > 0) {
+    return childFirstNames[0];
+  }
+  return roomName ? "Toda la sala" : "Anuncio general";
+}
+
 export function postRowToCard(row: PostRow): PostCardProps {
   const childFirstNames = row.child_names.map(getFirstName);
 
   return {
     id: row.id,
     type: POST_TYPE_CHIP[row.type],
-    childName: childFirstNames[0] ?? "Anuncio general",
+    childName: getCardTitle(childFirstNames, row.room_name),
     time: formatTimeOfDay(row.published_at),
     author: row.author_name,
     text: row.body,
