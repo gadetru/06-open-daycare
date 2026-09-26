@@ -1,6 +1,6 @@
 # SPEC 13 — Publicaciones del staff contra Supabase (feed real)
 
-> **Status:** aprobado
+> **Status:** implementado
 > **Depends on:** SPEC 01 (feed del home que se reemplaza), SPEC 06 (`CreatePostModal` que se conecta), SPEC 07 (`daycares`), SPEC 08 (`users` + RLS + RPC `is_same_daycare_staff`), SPEC 10 (`rooms`/`children` + policies de staff)
 > **Date:** 2026-09-25
 > **Objective:** Conectar el feed y el modal de nueva publicación a Supabase: el staff publica entradas reales en `posts`/`post_children` y `/` las lee ordenadas por fecha en vez de mostrar un seed en memoria.
