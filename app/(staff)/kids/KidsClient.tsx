@@ -3,11 +3,11 @@
 import { useState } from "react";
 import type { SVGProps } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/shared/Sidebar";
-import KidCard from "../components/kids/KidCard";
-import AddKidModal from "../components/kids/AddKidModal";
-import type { Kid } from "../data/kids";
-import type { NewChildFields } from "../lib/kids-utils";
+import Sidebar from "@/app/components/shared/Sidebar";
+import KidCard from "@/app/components/kids/KidCard";
+import AddKidModal from "@/app/components/kids/AddKidModal";
+import type { Kid } from "@/app/data/kids";
+import type { NewChildFields } from "@/app/lib/kids-utils";
 import { createClient } from "@/utils/supabase/client";
 
 export type RoomGroup = {

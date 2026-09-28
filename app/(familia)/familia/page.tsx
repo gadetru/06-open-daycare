@@ -1,14 +1,11 @@
 import { cookies } from "next/headers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
-import FeedClient from "@/app/components/home/FeedClient";
-import type { PostChildOption } from "@/app/components/home/CreatePostModal";
-import { getAvatarFor, getInitial } from "@/app/lib/kids-utils";
+import FamiliaClient from "@/app/components/familia/FamiliaClient";
 import { groupPostsByDay, type PostRow } from "@/app/lib/posts-utils";
 import { formatHeaderDate } from "@/app/lib/dates";
 
-type StaffRow = { full_name: string; daycare_id: string; room_id: string | null };
-type RoomRow = { name: string };
+type ParentRow = { full_name: string; daycare_id: string };
 type DaycareRow = { name: string };
 type ChildRow = { id: string; full_name: string };
 type AuthorRow = { full_name: string } | null;
@@ -36,14 +33,14 @@ type PostChildQueryRow = {
   child_id: string;
 };
 
-type FeedData = {
+type FamilyFeedData = {
+  parentName: string | null;
+  childNames: string[];
   daycareName: string | null;
-  staffName: string | null;
-  roomName: string | null;
   todayLabel: string;
-  kids: PostChildOption[];
   postsByDay: ReturnType<typeof groupPostsByDay>;
   notice: string | null;
+  hasLinkedChildren: boolean;
 };
 
 const POST_SELECT =
@@ -52,26 +49,27 @@ const POST_SELECT =
   "room:rooms!posts_room_id_fkey(name), " +
   "post_photos(storage_path)";
 
-export default async function HomePage() {
+export default async function FamiliaPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  const feed = await loadFeedData(supabase);
+  const feed = await loadFamilyFeedData(supabase);
 
   return (
-    <FeedClient
+    <FamiliaClient
+      parentName={feed.parentName}
+      childNames={feed.childNames}
       daycareName={feed.daycareName}
-      staffName={feed.staffName}
-      roomName={feed.roomName}
       todayLabel={feed.todayLabel}
-      kids={feed.kids}
       dayGroups={feed.postsByDay}
       notice={feed.notice}
+      hasLinkedChildren={feed.hasLinkedChildren}
     />
   );
 }
 
-// La RLS ya filtra: el staff solo lee posts de staff de su guardería.
+// La RLS ya filtra: el padre solo lee etiquetados a sus hijos + anuncios
+// generales. El loader no duplica esa regla, solo ordena y firma fotos.
 async function loadPostRows(supabase: SupabaseClient): Promise<PostRow[]> {
   const { data: postsData, error: postsError } = await supabase
     .from("posts")
@@ -97,22 +95,16 @@ async function loadPostRows(supabase: SupabaseClient): Promise<PostRow[]> {
     author_name: post.author?.full_name ?? "",
     room_name: post.room?.name ?? null,
     child_names: childNamesByPostId.get(post.id) ?? [],
-    // Sin foto el path queda null y la card se ve igual que en SPEC 13.
     photo_path: photoPathOf(post),
     photo_signed_url: signedUrlByPostId.get(post.id) ?? null,
   }));
 }
 
-// Máximo una foto por publicación: si algún día hubiera más filas, la card solo
-// sabe mostrar la primera.
 function photoPathOf(post: PostQueryRow): string | null {
   const photos = post.post_photos ?? [];
   return photos.length > 0 ? photos[0].storage_path : null;
 }
 
-// Cada render firma de nuevo: la URL vence en una hora y así sobrevive al F5.
-// Si la firma falla (o la imagen no existe), ese post queda sin URL y la card
-// cae al fallback punteado de `PhotoPlaceholder`.
 async function loadSignedUrlByPostId(
   supabase: SupabaseClient,
   postRows: PostQueryRow[]
@@ -138,8 +130,6 @@ async function loadSignedUrlByPostId(
   return signedUrlByPostId;
 }
 
-// Los nombres de los destinatarios se resuelven con dos consultas planas
-// (post_children y children) en vez de anidar: el resultado es más fácil de leer.
 async function loadChildNamesByPostId(
   supabase: SupabaseClient,
   postRows: PostQueryRow[]
@@ -191,35 +181,98 @@ async function loadChildNamesByPostId(
   return childNamesByPostId;
 }
 
-// Los niños del modal son los de la sala del staff, leídos de la base.
-async function loadRoomKids(
-  supabase: SupabaseClient,
-  roomId: string
-): Promise<PostChildOption[]> {
-  const { data: childData, error: childrenError } = await supabase
-    .from("children")
-    .select("id, full_name")
-    .eq("room_id", roomId)
-    .eq("status", "active")
-    .order("full_name");
+// Solo datos reducidos: nombre del padre, nombres de sus hijos y daycare.
+// Sin birth_date, alergias, notas médicas ni consentimientos.
+async function loadFamilyFeedData(
+  supabase: SupabaseClient
+): Promise<FamilyFeedData> {
+  const emptyFeed: FamilyFeedData = {
+    parentName: null,
+    childNames: [],
+    daycareName: null,
+    todayLabel: formatHeaderDate(new Date()),
+    postsByDay: [],
+    notice: null,
+    hasLinkedChildren: false,
+  };
 
-  if (childrenError) {
-    throw childrenError;
-  }
+  try {
+    const { data: claimsData } = await supabase.auth.getClaims();
+    const userId = claimsData?.claims?.sub;
 
-  return ((childData ?? []) as ChildRow[]).map((child, index) => {
-    const avatar = getAvatarFor(index);
+    if (typeof userId !== "string" || userId.length === 0) {
+      return { ...emptyFeed, notice: "Iniciá sesión para ver las novedades." };
+    }
+
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("full_name, daycare_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (userError) {
+      throw userError;
+    }
+
+    const parent = userData as ParentRow | null;
+    if (!parent) {
+      return { ...emptyFeed, notice: "No se pudo cargar las novedades." };
+    }
+
+    const { data: linkData, error: linksError } = await supabase
+      .from("parent_children")
+      .select("child_id")
+      .eq("parent_id", userId);
+
+    if (linksError) {
+      throw linksError;
+    }
+
+    const childIds = ((linkData ?? []) as { child_id: string }[]).map(
+      (link) => link.child_id
+    );
+
+    if (childIds.length === 0) {
+      const daycareName = await loadDaycareName(supabase, parent.daycare_id);
+      return {
+        ...emptyFeed,
+        parentName: parent.full_name,
+        daycareName,
+        hasLinkedChildren: false,
+      };
+    }
+
+    const { data: childData, error: childrenError } = await supabase
+      .from("children")
+      .select("id, full_name")
+      .in("id", childIds)
+      .order("full_name");
+
+    if (childrenError) {
+      throw childrenError;
+    }
+
+    const linkedChildren = (childData ?? []) as ChildRow[];
+    const daycareName = await loadDaycareName(supabase, parent.daycare_id);
+    const postsByDay = groupPostsByDay(await loadPostRows(supabase));
+
     return {
-      id: child.id,
-      firstName: child.full_name.split(" ")[0],
-      initial: getInitial(child.full_name),
-      avatarBg: avatar.bg,
-      avatarInk: avatar.ink,
+      parentName: parent.full_name,
+      childNames: linkedChildren.map((child) => child.full_name),
+      daycareName,
+      todayLabel: formatHeaderDate(new Date()),
+      postsByDay,
+      notice: null,
+      hasLinkedChildren: true,
     };
-  });
+  } catch {
+    return {
+      ...emptyFeed,
+      notice: "No se pudo cargar las novedades. Reintentá más tarde.",
+    };
+  }
 }
 
-// El nombre de la guardería se lee una vez y se muestra en el encabezado.
 async function loadDaycareName(
   supabase: SupabaseClient,
   daycareId: string
@@ -235,76 +288,4 @@ async function loadDaycareName(
   }
 
   return (daycareData as DaycareRow | null)?.name ?? null;
-}
-
-async function loadRoomName(
-  supabase: SupabaseClient,
-  roomId: string
-): Promise<string | null> {
-  const { data: roomData, error: roomError } = await supabase
-    .from("rooms")
-    .select("name")
-    .eq("id", roomId)
-    .maybeSingle();
-
-  if (roomError) {
-    throw roomError;
-  }
-
-  return (roomData as RoomRow | null)?.name ?? null;
-}
-
-async function loadFeedData(supabase: SupabaseClient): Promise<FeedData> {
-  const emptyFeed: FeedData = {
-    daycareName: null,
-    staffName: null,
-    roomName: null,
-    todayLabel: formatHeaderDate(new Date()),
-    kids: [],
-    postsByDay: [],
-    notice: null,
-  };
-
-  try {
-    const { data: claimsData } = await supabase.auth.getClaims();
-    const userId = claimsData?.claims?.sub;
-
-    if (typeof userId !== "string" || userId.length === 0) {
-      return { ...emptyFeed, notice: "Iniciá sesión para ver el feed." };
-    }
-
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("full_name, daycare_id, room_id")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (userError) {
-      throw userError;
-    }
-
-    const staff = userData as StaffRow | null;
-    const roomId = staff?.room_id ?? null;
-    const daycareName = staff
-      ? await loadDaycareName(supabase, staff.daycare_id)
-      : null;
-    const roomName = roomId ? await loadRoomName(supabase, roomId) : null;
-    const kids = roomId ? await loadRoomKids(supabase, roomId) : [];
-    const postsByDay = groupPostsByDay(await loadPostRows(supabase));
-
-    return {
-      daycareName,
-      staffName: staff?.full_name ?? null,
-      roomName,
-      todayLabel: formatHeaderDate(new Date()),
-      kids,
-      postsByDay,
-      notice: null,
-    };
-  } catch {
-    return {
-      ...emptyFeed,
-      notice: "No se pudo cargar el feed. Reintentá más tarde.",
-    };
-  }
 }

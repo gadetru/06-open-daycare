@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { childRowToKid } from "../lib/kids-utils";
+import { childRowToKid } from "@/app/lib/kids-utils";
 import KidsClient, { type RoomGroup } from "./KidsClient";
 
 type RoomRow = {
