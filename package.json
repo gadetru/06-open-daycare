@@ -26,5 +26,18 @@
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "Aplicación web responsive para guarderías, construida con Next.js 16, React 19, TypeScript y Tailwind CSS v4.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gadetru/06-open-daycare.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gadetru/06-open-daycare/issues"
+  },
+  "homepage": "https://github.com/gadetru/06-open-daycare#readme"
 }
