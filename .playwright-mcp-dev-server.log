@@ -4,52 +4,141 @@
 
 ▲ Next.js 16.3.5 (Turbopack)
 - Local:         http://localhost:3000
-- Network:       http://192.168.7.9:3000
-- Environments: .env.local, .env
-✓ Ready in 489ms
-✓ Running next.config.ts took 38ms
+- Network:       http://192.168.7.2:3000
+- Environments: .env
+✓ Ready in 587ms
+✓ Running next.config.ts took 40ms
 
- GET /login 200 in 250ms (next.js: 76ms, proxy.ts: 4ms, application-code: 170ms)
- GET /login 200 in 36ms (next.js: 5ms, proxy.ts: 4ms, application-code: 27ms)
- GET /login 200 in 37ms (next.js: 5ms, proxy.ts: 4ms, application-code: 28ms)
- GET /login 200 in 132ms (next.js: 97ms, proxy.ts: 6ms, application-code: 29ms)
- GET /login 200 in 122ms (next.js: 86ms, proxy.ts: 7ms, application-code: 29ms)
- GET /login 200 in 122ms (next.js: 89ms, proxy.ts: 8ms, application-code: 25ms)
- GET /login 200 in 118ms (next.js: 88ms, proxy.ts: 5ms, application-code: 25ms)
- GET /login 200 in 128ms (next.js: 91ms, proxy.ts: 4ms, application-code: 32ms)
- GET /login 200 in 50ms (next.js: 13ms, proxy.ts: 6ms, application-code: 32ms)
- GET / 200 in 412ms (next.js: 61ms, proxy.ts: 330ms, application-code: 22ms)
- GET / 200 in 35ms (next.js: 6ms, proxy.ts: 12ms, application-code: 17ms)
- GET /login 200 in 41ms (next.js: 5ms, proxy.ts: 4ms, application-code: 32ms)
- GET / 200 in 24ms (next.js: 6ms, proxy.ts: 6ms, application-code: 13ms)
- GET / 200 in 25ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 1816ms (next.js: 493ms, proxy.ts: 5ms, application-code: 1319ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 587ms (next.js: 14ms, proxy.ts: 6ms, application-code: 568ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 649ms (next.js: 11ms, proxy.ts: 5ms, application-code: 632ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 673ms (next.js: 11ms, proxy.ts: 4ms, application-code: 657ms)
- GET /kids/mateo 200 in 331ms (next.js: 11ms, proxy.ts: 4ms, application-code: 316ms)
- GET /kids/00000000-0000-4000-a000-000000000000 200 in 502ms (next.js: 12ms, proxy.ts: 5ms, application-code: 485ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 483ms (next.js: 11ms, proxy.ts: 3ms, application-code: 468ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 700ms (next.js: 13ms, proxy.ts: 6ms, application-code: 681ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 456ms (next.js: 100ms, proxy.ts: 5ms, application-code: 352ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 683ms (next.js: 12ms, proxy.ts: 5ms, application-code: 665ms)
- GET /login 200 in 36ms (next.js: 5ms, proxy.ts: 3ms, application-code: 28ms)
- GET / 200 in 22ms (next.js: 5ms, proxy.ts: 4ms, application-code: 13ms)
- GET / 200 in 24ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
- GET /kids/079ba370-b304-4117-8244-ef323818d2fe 200 in 1201ms (next.js: 16ms, proxy.ts: 7ms, application-code: 1178ms)
- GET /login 200 in 33ms (next.js: 4ms, proxy.ts: 3ms, application-code: 25ms)
- GET / 200 in 23ms (next.js: 5ms, proxy.ts: 5ms, application-code: 14ms)
- GET / 200 in 25ms (next.js: 5ms, proxy.ts: 5ms, application-code: 15ms)
- GET /kids/6887c60a-ac0d-4db2-ac66-ba13ff1aefe1 200 in 1422ms (next.js: 11ms, proxy.ts: 4ms, application-code: 1407ms)
- GET /login 200 in 33ms (next.js: 4ms, proxy.ts: 3ms, application-code: 26ms)
- GET / 200 in 23ms (next.js: 5ms, proxy.ts: 5ms, application-code: 13ms)
- GET / 200 in 24ms (next.js: 5ms, proxy.ts: 4ms, application-code: 15ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 996ms (next.js: 11ms, proxy.ts: 4ms, application-code: 981ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 837ms (next.js: 12ms, proxy.ts: 5ms, application-code: 820ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 784ms (next.js: 10ms, proxy.ts: 4ms, application-code: 771ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 740ms (next.js: 10ms, proxy.ts: 4ms, application-code: 726ms)
- GET /kids/1b98f3d3-2905-465d-afc8-92fa74b4c53c 200 in 664ms (next.js: 10ms, proxy.ts: 4ms, application-code: 650ms)
- GET / 200 in 866ms (next.js: 5ms, proxy.ts: 811ms, application-code: 49ms)
- GET /kids 200 in 737ms (next.js: 32ms, proxy.ts: 4ms, application-code: 701ms)
- GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 535ms (next.js: 12ms, proxy.ts: 4ms, application-code: 520ms)
+ GET /login 200 in 408ms (next.js: 78ms, proxy.ts: 162ms, application-code: 167ms)
+ GET /login 200 in 39ms (next.js: 6ms, proxy.ts: 5ms, application-code: 29ms)
+ GET /sin-acceso 200 in 1786ms (next.js: 307ms, proxy.ts: 1200ms, application-code: 280ms)
+ GET /sin-acceso 200 in 747ms (next.js: 6ms, proxy.ts: 531ms, application-code: 209ms)
+ GET /sin-acceso 200 in 609ms (next.js: 5ms, proxy.ts: 182ms, application-code: 422ms)
+ GET /sin-acceso 200 in 849ms (next.js: 5ms, proxy.ts: 201ms, application-code: 643ms)
+ GET /sin-acceso 200 in 241ms (next.js: 5ms, proxy.ts: 106ms, application-code: 131ms)
+ POST /sin-acceso 200 in 345ms (next.js: 5ms, proxy.ts: 193ms, application-code: 147ms)
+  └─ ƒ logout() in 113ms app/actions/auth.ts
+ GET /login 200 in 31ms (next.js: 12ms, proxy.ts: 4ms, application-code: 15ms)
+ GET /login 200 in 28ms (next.js: 5ms, proxy.ts: 4ms, application-code: 19ms)
+ GET /login 200 in 24ms (next.js: 5ms, proxy.ts: 4ms, application-code: 15ms)
+ GET / 200 in 1630ms (next.js: 37ms, proxy.ts: 189ms, application-code: 1403ms)
+ GET / 200 in 1665ms (next.js: 125ms, proxy.ts: 273ms, application-code: 1267ms)
+ GET / 200 in 1410ms (next.js: 5ms, proxy.ts: 147ms, application-code: 1258ms)
+ POST / 200 in 877ms (next.js: 5ms, proxy.ts: 423ms, application-code: 450ms)
+  └─ ƒ logout() in 424ms app/actions/auth.ts
+ GET /login 200 in 26ms (next.js: 5ms, proxy.ts: 6ms, application-code: 16ms)
+ GET /login 200 in 35ms (next.js: 13ms, proxy.ts: 5ms, application-code: 16ms)
+ GET / 200 in 1875ms (next.js: 5ms, proxy.ts: 210ms, application-code: 1660ms)
+ GET / 200 in 1630ms (next.js: 5ms, proxy.ts: 258ms, application-code: 1367ms)
+ GET /kids 200 in 976ms (next.js: 25ms, proxy.ts: 253ms, application-code: 698ms)
+ POST /kids 200 in 493ms (next.js: 6ms, proxy.ts: 299ms, application-code: 188ms)
+  └─ ƒ logout() in 157ms app/actions/auth.ts
+ GET /login 200 in 21ms (next.js: 5ms, proxy.ts: 3ms, application-code: 14ms)
+ GET /login 200 in 25ms (next.js: 5ms, proxy.ts: 3ms, application-code: 17ms)
+ GET /login 200 in 24ms (next.js: 6ms, proxy.ts: 4ms, application-code: 15ms)
+ GET / 200 in 1885ms (next.js: 8ms, proxy.ts: 217ms, application-code: 1661ms)
+ GET / 200 in 1638ms (next.js: 12ms, proxy.ts: 257ms, application-code: 1369ms)
+ GET /kids 200 in 657ms (next.js: 5ms, proxy.ts: 190ms, application-code: 462ms)
+ GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 1441ms (next.js: 518ms, proxy.ts: 121ms, application-code: 802ms)
+ POST /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 1127ms (next.js: 12ms, proxy.ts: 242ms, application-code: 873ms)
+  └─ ƒ createParentInvitation({"childId":"a5cc070b-3f42-4490-9b77-8aecc40d3e29","email":"gadetru@gmail.com","fullName":"gabi","...":"1 item not stringified"}) in 863ms app/actions/invitations.ts
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+ GET /activar-cuenta?code=XBZWT&email=gadetru%40gmail.com 200 in 655ms (next.js: 256ms, proxy.ts: 340ms, application-code: 59ms)
+ POST /activar-cuenta?code=XBZWT&email=gadetru%40gmail.com 200 in 219ms (next.js: 5ms, proxy.ts: 4ms, application-code: 211ms)
+  └─ ƒ getActivationContext("XBZWT", "gadetru@gmail.com") in 203ms app/actions/activations.ts
+ POST /activar-cuenta?code=XBZWT&email=gadetru%40gmail.com 200 in 216ms (next.js: 5ms, proxy.ts: 3ms, application-code: 208ms)
+  └─ ƒ getActivationContext("XBZWT", "gadetru@gmail.com") in 201ms app/actions/activations.ts
+ GET /login?activated=1 200 in 26ms (next.js: 4ms, proxy.ts: 3ms, application-code: 19ms)
+ POST /activar-cuenta?code=XBZWT&email=gadetru%40gmail.com 200 in 1469ms (next.js: 5ms, proxy.ts: 3ms, application-code: 1461ms)
+  └─ ƒ activateParentAccount({"code":"XBZWT","email":"gadetru@gmail.com","password":"1q2w3e"}) in 1423ms app/actions/activations.ts
+ GET /familia 200 in 3.6s (next.js: 190ms, proxy.ts: 465ms, application-code: 3.0s)
+ GET /familia 200 in 5.1s (next.js: 6ms, proxy.ts: 486ms, application-code: 4.6s)
+ GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 881ms (next.js: 12ms, proxy.ts: 126ms, application-code: 744ms)
+ GET /familia 200 in 1234ms (next.js: 5ms, proxy.ts: 313ms, application-code: 915ms)
+ GET /kids 200 in 621ms (next.js: 6ms, proxy.ts: 205ms, application-code: 410ms)
+ GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 1117ms (next.js: 13ms, proxy.ts: 314ms, application-code: 790ms)
+ GET /resumen-dia 404 in 424ms (next.js: 122ms, proxy.ts: 283ms, application-code: 18ms)
+ GET /resumen-dia 404 in 140ms (next.js: 9ms, proxy.ts: 105ms, application-code: 26ms)
+ GET /crear-publicacion 404 in 304ms (next.js: 10ms, proxy.ts: 278ms, application-code: 15ms)
+ GET /crear-publicacion 404 in 128ms (next.js: 9ms, proxy.ts: 95ms, application-code: 25ms)
+ POST /familia 200 in 431ms (next.js: 10ms, proxy.ts: 287ms, application-code: 134ms)
+  └─ ƒ logout() in 107ms app/actions/auth.ts
+ GET /login 200 in 21ms (next.js: 5ms, proxy.ts: 3ms, application-code: 12ms)
+ GET /login 200 in 22ms (next.js: 5ms, proxy.ts: 3ms, application-code: 15ms)
+ GET /login 200 in 23ms (next.js: 5ms, proxy.ts: 3ms, application-code: 15ms)
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+ GET /login 200 in 122ms (next.js: 5ms, proxy.ts: 86ms, application-code: 30ms)
+ GET / 200 in 1451ms (next.js: 5ms, proxy.ts: 178ms, application-code: 1268ms)
+ GET / 200 in 2.1s (next.js: 6ms, proxy.ts: 507ms, application-code: 1539ms)
+ GET /kids 200 in 764ms (next.js: 5ms, proxy.ts: 196ms, application-code: 563ms)
+ GET /kids/a5cc070b-3f42-4490-9b77-8aecc40d3e29 200 in 810ms (next.js: 12ms, proxy.ts: 113ms, application-code: 685ms)
+ GET /kids 200 in 447ms (next.js: 5ms, proxy.ts: 98ms, application-code: 345ms)
+ GET / 200 in 1224ms (next.js: 5ms, proxy.ts: 112ms, application-code: 1107ms)
+ POST / 200 in 997ms (next.js: 6ms, proxy.ts: 247ms, application-code: 745ms)
+  └─ ƒ createPost({"audience":"room","body":"foto de prueba","childIds":[],"...":"1 item not stringified"}, {}) in 734ms app/actions/posts.ts
+ GET / 200 in 1282ms (next.js: 5ms, proxy.ts: 103ms, application-code: 1174ms)
+ GET /kids 200 in 826ms (next.js: 6ms, proxy.ts: 461ms, application-code: 359ms)
+ POST /kids 200 in 644ms (next.js: 6ms, proxy.ts: 476ms, application-code: 162ms)
+  └─ ƒ logout() in 135ms app/actions/auth.ts
+ GET /login 200 in 21ms (next.js: 6ms, proxy.ts: 3ms, application-code: 13ms)
+ GET /login 200 in 26ms (next.js: 5ms, proxy.ts: 3ms, application-code: 19ms)
+ GET /login 200 in 23ms (next.js: 5ms, proxy.ts: 4ms, application-code: 14ms)
+ GET /familia 200 in 1159ms (next.js: 5ms, proxy.ts: 249ms, application-code: 905ms)
+ GET /familia 200 in 1078ms (next.js: 5ms, proxy.ts: 224ms, application-code: 849ms)
+ POST /familia 200 in 453ms (next.js: 5ms, proxy.ts: 316ms, application-code: 132ms)
+  └─ ƒ logout() in 103ms app/actions/auth.ts
+ GET /login 200 in 23ms (next.js: 5ms, proxy.ts: 4ms, application-code: 14ms)
+ GET /login 200 in 24ms (next.js: 5ms, proxy.ts: 3ms, application-code: 16ms)
+ GET /login 200 in 24ms (next.js: 5ms, proxy.ts: 3ms, application-code: 16ms)
+ GET / 200 in 1685ms (next.js: 6ms, proxy.ts: 188ms, application-code: 1492ms)
+ GET / 200 in 1599ms (next.js: 5ms, proxy.ts: 205ms, application-code: 1390ms)
+ POST / 200 in 905ms (next.js: 5ms, proxy.ts: 209ms, application-code: 690ms)
+  └─ ƒ createPost({"audience":"daycare","body":"pruebas","childIds":[],"...":"1 item not stringified"}, {}) in 682ms app/actions/posts.ts
+ GET / 200 in 1430ms (next.js: 5ms, proxy.ts: 95ms, application-code: 1330ms)
+ POST / 200 in 358ms (next.js: 5ms, proxy.ts: 206ms, application-code: 147ms)
+  └─ ƒ logout() in 125ms app/actions/auth.ts
+ GET /login 200 in 21ms (next.js: 5ms, proxy.ts: 3ms, application-code: 13ms)
+ GET /login 200 in 24ms (next.js: 5ms, proxy.ts: 3ms, application-code: 16ms)
+ GET /login 200 in 24ms (next.js: 5ms, proxy.ts: 3ms, application-code: 15ms)
+ GET /familia 200 in 849ms (next.js: 6ms, proxy.ts: 181ms, application-code: 662ms)
+ GET /familia 200 in 1262ms (next.js: 5ms, proxy.ts: 190ms, application-code: 1067ms)
+ GET /familia 200 in 1010ms (next.js: 6ms, proxy.ts: 218ms, application-code: 785ms)
+ POST /familia 200 in 368ms (next.js: 5ms, proxy.ts: 218ms, application-code: 145ms)
+  └─ ƒ logout() in 118ms app/actions/auth.ts
+ GET /login 200 in 30ms (next.js: 5ms, proxy.ts: 4ms, application-code: 21ms)
+ GET /login 200 in 26ms (next.js: 5ms, proxy.ts: 3ms, application-code: 18ms)
 [?25h

@@ -90,7 +90,17 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/");
+      const { data: roleRow } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
+        .maybeSingle();
+      const role = (roleRow as { role: string } | null)?.role;
+      if (role !== "staff" && role !== "parent" && role !== "admin") {
+        router.push("/sin-acceso");
+      } else {
+        router.push(role === "parent" ? "/familia" : "/");
+      }
       router.refresh();
     } catch {
       setError("No pudimos iniciar sesión. Intentá nuevamente.");

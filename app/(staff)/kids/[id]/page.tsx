@@ -5,7 +5,7 @@ import type {
   ChildRow,
   ParentRelationshipValue,
   PendingInvitationRow,
-} from "../../lib/kids-utils";
+} from "@/app/lib/kids-utils";
 import KidProfileClient from "./KidProfileClient";
 
 type RoomRow = {

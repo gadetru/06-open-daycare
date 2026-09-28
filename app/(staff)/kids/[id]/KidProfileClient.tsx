@@ -4,24 +4,24 @@ import { useCallback, useState } from "react";
 import type { SVGProps } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "../../components/shared/Sidebar";
-import SunIcon from "../../components/shared/SunIcon";
-import AddKidModal from "../../components/kids/AddKidModal";
-import type { RoomOption } from "../../components/kids/AddKidModal";
-import LinkParentModal from "../../components/kids/LinkParentModal";
-import type { Kid } from "../../data/kids";
+import Sidebar from "@/app/components/shared/Sidebar";
+import SunIcon from "@/app/components/shared/SunIcon";
+import AddKidModal from "@/app/components/kids/AddKidModal";
+import type { RoomOption } from "@/app/components/kids/AddKidModal";
+import LinkParentModal from "@/app/components/kids/LinkParentModal";
+import type { Kid } from "@/app/data/kids";
 import {
   buildParentRows,
   childRowToKid,
   getInitial,
-} from "../../lib/kids-utils";
+} from "@/app/lib/kids-utils";
 import type {
   AcceptedParentRow,
   ChildRow,
   NewChildFields,
   ParentRowData,
   PendingInvitationRow,
-} from "../../lib/kids-utils";
+} from "@/app/lib/kids-utils";
 import { createClient } from "@/utils/supabase/client";
 
 type KidProfileClientProps = {

@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
-import FeedClient from "./components/home/FeedClient";
-import type { PostChildOption } from "./components/home/CreatePostModal";
-import { getAvatarFor, getInitial } from "./lib/kids-utils";
-import { groupPostsByDay, type PostRow } from "./lib/posts-utils";
-import { formatHeaderDate } from "./lib/dates";
+import FeedClient from "@/app/components/home/FeedClient";
+import type { PostChildOption } from "@/app/components/home/CreatePostModal";
+import { getAvatarFor, getInitial } from "@/app/lib/kids-utils";
+import { groupPostsByDay, type PostRow } from "@/app/lib/posts-utils";
+import { formatHeaderDate } from "@/app/lib/dates";
 
 type StaffRow = { full_name: string; daycare_id: string; room_id: string | null };
 type RoomRow = { name: string };

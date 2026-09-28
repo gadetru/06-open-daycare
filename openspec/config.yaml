@@ -1,0 +1,34 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  App: guardería (daycare) para personal y familias.
+  Objetivo: que el personal publique novedades del día (texto + foto) de los
+  niños a los que tiene asignados, y que cada padre vea solo lo de su hijo.
+  Roles: staff (publica) y parent (solo lectura de sus hijos).
+  Tech stack: Next.js 16 App Router, TypeScript, Tailwind v4, Supabase
+  (Postgres + RLS + Auth + Storage). Sin tests; se valida con lint, tsc y build.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
